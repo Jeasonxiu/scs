@@ -20,18 +20,18 @@
 # ${SRCDIR}/a16_4.TstarStretchUp.sh
 # ${SRCDIR}/a16_5.NoStretch.sh
 # ${SRCDIR}/a16_6.FinalStretch.sh
-${SRCDIR}/a17_1.Decon.sh
+# ${SRCDIR}/a17_1.Decon.sh
 # ${SRCDIR}/a17_3.Subtract.sh
 # ${SRCDIR}/a17_5.Raw.sh
 # ${SRCDIR}/a17_6.WaterStripHalfS.sh
-# ${SRCDIR}/a19_1.WaterFRS.sh
+${SRCDIR}/a19_1.WaterFRS.sh
 # ${SRCDIR}/a19_3.SubtractFRS.sh
 # ${SRCDIR}/a19_5.RawFRS.sh
 # ${SRCDIR}/a19_6.WaterStripHalfSFRS.sh
-# ${SRCDIR}/a20.WeightScheme.sh
-# ${SRCDIR}/a21_1.CircleBin.sh
+${SRCDIR}/a20.WeightScheme.sh
+${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
-# ${SRCDIR}/a22.StackData.sh
+${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/a23.BinBootStrap.sh
 # ${SRCDIR}/a24_1.StackModels_1D.sh
 
@@ -70,7 +70,7 @@ ${SRCDIR}/a17_1.Decon.sh
 # ${SRCDIR}/b21_2.GeneralBin.sh
 # ${SRCDIR}/b21_3.PathAtSampling.sh
 # ${SRCDIR}/b21_4.BinWeightHistogram.sh
-# ${SRCDIR}/b22_1.DataStackMap.sh
+${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b22_2.BinCatalog.sh
 # ${SRCDIR}/b22_3.FinalDistMap.sh
 # ${SRCDIR}/b22_4.BinGcarcInc.sh
