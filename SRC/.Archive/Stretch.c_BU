@@ -1,0 +1,335 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include<ASU_tools.h>
+
+/***********************************************************
+ * Stretch S esf to best match ScS esf.
+ * Comparison is made above certain level for each esf.
+***********************************************************/
+
+int main(int argc,char **argv){
+
+    // Deal within inputs.
+    int    int_num,string_num,double_num,count;
+    int    *PI;
+    char   **PS;
+    double *P;
+
+    enum PIenum {nStretch,cate};
+    enum PSenum {Sesf,ScSesf,Sstretched};
+    enum Penum  {C1,C2,R1,R2,AMPlevel,Vlevel};
+
+    int_num=atoi(argv[1]);
+    string_num=atoi(argv[2]);
+    double_num=atoi(argv[3]);
+
+    PI=(int *)malloc(int_num*sizeof(int));
+    PS=(char **)malloc(string_num*sizeof(char *));
+    P=(double *)malloc(double_num*sizeof(double));
+
+    for (count=0;count<string_num;count++){
+        PS[count]=(char *)malloc(200*sizeof(char *));
+    }
+
+    for (count=0;count<int_num;count++){
+        if (scanf("%d",PI+count)!=1){
+            printf("In C : Int parameter reading Error !\n");
+            return 1;
+        }
+    }
+
+    for (count=0;count<string_num;count++){
+        if (scanf("%s",PS[count])!=1){
+            printf("In C : String parameter reading Error !\n");
+            return 1;
+        }
+    }
+
+    for (count=0;count<double_num;count++){
+        if (scanf("%lf",P+count)!=1){
+            printf("In C : Double parameter reading Error !\n");
+            return 1;
+        }
+    }
+
+    // Job begin.
+    int    count2,N,shift,S_NPTS,NPTS,Peak1,Peak2,S_B,ScS_B,S_E,ScS_E,flip,Length;
+    FILE   *fpin1,*fpin2,*fpout,*fptest;
+    char   outfile[200];
+    double dt,dl,dratio,T1,T2,ccc,ccc_max,ccc_max_normalized,abs_difference,dl_max,shift_max,PeakT1,PeakT2,time,amp,tmpmax;
+    double *esf1_time,*esf1_amp,*esf2_time,*esf2_amp,*esfstretched_time,*time_CC,*S_CC,*ScS_CC;
+
+    // Points used to resample stretched shape. For CC.
+    NPTS=3000;
+    dratio=(P[R2]-P[R1])/(PI[nStretch]-1);
+
+    // Count how many points within S,ScS E.S.F data (only between -100 and +100 sec. of ScS arrival).
+    fpin1=fopen(PS[Sesf],"r");
+    N=0;
+    while (fscanf(fpin1,"%lf%lf",&time,&amp)==2){
+        if (-100.0<time && time<100.0){
+            N++;
+        }
+    }
+    fclose(fpin1);
+
+    // Malloc spaces.
+    esf1_time=(double *)malloc(N*sizeof(double));
+    esf1_amp=(double *)malloc(N*sizeof(double));
+    esf2_time=(double *)malloc(N*sizeof(double));
+    esf2_amp=(double *)malloc(N*sizeof(double));
+    esfstretched_time=(double *)malloc(N*sizeof(double));
+
+    time_CC=(double *)malloc(NPTS*sizeof(double));
+    ScS_CC=(double *)malloc(NPTS*sizeof(double));
+    S_CC=NULL;
+
+    // Read in S and ScS esf fullstack. ( only between -100 and +100 sec. of ScS arrival )
+    fpin1=fopen(PS[Sesf],"r");
+    fpin2=fopen(PS[ScSesf],"r");
+    count=0;
+    while(fscanf(fpin1,"%lf%lf",&time,&amp)==2){
+        if (-100.0<time && time<100.0){
+            esf1_time[count]=time;
+            esf1_amp[count]=amp;
+            count++;
+        }
+    }
+    fclose(fpin1);
+
+    count=0;
+    while(fscanf(fpin2,"%lf%lf",&time,&amp)==2){
+        if (-100.0<time && time<100.0){
+            esf2_time[count]=time;
+            esf2_amp[count]=amp;
+            count++;
+        }
+    }
+    fclose(fpin2);
+
+    // Find the peaks of two traces. (should be lies within -10 ~ 20 of t=0 )
+    // Normlize two traces according to the peak.
+    tmpmax=0;
+    for (count=0;count<N;count++){
+        if ( -10<esf1_time[count] && esf1_time[count]<20 && tmpmax<fabs(esf1_amp[count])){
+            tmpmax=fabs(esf1_amp[count]);
+            Peak1=count;
+        }
+    }
+    for (count=0;count<N;count++){
+        esf1_amp[count]/=tmpmax;
+    }
+
+    tmpmax=0;
+    for (count=0;count<N;count++){
+        if ( -10<esf1_time[count] && esf2_time[count]<20 && tmpmax<fabs(esf2_amp[count])){
+            tmpmax=fabs(esf2_amp[count]);
+            Peak2=count;
+        }
+    }
+    for (count=0;count<N;count++){
+        esf2_amp[count]/=tmpmax;
+    }
+
+    // Shift time on two esf to align peak at zero.
+    PeakT1=esf1_time[Peak1];
+    PeakT2=esf2_time[Peak2];
+    for (count=0;count<N;count++){
+        esf1_time[count]-=PeakT1;
+        esf2_time[count]-=PeakT2;
+    }
+
+    // Output shifted original S esf for plotting.
+    sprintf(outfile,"tmpfile_%d_S_Shifted",PI[cate]);
+    fpout=fopen(outfile,"w");
+    for (count=0;count<N;count++){
+        fprintf(fpout,"%.4e\t%.4e\n",esf1_time[count]+PeakT2,esf1_amp[count]);
+    }
+    fclose(fpout);
+
+    // Stretch it vertically.
+    for (count=0;count<N;count++){
+        esf1_amp[count]=(esf1_amp[count]+P[Vlevel])/(1+P[Vlevel]);
+    }
+
+    // Down-hill search the AMPlevel point. (S_B----S_E, ScS_B----ScS_E)
+    S_B=0;ScS_B=0;
+    S_E=N;ScS_E=N;
+
+    for (count=Peak1;count>0;count--){
+        if (esf1_amp[count]<P[AMPlevel]){
+            S_B=count;
+            break;
+        }
+    }
+
+    for (count=Peak2;count>0;count--){
+        if (esf2_amp[count]<P[AMPlevel]){
+            ScS_B=count;
+            break;
+        }
+    }
+
+    for (count=Peak1;count<N;count++){
+        if (esf1_amp[count]<P[AMPlevel]){
+            S_E=count;
+            break;
+        }
+    }
+
+    for (count=Peak2;count<N;count++){
+        if (esf2_amp[count]<P[AMPlevel]){
+            ScS_E=count;
+            break;
+        }
+    }
+
+    // Find time anchor on ScS esf.
+    T1=esf2_time[ScS_B];
+    T2=esf2_time[ScS_E];
+
+    // Resample and create the first trace for comparison.
+    dt=(T2-T1)/(NPTS-1);
+    for (count=0;count<NPTS;count++){
+        time_CC[count]=T1+count*dt;
+    }
+    wiginterpd(esf2_time,esf2_amp,N,time_CC,ScS_CC,NPTS,0);
+
+    // Get rid of part below AMPlevel, normalize it.
+    for (count=0;count<NPTS;count++){
+        ScS_CC[count]-=P[AMPlevel];
+    }
+    normalized(ScS_CC,NPTS);
+
+    // Stretch S and compare it with ScS_CC.
+    sprintf(outfile,"Stretch_Info.%d",PI[cate]);
+    fpout=fopen(outfile,"w");
+    ccc_max_normalized=1/0.0;
+    for (count=0;count<PI[nStretch];count++){
+
+        // Stretch ratio.
+        dl=P[R1]+dratio*count;
+
+        // Stretch S esf.
+        for (count2=0;count2<N;count2++){
+            esfstretched_time[count2]=dl*esf1_time[count2];
+        }
+
+        // print out the lowest and highest stretch result.
+        if ( count==0 || count==PI[nStretch]-1 ){
+            sprintf(outfile,"tmpfile_%d_%d.Sstretch",PI[cate],count+1);
+            fptest=fopen(outfile,"w");
+            for (count2=0;count2<N;count2++){
+                fprintf(fptest,"%.4e\t%.4e\n",PeakT2+esfstretched_time[count2],esf1_amp[count2]);
+            }
+            fclose(fptest);
+        }
+
+        // Find time anchors after stretching.
+        T1=esfstretched_time[S_B];
+        T2=esfstretched_time[S_E];
+
+        // Resample for comparison. keep the sampling rate the same with ScS.
+        S_NPTS=(int)ceil((T2-T1)/dt);
+
+        // Resize spaces.
+        free(time_CC);
+        free(S_CC);
+        time_CC=(double *)malloc(S_NPTS*sizeof(double));
+        S_CC=(double *)malloc(S_NPTS*sizeof(double));
+
+        for (count2=0;count2<S_NPTS;count2++){
+            time_CC[count2]=T1+count2*dt;
+        }
+        wiginterpd(esfstretched_time,esf1_amp,N,time_CC,S_CC,S_NPTS,1);
+
+        // Get rid of part below AMPlevel, normalize it.
+        for (count2=0;count2<S_NPTS;count2++){
+            S_CC[count2]-=P[AMPlevel];
+        }
+        normalized(S_CC,S_NPTS);
+
+
+//         // Compare them by cross-correlation.
+//         CC(S_CC,S_NPTS,ScS_CC,NPTS,&shift,&ccc);
+//         if (ccc_max_normalized<fabs(ccc)){
+//             ccc_max_normalized=fabs(ccc);
+//             ccc_max=fabs(ccc);
+//             dl_max=dl;
+//             flip=ccc>0?1:-1;
+//         }
+
+        // Compare them by absolute difference, find the shift, then accumulate the absolute difference.
+        CC(S_CC,S_NPTS,ScS_CC,NPTS,&shift,&ccc);
+        abs_difference=0;
+        if (shift>=0){
+            Length=(int)fmin(S_NPTS-shift,NPTS);
+            for(count2=0;count2<Length;count2++){
+                abs_difference+=fabs(S_CC[count2+shift]-ScS_CC[count2]);
+            }
+        }
+        else {
+            Length=(int)fmin(NPTS+shift,S_NPTS);
+            for(count2=0;count2<Length;count2++){
+                abs_difference+=fabs(S_CC[count2]-ScS_CC[count2-shift]);
+            }
+        }
+
+        if (ccc_max_normalized>abs_difference/Length){
+            ccc_max_normalized=abs_difference/Length;
+            ccc_max=fabs(ccc);
+            dl_max=dl;
+            flip=ccc>0?1:-1;
+            shift_max=shift*dt;
+        }
+
+        fprintf(fpout,"%.4lf\t%.6lf\t%.6lf\n",dl,fabs(ccc),shift*dt);
+    }
+    fprintf(fpout,"%.4lf\t%.6lf\t%.6lf\n",dl_max,ccc_max,shift_max);
+    fclose(fpout);
+
+    // Create Stretched S esf.
+    free(esf2_time);
+    free(esf2_amp);
+
+    NPTS=(int)ceil(50/0.025);
+
+    esf2_time=(double *)malloc(NPTS*sizeof(double));
+    esf2_amp=(double *)malloc(NPTS*sizeof(double));
+
+    for (count=0;count<NPTS;count++){
+        esf2_time[count]=-25+count*0.025;
+    }
+
+    // Stretch S again for the maximum CCC; output stretched esf.
+    for (count=0;count<N;count++){
+        esfstretched_time[count]=dl_max*esf1_time[count];
+    }
+    wiginterpd(esfstretched_time,esf1_amp,N,esf2_time,esf2_amp,NPTS,1);
+
+    fpout=fopen(PS[Sstretched],"w");
+    for (count=0;count<NPTS;count++){
+        fprintf(fpout,"%.4e\t%.4e\n",esf2_time[count]+PeakT2,flip*esf2_amp[count]);
+    }
+    fclose(fpout);
+
+    // Free spaces.
+    free(esf1_time);
+    free(esf2_time);
+    free(esf1_amp);
+    free(esf2_amp);
+    free(esfstretched_time);
+    free(time_CC);
+    free(S_CC);
+    free(ScS_CC);
+
+    for (count=0;count<string_num;count++){
+        free(PS[count]);
+    }
+    free(P);
+    free(PI);
+    free(PS);
+
+    return 0;
+}

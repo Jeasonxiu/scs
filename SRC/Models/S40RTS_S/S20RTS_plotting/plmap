@@ -1,0 +1,82 @@
+#!/bin/tcsh -f
+
+set BIN = $TOMO_S20RTS/bin
+
+#-- input 
+set rawfl = $1
+set mxc   = $2
+set depth = $3
+
+#-- spherical harmonics
+#-- (lmin=1: takes out spherical average)
+set lmin  = 1
+set lmax  = 40
+set isp   = 1
+
+#-- Plot hotspot locations (=1 is yes)
+set plot_hotspots = 1
+set hpfl  = Sleep_hotspots.list
+#-- Plot plate boundaries (=1 is yes)
+set plot_plateboundaries = 1
+set plbfl = plate_boundaries.gmt
+
+#-- discreet colourscale (=0)
+set icont = 0
+#-- black-and-white =0; colour =1
+set col   = 1
+#-- Using Yu Gu's GU12 coulour scheme (12 values)
+#-- or TOMOGREY (6 values) for black-and-white
+#-- Grid contour (=1 is yes)
+#-- 0 is recommended when using gu12.chj (when col = 1)
+set grid_contours = 0
+
+if ($col == 1) then
+  echo colourscales/gu12.chj      >  in_mkrb
+else
+  echo colourscales/tomogrey6.chj >  in_mkrb
+endif
+echo $icont          >> in_mkrb
+echo $mxc            >> in_mkrb
+$BIN/mkrb_jr < in_mkrb > col.cpt
+
+#----- projection -------------
+set reg    = -R-180/180/-90/90
+set prjwd  =  6
+#-- central meridian
+set projct =  0
+#-- international dateline
+set projct =  180
+#-- eastern Asia
+set projct =  135
+set proj   = -JW$projct/$prjwd
+#------------------------------
+
+set xmin   = -180
+set xmax   =  180
+
+echo Turning the ".raw" file into "x-y-z" file
+echo $rawfl      >  in_raw2xyz
+echo map.xyz     >> in_raw2xyz
+echo $isp        >> in_raw2xyz
+echo 1.00        >> in_raw2xyz
+echo $lmin $lmax >> in_raw2xyz
+echo $xmin       >> in_raw2xyz
+$BIN/raw2xyz_jr < in_raw2xyz
+
+echo surface map.xyz -Gmap1.grd -I$isp -N1 $reg 
+surface map.xyz -Gmap1.grd -I$isp -N1 $reg 
+grdsample map1.grd -Gmap.grd -I0.8 -L
+grdimage map.grd -Ccol.cpt $proj $reg  -X1.5 -Y4     -P -V -K >  map.ps
+if ( $grid_contours ) then
+    grdcontour map.grd -Ccol.cpt -A- $proj $reg   -O -P -V -K >> map.ps
+endif
+
+pscoast $reg $proj -B         -Dc -A50000 -W4/0   -O -P -V -K >> map.ps
+
+#-- hotspots and plate boundaries
+if ( $plot_plateboundaries) then
+  psxy  $reg $proj $plbfl -W4/255   -M            -O -P -V -K >> map.ps
+endif
+if ( $plot_hotspots ) then
+  awk '{print $3, $2}' $hpfl | psxy $reg $proj -G255 -W1 -St0.11 -O -P -K >> map.ps
+endif

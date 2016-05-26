@@ -1,0 +1,133 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+#include<ASU_tools.h>
+
+// Calculate the theoretic reflection / transmission
+// coefficients, travel-tiem for a given ULVZ layer.
+
+int main(int argc, char **argv){
+
+    // Deal within inputs.
+    int    int_num,string_num,double_num,count;
+    int    *PI;
+    char   **PS;
+    double *P;
+
+//     enum PIenum {};
+    enum PSenum {outfile};
+    enum Penum  {EVDE_MIN,EVDE_MAX,DELTA_EVDE,DIST_MIN,DIST_MAX,DELTA_DIST,Thickness_MIN,Thickness_MAX,Thickness_INC,D_Vs_MIN,D_Vs_MAX,D_Vs_INC,D_rho_MIN,D_rho_MAX,D_rho_INC};
+
+    int_num=atoi(argv[1]);
+    string_num=atoi(argv[2]);
+    double_num=atoi(argv[3]);
+
+    PI=(int *)malloc(int_num*sizeof(int));
+    PS=(char **)malloc(string_num*sizeof(char *));
+    P=(double *)malloc(double_num*sizeof(double));
+
+    for (count=0;count<string_num;count++){
+        PS[count]=(char *)malloc(200*sizeof(char *));
+    }
+
+    for (count=0;count<int_num;count++){
+        if (scanf("%d",PI+count)!=1){
+            printf("In C : Int parameter reading Error !\n");
+            return 1;
+        }
+    }
+
+    for (count=0;count<string_num;count++){
+        if (scanf("%s",PS[count])!=1){
+            printf("In C : String parameter reading Error !\n");
+            return 1;
+        }
+    }
+
+    for (count=0;count<double_num;count++){
+        if (scanf("%lf",P+count)!=1){
+            printf("In C : Double parameter reading Error !\n");
+            return 1;
+        }
+    }
+
+    // Job begin.
+    double rayp,gcarc,evde,A,B,C,D,E,Vs,rho,Ratio;
+    char   command[100];
+    FILE   *fpin,*fpout;
+    double vpv,vph,vsh,qu,qk,yita,dvs,drho,H,StS,STS,SvS,SuS;
+
+    prem(2891.0,1,0,&rho,&vpv,&vph,&Vs,&vsh,&qu,&qk,&yita);
+
+    fpout=fopen(PS[outfile],"a");
+
+    evde=P[EVDE_MIN];
+    while (evde<=P[EVDE_MAX]){
+
+        gcarc=P[DIST_MIN];
+        while (gcarc<=P[DIST_MAX]){
+
+            sprintf(command,"taup_time -h %.2lf -ph ScS -deg %.2lf --rayp -o stdout",evde,gcarc);
+            fpin=popen(command,"r");
+            fscanf(fpin,"%lf",&rayp);
+            fclose(fpin);
+            rayp*=(180/M_PI/3480);
+
+            dvs=P[D_Vs_MIN];
+            while(dvs<P[D_Vs_MAX]+P[D_Vs_INC]){
+
+                drho=P[D_rho_MIN];
+                while(drho<P[D_rho_MAX]+P[D_rho_INC]){
+
+                    H=P[Thickness_MIN];
+                    while(H<P[Thickness_MAX]+P[Thickness_INC]){
+
+//     Notes for the names.
+//     A=sin(incident);
+//     B=sin(transmision);
+//     C=cos(incident);
+//     D=cos(transmision);
+//     E=denominator;
+
+                        A=rayp*Vs;
+                        B=A*dvs;
+                        C=sqrt(1-pow(A,2));
+                        D=sqrt(1-pow(B,2));
+                        E=rho*Vs*C+rho*drho*Vs*dvs*D;
+
+                        SvS=(rho*Vs*C-rho*drho*Vs*dvs*D)/E;
+                        SuS=-(rho*Vs*C-rho*drho*Vs*dvs*D)/E;
+                        StS=rho*Vs*C*2/E;
+                        STS=rho*drho*Vs*dvs*D*2/E;
+
+                        // d ln (rho) / d ln (Vs)
+                        Ratio=log(drho)*log(Vs)/log(dvs)/log(rho);
+
+                        fprintf(fpout,"%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e,%15.4e\n"
+                        ,evde,gcarc,dvs,drho,H,asin(A)*180/M_PI,asin(B)*180/M_PI,SvS,SuS,StS,STS
+                        ,SvS/StS/STS,SuS,SuS-SvS/StS/STS,2*(H/D)/(Vs*dvs),Ratio);
+
+                        H+=P[Thickness_INC];
+                    }
+
+                    drho+=P[D_rho_INC];
+                }
+
+                dvs+=P[D_Vs_INC];
+            }
+
+            gcarc+=P[DELTA_DIST];
+        }
+        evde+=P[DELTA_EVDE];
+    }
+
+    // Free spaces.
+    for (count=0;count<string_num;count++){
+        free(PS[count]);
+    }
+    free(P);
+    free(PI);
+    free(PS);
+
+    return 0;
+}

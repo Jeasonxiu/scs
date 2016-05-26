@@ -1,0 +1,215 @@
+#!/bin/tcsh -f
+
+gmtset LABEL_FONT_SIZE 36
+gmtset ANNOT_FONT_SIZE_PRIMARY 8
+
+set NPTS = 128
+set BIN  = $TOMO_S20RTS/bin
+
+#-- Plot hotspot locations (=1 is yes)
+set plot_hotspots = 1
+#-- Plot plate boundaries (=1 is yes)
+set plot_plateboundaries = 1
+#-- Plot contour (=1 is yes), not recommended when using gu12.chj
+set plot_contours = 0
+
+set MODEL      = $1
+set lat0       = $2
+set lon0       = $3
+set az         = $4
+set mxc        = $5
+set modelname  = $6
+
+#-- spherical harmonics
+#-- (lmin=1: takes out spherical average)
+set lmin = 1
+set lmax = 40
+
+#-- azimuth bug!!! (avoid az=0 or az=180)
+if ($az == 0 || $az == 180) then
+  @ az++
+endif
+
+set az2   = `$BIN/calc $az + 180.`
+set true  = `$BIN/calc $az2 \> 360.`
+if ( $true ) then
+  set az2 = `$BIN/calc $az2 - 360.`
+endif
+
+#-- Find the location [lat1,lon1] and [lat2/lon2]
+#-- that are 90 degrees distance from [lat0,lon0]
+#-- at an azimuth $az and $az+180
+#-- These locations are the endpoints of the cross-section
+
+set loc2 = `$BIN/distaz2latlon $lat0 $lon0 89.9 $az`
+set lat1 =  $loc2[1]
+set lon1 =  $loc2[2]
+set loc2 = `$BIN/distaz2latlon $lat0 $lon0 89.9 $az2`
+set lat2 =  $loc2[1]
+set lon2 =  $loc2[2]
+
+#-- Ticks to put on the cross-section at 30 degrees interval
+set   ticks    = `$BIN/distaz2latlon $lat0 $lon0  0        $az`
+echo $ticks[2] $ticks[1]   >   ticks
+foreach tckdist ( 30 60 ) 
+  set ticks    = `$BIN/distaz2latlon $lat0 $lon0  $tckdist $az`
+  echo $ticks[2] $ticks[1] >>  ticks
+  set ticks    = `$BIN/distaz2latlon $lat0 $lon0  $tckdist $az2`
+  echo $ticks[2] $ticks[1] >>  ticks
+end
+
+#-- discreet colourscale (=0)
+set icont = 0
+#-- black-and-white
+set col   = 0
+#-- colour
+set col   = 1
+#-- Using Yu Gu's coulour scheme (12 values)
+#-- or TOMOGREY (6 values) for black-and-white 
+
+if ($col == 1) then
+  echo colourscales/gu12.chj      >  in_mkrb
+else
+  echo colourscales/tomogrey6.chj >  in_mkrb
+endif
+echo $icont          >> in_mkrb
+echo $mxc            >> in_mkrb
+$BIN/mkrb_jr < in_mkrb > col.cpt
+
+#-- My plate boundaries file is in /work/jeroen/Utils/WorldGeology
+set plbfl = plate_boundaries.gmt
+set hpfl  = Sleep_hotspots.list
+set plbcol = 255/255/255
+
+#-- integer values: I wouldn't change them ...
+#-- lateral sampling of 1 degree
+set INCLAT = 1
+set NLAT   = 181
+#-- depth sampling of 5 km
+set INCDEP =  5
+
+set MAP  = 0/180/3480/6370
+set MAP1 = 0/180/0/6370
+set PROJ = P6.5
+
+#-- these are inches!!
+#-- Diameter of the cross-section; used in the option "-JP"
+set MAPDIAM  = 1.7
+
+#-- Here we generate from loc1 to loc2 (the great circle arc)
+#-- points at INCLAT interval
+#-- We repeat this for each INCDEP step in depth
+echo                 mkc $lat1 $lon1 $lat2 $lon2 $INCLAT $NLAT
+$TOMO_S20RTS/scripts/mkc $lat1 $lon1 $lat2 $lon2 $INCLAT $NLAT > uit.xy
+
+#-- Make input for the program MDLWELLLN
+echo $MODEL      >  in_mdlwellln_jr
+echo "uit.xy"    >> in_mdlwellln_jr
+echo "uit.xyz"   >> in_mdlwellln_jr
+echo $lmin $lmax >> in_mdlwellln_jr
+echo "1"         >> in_mdlwellln_jr
+echo $INCDEP     >> in_mdlwellln_jr
+
+#-- UIT.YXZ will contain the dist,dep,dV values
+#-- of S20RTS along the cross-section
+echo Running mdlwellln_jr ...
+$BIN/mdlwellln_jr < in_mdlwellln_jr
+
+/bin/cp uit.xyz uit.orig
+perl -nae '$d= $F[0];print "$d $F[3] $F[4]\n"' uit.xyz > uit2.xyz
+/bin/mv uit2.xyz uit.xyz
+
+#-- Get rid of NaN 
+#-- (don't know why mdlwelln sometimes screws up ...)
+cat uit.xyz | grep -v NaN > uit2.xyz
+/bin/mv uit2.xyz uit.xyz
+
+set bord = -Bf30/f100wesn
+
+#-- Plotting
+echo surface uit.xyz -I$INCLAT/$INCDEP  -Guit.grd -T0.25 -R$MAP 
+     surface uit.xyz -I$INCLAT/$INCDEP  -Guit.grd -T0.25 -R$MAP 
+echo grdimage uit.grd -Ccol.cpt -X2 -Y2 $bord -J$PROJ -R$MAP
+     grdimage uit.grd -Ccol.cpt -X1 -Y3 $bord -J$PROJ -R$MAP -P -K  >  slice.ps
+#-- contours for black-and-white cross-section
+if ($plot_contours) then
+     grdcontour uit.grd -Ccol.cpt -A-  -J$PROJ -R$MAP  -O -P -K  >> slice.ps
+endif
+
+#-- Horizons
+psxy horizons/core.xy  -R$MAP1 -J$PROJ -W2ta            -A -O -K -P >> slice.ps
+psxy horizons/crust.xy -R$MAP1 -J$PROJ -W3              -A -O -K -P >> slice.ps
+psxy horizons/670km.xy -R$MAP  -J$PROJ -W2t12_12_12:12  -A -O -K -P >> slice.ps
+
+psxy << distticks -R$MAP -J$PROJ -W5 -A -M -O -K -P >> slice.ps
+>
+30 6349
+30 6049
+>
+60 6349
+60 6049
+>
+90 6349
+90 6049
+>
+120 6349
+120 6049
+>
+150 6349
+150 6049
+distticks
+psxy << distticks -R$MAP -J$PROJ -Sc0.1 -W1 -G255 -A -N -O -K -P >> slice.ps
+ 30 6349
+ 60 6349
+ 90 6349
+120 6349
+150 6349
+distticks
+
+
+#-- globe that shows the cross-section
+set n = `$BIN/calc 180. / $INCLAT`
+set n = `$BIN/calc int $n`
+
+cat uit.xy | head -n $n | $BIN/colgrep -c 3 2 > gcpath
+set NLINES = `wc -l gcpath`
+@ NLINES /= 2
+@ NLINES++
+set MIDCOORDS = `head -$NLINES gcpath | tail -1`
+
+set MAP = -R0/360/-90/90
+set PROJ = -JG$MIDCOORDS[1]/$MIDCOORDS[2]/${MAPDIAM}
+set YOFF = 3.
+
+set land = 255/225/160
+set sea  = 155/235/155
+
+pscoast $MAP $PROJ -Dc -A40000 -B90g45 -W2 -G$land -S$sea -Y2.4 -O -P -K >> slice.ps
+psxy       $MAP $PROJ gcpath -Ss0.03 -G0/0/155       -O -P -K >> slice.ps
+if ( $plot_plateboundaries) then
+  psxy     $MAP $PROJ $plbfl -W3/135              -M -O -P -K >> slice.ps
+endif
+psxy       $MAP $PROJ ticks -Sc0.08 -W1/0 -G255      -O -P -K >> slice.ps
+
+if ( $plot_hotspots ) then
+awk '{print $3, $2}' $hpfl  | psxy $MAP $PROJ -G255 -W1 -St0.09 -O -P -K >> slice.ps
+endif
+
+
+#-- colourscale
+psscale -D4.05/0.0/3.5/0.20h -Ccol.cpt -X-0.8 -Y-2.6 \
+                           -O -P -K | grep -v 'E -2 div' >> slice.ps
+
+#-- text
+echo -1.05  0.5 15 0 1 7 -$mxc%                             >  text
+echo  1.05  0.5 15 0 1 5 +$mxc%                             >> text
+echo  0.00  1.2 12 0 1 BC shear velocity variation from 1-D >> text
+echo -1.85 -1.5 11 0 1 BL $modelname                        >> text
+echo  0.8  -2.6 10 0 0 BL Latitude=                         >> text
+echo  1.45 -2.6 10 0 0 BR $lat0@+o@+                        >> text
+echo  0.8  -3.3 10 0 0 BL Longitude=                        >> text
+echo  1.45 -3.3 10 0 0 BR $lon0@+o@+                        >> text
+echo  0.8  -4.0 10 0 0 BL Azimuth=                          >> text
+echo  1.45 -4.0 10 0 0 BR $az@+o@+                          >> text
+
+pstext text -R-1/1/0/1 -JX3.5/.2 -X2.3 -Y-0.20 -N -O -P   >> slice.ps

@@ -1,0 +1,149 @@
+#!/bin/bash
+
+# ==============================================================
+# SYNTHESIS
+# This script make ESF for S.
+#
+# Outputs:
+#
+#           ${WORKDIR_ESF}/${EQ}_S/
+#
+# Mysql:    Update ScS.Master
+#
+# Shule Yu
+# Jun 22 2014
+# ==============================================================
+
+echo ""
+echo "--> `basename $0` is running. "
+
+# Continue from last modification.
+mysql -u shule ${SYNDB} << EOF
+drop table if exists Master_$$;
+create table Master_$$ as select * from Master_a34;
+EOF
+
+# Work Begins.
+for EQ in ${EQnames}
+do
+
+    echo "    ==> EQ ${EQ}. E.S.F begin ! ( ${ReferencePhase}_${COMP} )."
+
+    # EQ specialized parameters.
+
+	WBegin="-5"
+	WLen="15"
+	WBegin_ScS="-5"
+	WLen_ScS="15"
+
+    for cate in `seq 1 ${CateN}`
+    do
+
+        rm -rf ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}
+        mkdir -p ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}
+        cd ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}
+        cp ${WORKDIR}/tmpfile_INFILE_${RunNumber} ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/INFILE
+        trap "rm -rf ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate} ${WORKDIR}/tmpfile*${RunNumber}; exit 1" SIGINT
+
+		# Information collection.
+		mysql -N -u shule ${SYNDB} > tmpfile_Cin_$$ << EOF
+select file,stnm,${ReferencePhase},${N_A_S},Rad_Pat_${ReferencePhase} from Master_$$ where eq=${EQ} and Category=${cate} and WantIt=1;
+EOF
+
+
+        # C code.
+		${EXECDIR}/ESW.out 3 6 20 << EOF
+${passes}
+${order}
+${Filter_Flag}
+${EQ}
+${ReferencePhase}
+${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}
+tmpfile_Cin_$$
+STDOUT
+${EQ}.ESF_DT
+${Cut1_S}
+${Cut2_S}
+${E1_S}
+${E2_S}
+${F1}
+${F2}
+${S1_S}
+${S2_S}
+${N1_S}
+${N2_S}
+${Taper_ESF}
+${DELTA}
+${SNRLOW}
+${SNRHIGH}
+${CCCOFF}
+${RAMP}
+${WBegin}
+${WLen}
+${WBegin_ScS}
+${WLen_ScS}
+EOF
+        if [ $? -ne 0 ]
+        then
+            echo "    !=> ESF C code failed on ${EQ}_${ReferencePhase}_Category${cate} ..."
+            exit 1
+        fi
+
+
+		# format infile.
+		sed 's/[[:blank:]]\+/,/g' ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/${EQ}.ESF_DT | awk 'NR>1 {print $0}' > tmpfile_in_$$
+
+		# put the calculation into Master.
+		mysql -u shule ${SYNDB} << EOF
+drop table if exists tmptable$$;
+create table tmptable$$(
+PairName   varchar(22) not null unique primary key,
+D_T_S      double comment "S arrival relative to PREM, ESW by categorized data.",
+CCC_S      double comment "S wave shape CCC, ESW by categorized data.",
+SNR_S      double comment "S SNR, ESW by categorized data.",
+Weight_S   double comment "Given weight to S constructing the ESW by categorized data.",
+Misfit_S   double comment "S half-height width comparing to ESW by categorized data.",
+Misfit2_S  double comment "S half-height area comparing to ESW by categorized data.",
+Norm2_S    double comment "S Norm2 difference comparing to ESW by categorized data.",
+Peak_S     double comment "S peak time relative to PREM, ESW by categorized data.",
+NA_S       double comment "S noise anchor time relative to S arrival time, ESW by categorized data.",
+N_T1_S     double comment "S noise Window T1 relative to S arrival time, ESW by categorized data.",
+N_T2_S     double comment "S noise Window T2 relative to S arrival time, ESW by categorized data.",
+S_T1_S     double comment "S signal Window T1 relative to S arrival time, ESW by categorized data.",
+S_T2_S     double comment "S signal Window T2 relative to S arrival time, ESW by categorized data.",
+Polarity_S integer comment "S Polarity, ESW by categorized data.",
+WL_S       double comment "S noise section spectrum maximum, ESW by categorized data.",
+Amp_S      double comment "S amplitude after filtering, ESW by categorized data."
+);
+load data local infile "tmpfile_in_$$" into table tmptable$$
+fields terminated by "," lines terminated by "\n"
+(@tmp1,@tmp2,D_T_S,CCC_S,SNR_S,Weight_S,Misfit_S,Misfit2_S,Norm2_S,Peak_S,NA_S,N_T1_S,N_T2_S,S_T1_S,S_T2_S,Polarity_S,@tmp3,WL_S,Amp_S)
+set PairName=concat(@tmp1,"_",@tmp2);
+EOF
+
+		# update Master.
+		${BASHCODEDIR}/UpdateTable.sh ${SYNDB} Master_$$ tmptable$$ PairName
+		mysql -u shule ${SYNDB} << EOF
+update Master_$$ set WantIt=0 where eq=${EQ} and Weight_S=0;
+EOF
+
+        # Clean up.
+        rm -f ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/tmpfile*$$
+
+    done # Done category loop.
+
+done # Done EQ loop.
+
+
+mysql -u shule ${SYNDB} << EOF
+drop table if exists tmptable$$;
+drop table if exists Master_a35;
+create table Master_a35 as select * from Master_$$;
+drop table if exists Master_$$;
+EOF
+
+
+
+cd ${WORKDIR}
+
+exit 0

@@ -1,0 +1,80 @@
+#!/bin/tcsh -f
+
+set BIN  = $TOMO_S20RTS/bin
+
+#-- C-shell of GMT plotting commmands
+#-- to make a 180-degrees wide
+#-- cross-section through model S20RTS.
+#--
+#-- SYNTAX:
+#-- mkmap maxv depth
+#--
+#-- maxv: range of shear velocity variations: -(maxv)% to +(maxv)%
+#-- depth: is depth in mantle
+#-- output file will be called "map.${depth}km.ps"
+#--
+#-- EXAMPLE: mkmap 7 120
+#------------------------------------------------
+                                                                                                               
+if ( $#argv == 2 ) then
+
+if (-e .gmtcommands ) /bin/rm .gmtcommands .gmtdefaults
+
+gmtset PAPER_MEDIA letter+
+gmtset MEASURE_UNIT inch
+gmtset ANOT_FONT_SIZE 8
+
+set maxv  = $1
+set depth = $2
+
+#------------------------------------------------
+#-- Models:
+set mod = 1
+if      ($mod == 0) then
+  set modelname = S20RTS
+  set ref   = "Ritsema et al. \[1999\]"
+else if ($mod == 1) then
+  set modelname = S40RTS
+  set ref   = "Ritsema et al. \[2010\]"
+endif
+set model  = $modelname.sph
+#------------------------------------------------
+
+echo depth= $depth  MAX= $maxv
+
+#-- DEPMAPHJ
+echo $model >  in_depmaphj_jr
+echo $depth >> in_depmaphj_jr
+$BIN/depmaphj_jr <  in_depmaphj_jr > out_depmax
+
+set md =  $model:t:r
+set rawfl = `/bin/ls -1 $md.raw`
+
+plmap $rawfl $maxv $depth
+
+#---------------------------------------------------------------
+#-- ColourScale:
+psscale -D1/3/3/0.22h -Ccol.cpt -X2.05 -Y-3.5 -O -P -V -K | grep -v 'E -2' >> map.ps
+
+pstext << END -R0/10/0/10 -Jx0.2 -Y2.3 -N -O -P -V    >> map.ps
+ 5.0  4.1 12 0 1 6 shear velocity variation from 1-D
+-3.0  3.0 15 0 1 MR -${maxv}%
+13.0  3.0 15 0 1 ML +${maxv}%
+-5.5  0.6 11 0 1 BL $modelname
+-5.5  0.0  8 0 0 BL $ref
+ 9.0  0.0 17 0 1 BL Depth= $depth km
+END
+
+mv map.ps map.${depth}km.ps
+mv map.xyz map.${depth}km.xyz
+
+#-- clean up
+/bin/rm col.cpt
+/bin/rm in_mkrb in_raw2xyz in_depmaphj_jr out_depmax
+/bin/rm map1.grd map.grd $modelname.raw
+
+else #-- if number of arguments is incorrect
+  echo "Usage: mkmap MAXV DEPTH"
+  exit 0
+endif
+

@@ -1,0 +1,6 @@
+To compile these codes, run:
+
+prompt> make
+
+This creates the library lib/libS20.a 
+(the directory above here)

@@ -1,0 +1,11 @@
+#!/bin/csh
+#set mainf = PM_INVER.f90
+#set mainf = PM_INVER_S_SKS_ScS_with_smooth.f90
+set mainf = PM_INVER_S_SKS_ScS_with_smooth_powerlawlimit4ScS.f90
+#set mainf = calculate_S_SKS_time_only_2TXBW.f90
+set ydaz =  AZ_DIST_SUBROUTINE.f
+set tomo_time = subroutine_time_tomo_prediction.f90
+set tomo_smooth = subroutine_tomo_gaussian_smooth_count.f90
+gfortran -m64 $mainf $tomo_time $tomo_smooth $ydaz -o PMINVER
+
+#PMINVER tomofilelist pathfilelist

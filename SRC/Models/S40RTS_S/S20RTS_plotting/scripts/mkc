@@ -1,0 +1,28 @@
+#!/bin/tcsh -f
+
+
+if($1 != '' && $2 != '' && $3 != '' && $4 != '' && $5 != '' && $6 != '') then
+
+set lat1=$1
+set lon1=$2
+set lat2=$3
+set lon2=$4
+set rdeg=$5
+set ddep=$6
+
+
+cat <<! > mkcut.in
+$lat1 $lon1
+$lat2 $lon2
+$rdeg $ddep
+!
+
+$TOMO_S20RTS/bin/mkcut_jr < mkcut.in > mkcut.out
+
+cat mkcut.out
+
+else
+	echo needs lat1, lon1, lat2, lon2, rdeg ddep as arguments
+endif
+
+

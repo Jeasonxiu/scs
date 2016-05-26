@@ -1,0 +1,65 @@
+#!/bin/tcsh -f
+
+#-- C-shell of GMT plotting commmands
+#-- to make a 180-degrees wide
+#-- cross-section through model S20RTS.
+#-- 
+#-- SYNTAX:
+#-- crossect_180 lat lon azimuth code
+#--
+#-- lat/lon is midpoint of the cross-section,
+#-- azimuth is clockwise from north
+#-- output file will be called "${code}.ps"
+#--
+#-- EXAMPLE: crossect_180 -20 25 35 africa
+#------------------------------------------------
+
+if ( $#argv == 3  || $#argv == 4 ) then
+
+#-- Models:
+set modelname = S40RTS
+set modelname = S20RTS
+set model     = $modelname.sph
+#-- shear velocity variation from -1.5% to +1.5% 
+set mxc       = 1.5
+
+#---------------------------------------------------------------
+#-- Regions:
+set lat   = $1
+set lon   = $2
+set az    = $3
+set code  = $4
+
+set model     = $modelname.sph
+#-- shear velocity variation from -1.5% to +1.5% 
+set mxc       = 1.5
+
+#---------------------------------------------------------------
+#-- Regions:
+set lat   = $1
+set lon   = $2
+set az    = $3
+set code  = $4
+
+#---------------------------------------------------------------
+
+if (-e .gmtcommands ) /bin/rm .gmtcommands .gmtdefaults
+
+gmtset PAPER_MEDIA letter+
+gmtset MEASURE_UNIT inch
+$TOMO_S20RTS/slice_180 $model $lat $lon $az $mxc $modelname
+
+if ( $code == "") then
+  set code = slice
+else
+  /bin/mv slice.ps $code.ps
+endif
+
+#-- clean up
+/bin/rm in_mdlwellln_jr gcpath ticks mkcut.in mkcut.out col.cpt
+/bin/rm in_mkrb uit.grd uit.xy uit.xyz uit.orig text
+
+else #-- if number of arguments is incorrect
+  echo "Usage: crossect_180 lat lon azimuth [code]"
+  exit 0
+endif
