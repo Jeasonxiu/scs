@@ -12,6 +12,7 @@ set -a
 CODEDIR=${PWD}
 SRCDIR=${PWD}/SRC
 RunNumber=$$
+BranchName=`git branch | grep "*" | awk '{print $2}'`
 
 #============================================
 #            ! Test Files !
@@ -320,7 +321,7 @@ rm -f ${EXECDIR}/*fun.o ${EXECDIR}/*a
 cat >> ${WORKDIR}/stdout << EOF
 
 =============================================
-Run Date: `date`
+Run Date: `date`; On branch: ${BranchName}
 EOF
 
 bash ${WORKDIR}/tmpfile_LIST_$$ >> ${WORKDIR}/stdout 2>&1
