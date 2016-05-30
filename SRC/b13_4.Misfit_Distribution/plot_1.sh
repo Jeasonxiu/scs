@@ -9,7 +9,7 @@ XNUM=10
 YMIN=20
 YMAX=50
 YINC=10
-YNUM=20
+YNUM=10
 
 PROJ=-JX${width}i/${height}i
 REG="-R${XMIN}/${XMAX}/${YMIN}/${YMAX}"
@@ -24,7 +24,7 @@ gmt psxy tmpfile_stlo_stla_MisfitS_Thin ${REG} ${PROJ} -Sx -Wblue -N -O -K >> ${
 gmt psxy tmpfile_stlo_stla_MisfitS_Fat ${REG} ${PROJ} -Sc -Wred -N -O -K >> ${OUTFILE}
 
 cat > tmpfile_$$ << EOF
-${XMIN} ${YMIN} S Misfit, NR=$((NR1+NR2)).
+${XMIN} ${YMIN} S Misfit, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
 EOF
 gmt pstext tmpfile_$$ -F+jLB+f10p -J -R -N -O -K >> ${OUTFILE}
 
