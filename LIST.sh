@@ -12,26 +12,27 @@ ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/a10.ESW_OneCate_Modified.sh
 # ${SRCDIR}/a11_1.ClusterThin.sh
 # ${SRCDIR}/a11_2.Cluster.sh
-# ${SRCDIR}/a12.ESW_S.sh
-# ${SRCDIR}/a13.ESW_ScS.sh
+${SRCDIR}/a11_3.ClusterMisfit.sh
+${SRCDIR}/a12.ESW_S.sh
+${SRCDIR}/a13.ESW_ScS.sh
 # ${SRCDIR}/a16_1.StretchWindow.sh
 # ${SRCDIR}/a16_2.StretchUp.sh
 # ${SRCDIR}/a16_3.TstarStretchWindow.sh
 # ${SRCDIR}/a16_4.TstarStretchUp.sh
 # ${SRCDIR}/a16_5.NoStretch.sh
-# ${SRCDIR}/a16_6.FinalStretch.sh
-# ${SRCDIR}/a17_1.Decon.sh
+${SRCDIR}/a16_6.FinalStretch.sh
+${SRCDIR}/a17_1.Decon.sh
 # ${SRCDIR}/a17_3.Subtract.sh
 # ${SRCDIR}/a17_5.Raw.sh
 # ${SRCDIR}/a17_6.WaterStripHalfS.sh
-# ${SRCDIR}/a19_1.WaterFRS.sh
+${SRCDIR}/a19_1.WaterFRS.sh
 # ${SRCDIR}/a19_3.SubtractFRS.sh
 # ${SRCDIR}/a19_5.RawFRS.sh
 # ${SRCDIR}/a19_6.WaterStripHalfSFRS.sh
-# ${SRCDIR}/a20.WeightScheme.sh
-# ${SRCDIR}/a21_1.CircleBin.sh
+${SRCDIR}/a20.WeightScheme.sh
+${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
-# ${SRCDIR}/a22.StackData.sh
+${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/a23.BinBootStrap.sh
 # ${SRCDIR}/a24_1.StackModels_1D.sh
 
@@ -52,8 +53,8 @@ ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/b12_2.ESW_S_Profile.sh
 # ${SRCDIR}/b13_1.ESW_ScS_Catalog.sh
 # ${SRCDIR}/b13_2.ESW_ScS_Profile.sh
-# ${SRCDIR}/b13_3.ESW_DataMining/plot.sh
-${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
+${SRCDIR}/b13_3.ESW_DataMining/plot.sh
+# ${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
 # ${SRCDIR}/b16_1.StretchWindow.sh
 # ${SRCDIR}/b16_2.StretchUp.sh
 # ${SRCDIR}/b16_3.TstarStretchWindow.sh
@@ -71,7 +72,7 @@ ${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
 # ${SRCDIR}/b21_2.GeneralBin.sh
 # ${SRCDIR}/b21_3.PathAtSampling.sh
 # ${SRCDIR}/b21_4.BinWeightHistogram.sh
-# ${SRCDIR}/b22_1.DataStackMap.sh
+${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b22_2.BinCatalog.sh
 # ${SRCDIR}/b22_3.FinalDistMap.sh
 # ${SRCDIR}/b22_4.BinGcarcInc.sh
