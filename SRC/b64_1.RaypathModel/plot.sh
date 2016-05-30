@@ -56,7 +56,7 @@ do
     do
 
 		# EQ info.
-		mysql -N -u shule ScS > tmpfile_$$ << EOF
+		mysql -N -u shule ${DB} > tmpfile_$$ << EOF
 	select evlo,evla,evde,mag from Master_a10 where eq=${EQ} limit 1;
 EOF
 		read EVLO EVLA EVDE EVMA < tmpfile_$$
@@ -74,7 +74,7 @@ EOF
         fi
 
         # Plot information.
-		mysql -N -u shule ScS > tmpfile_$$ << EOF
+		mysql -N -u shule ${DB} > tmpfile_$$ << EOF
 select stnm,1,misfit_${StructurePhase}_all from Master_a10 where eq=${EQ} and wantit=1 and misfit_s_all<0 and misfit_scs_all>0 and weight_S_all is not null and weight_S_all>0.85 and weight_ScS_all is not null and weight_ScS_all>0.1;
 EOF
 

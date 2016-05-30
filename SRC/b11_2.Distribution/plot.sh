@@ -74,13 +74,13 @@ do
     echo "    ==> Ploting S waveform cluster distribution of ${EQ}..."
 
     # Gather information.
-	mysql -N -u shule ScS > tmpfile_$$ << EOF
+	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
 select evde from Master_a11 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
     Vs=`${BASHCODEDIR}/prem_velocity.sh S ${evde}`
 
-	mysql -N -u shule ScS > tmpfile_allinfo << EOF
+	mysql -N -u shule ${DB} > tmpfile_allinfo << EOF
 select category,stlo,stla,gcarc,az,asin(Srayp*${Vs}/(6371.0-evde))*180.0/PI(),asin(ScSrayp*${Vs}/(6371.0-evde))*180.0/PI(),Misfit_S_All,Misfit_ScS_All from Master_a11 where eq=${EQ} and wantit=1;
 EOF
 

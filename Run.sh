@@ -321,7 +321,7 @@ rm -f ${EXECDIR}/*fun.o ${EXECDIR}/*a
 cat >> ${WORKDIR}/stdout << EOF
 
 =============================================
-Run Date: `date`; On branch: ${BranchName}
+Run Date: `date`; On branch: ${BranchName}.
 EOF
 
 bash ${WORKDIR}/tmpfile_LIST_$$ >> ${WORKDIR}/stdout 2>&1

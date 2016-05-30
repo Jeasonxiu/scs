@@ -12,10 +12,10 @@ PLOTSRCDIR=${PLOTSRCDIR%/*}
 # ===========================================================
 
 VERTICNUM=2
-HORIZNUM=2
-VERTICPER="0.75"
+HORIZNUM=1
+VERTICPER="0.85"
 HORIZPER="0.8"
-PLOTORIENT=""
+PLOTORIENT="-P"
 
 if [ -z ${PLOTORIENT} ]
 then
@@ -23,8 +23,8 @@ then
     PLOTVERTIC="7.5"
     PLOTHORIZ="10"
 else
-    YMOVE="10.7"
-    PLOTVERTIC="10.5"
+    YMOVE="10.5"
+    PLOTVERTIC="10"
     PLOTHORIZ="7.5"
 fi
 
@@ -34,7 +34,7 @@ mkdir -p ${WORKDIR_Plot}/tmpdir_$$
 cd ${WORKDIR_Plot}/tmpdir_$$
 trap "rm -rf ${WORKDIR_Plot}/tmpdir_$$; exit 1" SIGINT EXIT
 
-hskip=`echo "${PLOTVERTIC}/${VERTICNUM}" | bc -l`
+hskip=`echo "${PLOTVERTIC}/($((VERTICNUM-1))+${VERTICPER})" | bc -l`
 wskip=`echo "${PLOTHORIZ}/($((HORIZNUM-1))+${HORIZPER})" | bc -l`
 height=`echo "${hskip}*${VERTICPER}" | bc -l`
 width=`echo "${wskip}*${HORIZPER}" | bc -l`
@@ -45,16 +45,6 @@ gmt gmtset FONT_LABEL 10p
 gmt gmtset MAP_LABEL_OFFSET 6p
 gmt gmtset MAP_FRAME_PEN 0.5p,black
 gmt gmtset MAP_GRID_PEN_PRIMARY 0.25p,gray,-
-
-color[1]=red
-color[2]=green
-color[3]=blue
-color[4]=purple
-color[5]=darkgreen
-color[6]=cyan
-color[7]=darkblue
-color[8]=gold
-color[9]=yellow
 
 for EQ in ${EQnames}
 do
@@ -71,7 +61,7 @@ do
         continue
     fi
 
-    echo "    ==> Plotting DataMining result of ${EQ}..."
+    echo "    ==> Plotting Misfit Distribution of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
@@ -79,16 +69,17 @@ select evde from Master_a13 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
 
-	mysql -N -u shule ${DB} > tmpfile_master10_info << EOF
-select Misfit_S_All,Misfit_ScS_All,weight_S_All,weight_ScS_All from Master_a10 where eq=${EQ} and wantit=1;
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Thin << EOF
+select stlo,stla,Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All<=0;
 EOF
-
-	mysql -N -u shule ${DB} > tmpfile_master11_info << EOF
-select category,Misfit_S_All,Misfit_ScS_All from Master_a11 where eq=${EQ} and wantit=1;
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Fat << EOF
+select stlo,stla,Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All>0;
 EOF
-
-	mysql -N -u shule ${DB} > tmpfile_master13_info << EOF
-select category,Misfit_S,Misfit_ScS,az from Master_a13 where eq=${EQ} and wantit=1;
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Thin << EOF
+select stlo,stla,Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All<=0;
+EOF
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Fat << EOF
+select stlo,stla,Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All>0;
 EOF
 
     # Plot Begin.
@@ -103,10 +94,8 @@ EOF
 0 0 ${title}
 EOF
 
-	gmt pstext tmpfile_$$ -F+jCB+f16p ${REG} ${PROJ} -X0.65i -Ya${YMOVE}i ${PLOTORIENT} -N -K > ${OUTFILE}
+	gmt pstext tmpfile_$$ -F+jCB+f16p ${REG} ${PROJ} -Xf0.65i -Yf${YMOVE}i ${PLOTORIENT} -N -K > ${OUTFILE}
 
-	gmt psxy -J -R -Y${PLOTVERTIC}i -O -K >> ${OUTFILE} << EOF
-EOF
 	gmt psxy -J -R -Y-${height}i -O -K >> ${OUTFILE} << EOF
 EOF
 
