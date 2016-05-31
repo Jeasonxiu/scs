@@ -53,7 +53,8 @@ ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/b13_1.ESW_ScS_Catalog.sh
 # ${SRCDIR}/b13_2.ESW_ScS_Profile.sh
 # ${SRCDIR}/b13_3.ESW_DataMining/plot.sh
-${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
+# ${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
+${SRCDIR}/b13_5.Misfit_dT/plot.sh
 # ${SRCDIR}/b16_1.StretchWindow.sh
 # ${SRCDIR}/b16_2.StretchUp.sh
 # ${SRCDIR}/b16_3.TstarStretchWindow.sh

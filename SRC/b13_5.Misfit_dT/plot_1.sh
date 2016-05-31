@@ -17,14 +17,14 @@ REG="-R${XMIN}/${XMAX}/${YMIN}/${YMAX}"
 gmt psbasemap ${REG} ${PROJ} -Ba${XNUM}f${XINC}g${XNUM}:"${xlabel}":/a${YNUM}f${YINC}g${YNUM}:"${ylabel}":WS -O -K >> ${OUTFILE}
 gmt pscoast -JX${width}id/${height}id ${REG} -W0.5p,black -A2000 -Dh -O -K >> ${OUTFILE}
 
-NR1=`wc -l < tmpfile_stlo_stla_MisfitScS_Thin`
-NR2=`wc -l < tmpfile_stlo_stla_MisfitScS_Fat`
+NR1=`wc -l < tmpfile_MisfitS_DTS_Thin`
+NR2=`wc -l < tmpfile_MisfitS_DTS_Fat`
 
-gmt psxy tmpfile_stlo_stla_MisfitScS_Thin ${REG} ${PROJ} -Sx -Wblue -N -O -K >> ${OUTFILE}
-gmt psxy tmpfile_stlo_stla_MisfitScS_Fat ${REG} ${PROJ} -Sc -Wred -N -O -K >> ${OUTFILE}
+gmt psxy tmpfile_MisfitS_DTS_Thin ${REG} ${PROJ} -Sx -Wblue -N -O -K >> ${OUTFILE}
+gmt psxy tmpfile_MisfitS_DTS_Fat ${REG} ${PROJ} -Sc -Wred -N -O -K >> ${OUTFILE}
 
 cat > tmpfile_$$ << EOF
-${XMIN} ${YMIN} ScS Misfit, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
+${XMIN} ${YMIN} S Misfit-dT relation, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
 EOF
 gmt pstext tmpfile_$$ -F+jLB+f10p -J -R -N -O -K >> ${OUTFILE}
 
