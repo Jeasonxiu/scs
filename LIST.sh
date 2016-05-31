@@ -8,7 +8,7 @@
 # ${SRCDIR}/a06.HumanSelect.sh
 # ${SRCDIR}/a08.AddRadpat.sh
 # ${SRCDIR}/a09.CorrectDepth.sh
-${SRCDIR}/a10.ESW_OneCate.sh
+# ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/a10.ESW_OneCate_Modified.sh
 # ${SRCDIR}/a11_1.ClusterThin.sh
 # ${SRCDIR}/a11_2.Cluster.sh

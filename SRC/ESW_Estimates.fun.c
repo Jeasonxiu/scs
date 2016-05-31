@@ -59,6 +59,8 @@ void Misfit(struct Data *p){
     for (count=H1;count<=H2;count++){
         Sum_ESW+=fabs(p->stack[count]);
     }
+	Sum_ESW-=(H2-H1)*fabs(p->stack[H1]);
+
 
     for (count=0;count<p->fileN;count++){
 
@@ -83,6 +85,7 @@ void Misfit(struct Data *p){
         for (count2=H1;count2<=H2;count2++){
             Sum_Trace+=fabs(p->data[count][count2]);
         }
+        Sum_Trace-=(H2-H1)*fabs(p->data[count][H1]);
 
         // Record Measurements.
         p->misfit[count]=(1.0*(H2-H1)/width)-1.0;
