@@ -53,6 +53,14 @@ void Misfit(struct Data *p){
 
 	// Step1. For half-height esitmation.
 
+	if (strcmp(p->PHASE,"ScS")==0){
+		fpin=fopen(DATAFILE,"r");
+		for (count=0;count<4;count++){
+			fscanf(fpin,"%lf",&S_misfit_esw[count]);
+		}
+		fclose(fpin);
+	}
+
     // Find half-height on ESW.
     max_ampd(p->stack+p->stack_p+p->eloc,p->Elen,&tmpP);
     tmpP+=p->stack_p+p->eloc;
@@ -68,6 +76,7 @@ void Misfit(struct Data *p){
         }
     }
     width=H2-H1;
+	p->misfit_esw=width*p->delta;
 
     // Area above half-height on ESW.
     Sum_ESW=0;
@@ -75,6 +84,15 @@ void Misfit(struct Data *p){
         Sum_ESW+=fabs(p->stack[count]);
     }
 	Sum_ESW-=(H2-H1)*fabs(p->stack[H1]);
+	p->misfit2_esw=Sum_ESW;
+
+	// use the same criteria as S.
+	if (strcmp(p->PHASE,"ScS")==0){
+		width=(int)(S_misfit_esw[0]/p->delta);
+		Sum_ESW=S_misfit_esw[1];
+	}
+
+
 
 
     for (count=0;count<p->fileN;count++){
@@ -126,6 +144,7 @@ void Misfit(struct Data *p){
 		}
 	}
 	width=H2-H1;
+	p->misfit3_esw=width*p->delta;
 
 	// Area under curve on ESW.
 	Sum_ESW=0;
@@ -133,6 +152,14 @@ void Misfit(struct Data *p){
 		Sum_ESW+=fabs(p->stack[count]);
 	}
 	Sum_ESW-=(H2-H1)*fabs(p->stack[H1]);
+	p->misfit4_esw=Sum_ESW;
+
+	// use the same criteria as S.
+	if (strcmp(p->PHASE,"ScS")==0){
+		width=(int)(S_misfit_esw[2]/p->delta);
+		Sum_ESW=S_misfit_esw[3];
+	}
+
 
 	for (count=0;count<p->fileN;count++){
 
