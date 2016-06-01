@@ -84,7 +84,7 @@ EOF
 select stlo,stla,(D_T_S_All-${AveVal})/(${MaxVal}-${AveVal}) from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All>${AveVal};
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Lesser << EOF
-select stlo,stla,${AveVal}-D_T_S_All/(${AveVal}-${MinVal}) from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<=${AveVal};
+select stlo,stla,(${AveVal}-D_T_S_All)/(${AveVal}-${MinVal}) from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<=${AveVal};
 EOF
 
 	# ScS dT.
