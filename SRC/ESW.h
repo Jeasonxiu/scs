@@ -62,6 +62,11 @@ struct Data{
 	int     contribute;                // # of Non-zero weight traces for ESW.
 	double  waterlevel;                // Measurement of noise fft amplitude peak value on stack.
 
+	double  misfit_esw;                // ESW Half-height width in sec.
+	double  misfit2_esw;               // ESW Half-height area-under-curve in [m*s] (if normalized, it's [s]).
+	double  misfit3_esw;               // ESW Peak to zero width in sec.
+	double  misfit4_esw;               // ESW Peak to zero area-under-curve in [m*s] (if normalized, it's [s]).
+
     int     *shift;                    // Shift npts for every ESW-windowed section relative to ESW.
 	int     *ppeak;                    // Peak position of each trace. (npts from beginning)
 	int     *polarity;                 // The sign of p->data[count][ppeak].

@@ -66,6 +66,11 @@ EOF
 select stnm,Polarity_S from Master_$$ where eq=${EQ} and WantIt=1;
 EOF
 
+		grep "<Misfit_ESW>"  ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/STDOUT | awk '{print $2}' >  tmpfile_MISFIT
+		grep "<Misfit2_ESW>" ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/STDOUT | awk '{print $2}' >> tmpfile_MISFIT
+		grep "<Misfit3_ESW>" ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/STDOUT | awk '{print $2}' >> tmpfile_MISFIT
+		grep "<Misfit4_ESW>" ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/STDOUT | awk '{print $2}' >> tmpfile_MISFIT
+
 
         # C code.
 		${EXECDIR}/ESW.out 3 6 20 << EOF

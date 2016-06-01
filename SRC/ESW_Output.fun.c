@@ -31,6 +31,10 @@ void ESW_Output(struct Data *p){
     fprintf(fpout,"<Nrecord_Used> %d\n",p->contribute);
     fprintf(fpout,"<Nrecord_All> %d\n",p->fileN);
     fprintf(fpout,"<WaterESW> %.6lf\n",p->waterlevel);
+	fprintf(fpout,"<Misfit_ESW> %.6lf\n",p->misfit_esw);
+	fprintf(fpout,"<Misfit2_ESW> %.6lf\n",p->misfit2_esw);
+	fprintf(fpout,"<Misfit3_ESW> %.6lf\n",p->misfit3_esw);
+	fprintf(fpout,"<Misfit4_ESW> %.6lf\n",p->misfit4_esw);
     fclose(fpout);
 
 

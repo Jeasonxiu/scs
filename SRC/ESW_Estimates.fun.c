@@ -37,6 +37,18 @@ void Misfit(struct Data *p){
 
     int    count,count2,H1,H2,tmpP,width;
     double AMP,Sum_ESW,Sum_Trace;
+	char *DATAFILE="tmpfile_MISFIT";
+	double S_misfit_esw[4];
+	FILE *fpin;
+
+	if (strcmp(p->PHASE,"ScS")==0){
+		fpin=fopen(DATAFILE,"r");
+		for (count=0;count<4;count++){
+			fscanf(fpin,"%lf",&S_misfit_esw[count]);
+		}
+		fclose(fpin);
+	}
+
 
     // Find half-height on ESW.
     max_ampd(p->stack+p->stack_p+p->eloc,p->Elen,&tmpP);
