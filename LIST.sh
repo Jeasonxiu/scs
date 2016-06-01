@@ -8,7 +8,7 @@
 # ${SRCDIR}/a06.HumanSelect.sh
 # ${SRCDIR}/a08.AddRadpat.sh
 # ${SRCDIR}/a09.CorrectDepth.sh
-${SRCDIR}/a10.ESW_OneCate.sh
+# ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/a10.ESW_OneCate_Modified.sh
 # ${SRCDIR}/a11_1.ClusterThin.sh
 # ${SRCDIR}/a11_2.Cluster.sh
@@ -53,8 +53,9 @@ ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/b12_2.ESW_S_Profile.sh
 # ${SRCDIR}/b13_1.ESW_ScS_Catalog.sh
 # ${SRCDIR}/b13_2.ESW_ScS_Profile.sh
-${SRCDIR}/b13_3.ESW_DataMining/plot.sh
+# ${SRCDIR}/b13_3.ESW_DataMining/plot.sh
 # ${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
+${SRCDIR}/b13_5.Misfit_dT/plot.sh
 # ${SRCDIR}/b16_1.StretchWindow.sh
 # ${SRCDIR}/b16_2.StretchUp.sh
 # ${SRCDIR}/b16_3.TstarStretchWindow.sh
