@@ -104,6 +104,12 @@ SNR_S      double comment "S SNR, ESW by categorized data.",
 Weight_S   double comment "Given weight to S constructing the ESW by categorized data.",
 Misfit_S   double comment "S half-height width comparing to ESW by categorized data.",
 Misfit2_S  double comment "S half-height area comparing to ESW by categorized data.",
+Misfit3_S  double comment "S Peak to zero width comparing to ESW by categorized data.",
+Misfit4_S  double comment "S Peak to zero area comparing to ESW by categorized data.",
+M1_B_S     double comment "S half-height begin position. in sec. relative to prem.",
+M1_E_S     double comment "S half-height end position. in sec. relative to prem.",
+M2_B_S     double comment "S zero-crossing begin position. in sec. relative to prem.",
+M2_E_S     double comment "S zero-crossing end position. in sec. relative to prem.",
 Norm2_S    double comment "S Norm2 difference comparing to ESW by categorized data.",
 Peak_S     double comment "S peak time relative to PREM, ESW by categorized data.",
 NA_S       double comment "S noise anchor time relative to S arrival time, ESW by categorized data.",
@@ -117,7 +123,7 @@ Amp_S      double comment "S amplitude after filtering, ESW by categorized data.
 );
 load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
-(@tmp1,@tmp2,D_T_S,CCC_S,SNR_S,Weight_S,Misfit_S,Misfit2_S,Norm2_S,Peak_S,NA_S,N_T1_S,N_T2_S,S_T1_S,S_T2_S,Polarity_S,@tmp3,WL_S,Amp_S)
+(@tmp1,@tmp2,D_T_S,CCC_S,SNR_S,Weight_S,Misfit_S,Misfit2_S,Misfit3_S,Misfit4_S,M1_B_S,M1_E_S,M2_B_S,M2_E_S,Norm2_S,Peak_S,NA_S,N_T1_S,N_T2_S,S_T1_S,S_T2_S,Polarity_S,@tmp3,WL_S,Amp_S)
 set PairName=concat(@tmp1,"_",@tmp2);
 EOF
 
