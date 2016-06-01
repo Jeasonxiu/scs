@@ -70,13 +70,13 @@ EOF
 	read evde < tmpfile_$$
 
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Thin << EOF
-select stlo,stla,Misfit3_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit3_S_All<=0;
+select stlo,stla,-1.0*Misfit3_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit3_S_All<=0;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Fat << EOF
 select stlo,stla,Misfit3_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit3_S_All>0;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Thin << EOF
-select stlo,stla,Misfit3_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit3_ScS_All<=0;
+select stlo,stla,-1.0*Misfit3_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit3_ScS_All<=0;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Fat << EOF
 select stlo,stla,Misfit3_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit3_ScS_All>0;

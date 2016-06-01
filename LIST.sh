@@ -8,7 +8,7 @@
 # ${SRCDIR}/a06.HumanSelect.sh
 # ${SRCDIR}/a08.AddRadpat.sh
 # ${SRCDIR}/a09.CorrectDepth.sh
-${SRCDIR}/a10.ESW_OneCate.sh
+# ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/a10.ESW_OneCate_Modified.sh
 # ${SRCDIR}/a11_1.ClusterThin.sh
 # ${SRCDIR}/a11_2.Cluster.sh
@@ -46,8 +46,8 @@ ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/b10_1.ESW_OneCate_S.sh
 # ${SRCDIR}/b10_1.ESW_OneCate_S_Modified.sh
 # ${SRCDIR}/b10_2.ESW_OneCate_ScS.sh
-${SRCDIR}/b10_3.Catalog_S_with_misfit_position.sh
-${SRCDIR}/b10_4.Catalog_ScS_with_misfit_position.sh
+# ${SRCDIR}/b10_3.Catalog_S_with_misfit_position.sh
+# ${SRCDIR}/b10_4.Catalog_ScS_with_misfit_position.sh
 # ${SRCDIR}/b11_1.ClusterWaveform.sh
 # ${SRCDIR}/b11_2.Distribution/plot.sh
 # ${SRCDIR}/b12_1.ESW_S_Catalog.sh
@@ -55,14 +55,15 @@ ${SRCDIR}/b10_4.Catalog_ScS_with_misfit_position.sh
 # ${SRCDIR}/b13_1.ESW_ScS_Catalog.sh
 # ${SRCDIR}/b13_2.ESW_ScS_Profile.sh
 # ${SRCDIR}/b13_3.ESW_DataMining/plot.sh
-${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
-${SRCDIR}/b13_5.Misfit2_Distribution/plot.sh
-${SRCDIR}/b13_6.Misfit3_Distribution/plot.sh
-${SRCDIR}/b13_7.Misfit4_Distribution/plot.sh
-${SRCDIR}/b13_5.Misfit_dT/plot.sh
-${SRCDIR}/b13_6.Misfit2_dT/plot.sh
-${SRCDIR}/b13_7.Misfit3_dT/plot.sh
-${SRCDIR}/b13_8.Misfit4_dT/plot.sh
+# ${SRCDIR}/b13_4.Misfit_Distribution/plot.sh
+# ${SRCDIR}/b13_5.Misfit2_Distribution/plot.sh
+# ${SRCDIR}/b13_6.Misfit3_Distribution/plot.sh
+# ${SRCDIR}/b13_7.Misfit4_Distribution/plot.sh
+# ${SRCDIR}/b13_5.Misfit_dT/plot.sh
+# ${SRCDIR}/b13_6.Misfit2_dT/plot.sh
+# ${SRCDIR}/b13_7.Misfit3_dT/plot.sh
+# ${SRCDIR}/b13_8.Misfit4_dT/plot.sh
+${SRCDIR}/b13_6.dT_Distribution/plot.sh
 # ${SRCDIR}/b16_1.StretchWindow.sh
 # ${SRCDIR}/b16_2.StretchUp.sh
 # ${SRCDIR}/b16_3.TstarStretchWindow.sh
