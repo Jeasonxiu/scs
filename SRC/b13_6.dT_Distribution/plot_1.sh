@@ -20,11 +20,11 @@ gmt pscoast -JX${width}id/${height}id ${REG} -W0.5p,black -A2000 -Dh -O -K >> ${
 NR1=`wc -l < tmpfile_stlo_stla_dTS_Lesser`
 NR2=`wc -l < tmpfile_stlo_stla_dTS_Greater`
 
-gmt psxy tmpfile_stlo_stla_MisfitS_Thin ${REG} ${PROJ} -Sx -Wblue -N -O -K >> ${OUTFILE}
-gmt psxy tmpfile_stlo_stla_MisfitS_Fat ${REG} ${PROJ} -Sc -Wred -N -O -K >> ${OUTFILE}
+gmt psxy tmpfile_stlo_stla_dTS_Lesser ${REG} ${PROJ} -Sx -Wblue -N -O -K >> ${OUTFILE}
+gmt psxy tmpfile_stlo_stla_dTS_Greater ${REG} ${PROJ} -Sc -Wred -N -O -K >> ${OUTFILE}
 
 cat > tmpfile_$$ << EOF
-${XMIN} ${YMIN} S Misfit, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
+${XMIN} ${YMIN} Scaled S dT, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
 EOF
 gmt pstext tmpfile_$$ -F+jLB+f10p -J -R -N -O -K >> ${OUTFILE}
 
