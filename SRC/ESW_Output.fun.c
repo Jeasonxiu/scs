@@ -45,19 +45,22 @@ void ESW_Output(struct Data *p){
     sprintf(outfile,"%s/%s",p->OUTDIR,p->OUTFILE);
     fpout=fopen(outfile,"w");
     fprintf(fpout,"<EQ>%s<STNM>%s<D_T>%s<CCC>%s<SNR>%s<Weight>%s\
-    <Misfit>%s<Misfit2>%s<Norm2>%s<Peak>%s<Nanchor>%s\
+	<Misfit>%s<Misfit2>%s<Misfit3>%s<Misfit4>%s<M1_B>%s<M1_E>%s<M2_B>%s<M2_E>%s\
+	<Norm2>%s<Peak>%s<Nanchor>%s\
     <N_T1>%s<N_T2>%s<S_T1>%s<S_T2>%s<Polarity>%s<Rad_Pat>%s<WaterLevel>%s<Amplitude>\n"
-    ,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces
-    ,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces);
+    ,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces
+    ,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces,spaces);
 
     for(count=0;count<p->fileN;count++){
         fprintf(fpout,"%s\t%s%15.3lf%15.2lf%15.2lf\
-        %15.3lf%15.3lf%15.3lf%15.3lf%15.3lf\
+        %15.3lf%15.3lf%15.3lf%15.3lf%15.3lf%15.3lf%15.3lf%15.3lf\
+		%15.3lf%15.3lf%15.3lf\
         %15.3lf%15.3lf%15.3lf\
         %15.3lf%15.3lf\
         %5d%15.4lf%15.6lf\t%.4e\n"
-        ,p->EQ,p->stnm[count],p->C1+p->delta*p->ploc[count],p->ccc[count],p->snr[count]
-        ,fabs(p->weight[count]),p->misfit[count],p->misfit2[count],p->norm2[count],p->C1+p->delta*p->ppeak[count]
+        ,p->EQ,p->stnm[count],p->C1+p->delta*p->ploc[count],p->ccc[count],p->snr[count],fabs(p->weight[count])
+        ,p->misfit[count],p->misfit2[count],p->misfit3[count],p->misfit4[count],p->M1_B[count],p->M1_E[count],p->M2_B[count],p->M2_E[count]
+		,p->norm2[count],p->C1+p->delta*p->ppeak[count]
         ,p->C1+p->delta*p->naloc[count],p->C1+p->delta*(p->naloc[count]+p->nloc)
 		,p->C1+p->delta*(p->naloc[count]+p->nloc+p->Nlen)
         ,p->C1+p->delta*(p->ppeak[count]+p->sloc),p->C1+p->delta*(p->ppeak[count]+p->sloc+p->Slen)
