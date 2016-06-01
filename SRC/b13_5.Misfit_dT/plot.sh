@@ -61,7 +61,7 @@ do
         continue
     fi
 
-    echo "    ==> Plotting Misfit Distribution of ${EQ}..."
+    echo "    ==> Plotting Misfit-dT relation of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
