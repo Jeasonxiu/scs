@@ -116,7 +116,8 @@ void MakeStack(struct Data *p,int quick){
 	********************************************/
 
     int    N,count,count2,contribute,P;
-    double flip,AMP;
+    double flip,AMP,MidVal;
+	double *misfit=(double *)malloc(p->fileN*sizeof(double));
 
     contribute=1;
     // Iteratively make stack.
@@ -158,8 +159,30 @@ void MakeStack(struct Data *p,int quick){
 
         // MakeWeights.
 		MakeWeight(p,quick);
+		
+		// In the final loop, we use misfit as an estimation to 
+		// use the skinnest half population into the ESW.
+		if (N==stackloopN-2){
+			Misfit(p);
+
+			// Decide the discard misift value.
+			for (count=0;count<p->fileN;count++){
+				misfit[count]=p->misfit4[count];
+			}
+			sort_quickd(misfit,p->fileN);
+			MidVal=misfit[p->fileN/2];
+
+			// Adjust weight assignment.
+			for (count=0;count<p->fileN;count++){
+				if (p->misfit4[count]>=MidVal){
+					p->weight[count]=0;
+				}
+			}
+		}
+
     }
     p->contribute=contribute;
+	free(misfit);
 
     return ;
 }
