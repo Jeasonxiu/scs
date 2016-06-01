@@ -61,7 +61,7 @@ do
         continue
     fi
 
-    echo "    ==> Plotting Misfit2 Distribution of ${EQ}..."
+    echo "    ==> Plotting dT Distribution of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
@@ -69,17 +69,36 @@ select evde from Master_a13 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
 
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Thin << EOF
-select stlo,stla,-1.0*Misfit2_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_S_All<=0;
+	# S dT.
+	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
+select D_T_S_All from Master_a10 where eq=${EQ} and wantit=1;
 EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Fat << EOF
-select stlo,stla,Misfit2_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_S_All>0;
+	${EXECDIR}/GetAve.out 0 2 0 << EOF
+tmpfile_$$
+tmpfile_out_$$
 EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Thin << EOF
-select stlo,stla,-1.0*Misfit2_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_ScS_All<=0;
+	read AveVal < tmpfile_out_$$
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Greater << EOF
+select stlo,stla,D_T_S_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All>${AveVal};
 EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Fat << EOF
-select stlo,stla,Misfit2_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_ScS_All>0;
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Lesser << EOF
+select stlo,stla,D_T_S_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<=${AveVal};
+EOF
+
+	# ScS dT.
+	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
+select D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1;
+EOF
+	${EXECDIR}/GetAve.out 0 2 0 << EOF
+tmpfile_$$
+tmpfile_out_$$
+EOF
+	read AveVal < tmpfile_out_$$
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Greater << EOF
+select stlo,stla,D_T_ScS_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All>${AveVal};
+EOF
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Lesser << EOF
+select stlo,stla,D_T_ScS_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All<=${AveVal};
 EOF
 
     # Plot Begin.
