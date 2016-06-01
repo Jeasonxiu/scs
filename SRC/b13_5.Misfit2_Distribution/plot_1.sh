@@ -24,7 +24,7 @@ gmt psxy tmpfile_stlo_stla_MisfitS_Thin ${REG} ${PROJ} -Sx -Wblue -N -O -K >> ${
 gmt psxy tmpfile_stlo_stla_MisfitS_Fat ${REG} ${PROJ} -Sc -Wred -N -O -K >> ${OUTFILE}
 
 cat > tmpfile_$$ << EOF
-${XMIN} ${YMIN} S Misfit, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
+${XMIN} ${YMIN} S Misfit2, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
 EOF
 gmt pstext tmpfile_$$ -F+jLB+f10p -J -R -N -O -K >> ${OUTFILE}
 
