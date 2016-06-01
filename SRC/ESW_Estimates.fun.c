@@ -30,13 +30,16 @@ void Misfit(struct Data *p){
 
 	/************************************************
 	 * This C function make misfit difference defined
-	 * as the comparison of half-height width in time
-	 * between ESW and each trace:
-	 * misfit=(H_trace-H_esf)/H_esf
+	 * as the comparison of half-height/peak-to-zero
+	 * width/area-under-curve in time domain between
+	 * ESW and each trace:
+	 * misfit=(trace-esf)/esf
 	************************************************/
 
     int    count,count2,H1,H2,tmpP,width;
     double AMP,Sum_ESW,Sum_Trace;
+
+	// Step1. For half-height esitmation.
 
     // Find half-height on ESW.
     max_ampd(p->stack+p->stack_p+p->eloc,p->Elen,&tmpP);
@@ -90,8 +93,63 @@ void Misfit(struct Data *p){
         // Record Measurements.
         p->misfit[count]=(1.0*(H2-H1)/width)-1.0;
         p->misfit2[count]=Sum_Trace/Sum_ESW-1;
+		p->M1_B[count]=H1*p->delta+p->C1;
+		p->M1_E[count]=H2*p->delta+p->C1;
 
     }
+
+	// Step2. Do the same thing for the peak-to-zero.
+
+	// Find zero position on ESW.
+	max_ampd(p->stack+p->stack_p+p->eloc,p->Elen,&tmpP);
+	tmpP+=p->stack_p+p->eloc;
+	for (H1=tmpP;H1>p->stack_p+p->eloc;H1--){
+		if (p->stack[H1]*p->stack[H1-1]<=0){
+			break;
+		}
+	}
+	for (H2=tmpP;H2<p->stack_p+p->eloc+p->Elen;H2++){
+		if (p->stack[H2]*p->stack[H2-1]<=0){
+			break;
+		}
+	}
+	width=H2-H1;
+
+	// Area under curve on ESW.
+	Sum_ESW=0;
+	for (count=H1;count<=H2;count++){
+		Sum_ESW+=fabs(p->stack[count]);
+	}
+	Sum_ESW-=(H2-H1)*fabs(p->stack[H1]);
+
+	for (count=0;count<p->fileN;count++){
+
+		// Find zero-crossing on traces.
+		for (H1=p->ppeak[count];H1>p->ploc[count]+p->eloc;H1--){
+			if (p->data[count][H1]*p->data[count][H1-1]<=0){
+				break;
+			}
+		}
+		for (H2=p->ppeak[count];H2<p->ploc[count]+p->eloc+p->Elen;H2++){
+			if (p->data[count][H2]*p->data[count][H2-1]<=0){
+				break;
+			}
+		}
+
+		// Area above half-height on traces.
+		Sum_Trace=0;
+		for (count2=H1;count2<=H2;count2++){
+			Sum_Trace+=fabs(p->data[count][count2]);
+		}
+		Sum_Trace-=(H2-H1)*fabs(p->data[count][H1]);
+
+		// Record Measurements.
+		p->misfit3[count]=(1.0*(H2-H1)/width)-1.0;
+		p->misfit4[count]=Sum_Trace/Sum_ESW-1;
+		p->M2_B[count]=H1*p->delta+p->C1;
+		p->M2_E[count]=H2*p->delta+p->C1;
+
+	}
     return;
 }
 

@@ -85,6 +85,12 @@ void ESW_Check(struct Data *p){
 		p->amplitude=(double *)malloc(p->fileN*sizeof(double));
 		p->misfit=(double *)malloc(p->fileN*sizeof(double));
 		p->misfit2=(double *)malloc(p->fileN*sizeof(double));
+		p->misfit3=(double *)malloc(p->fileN*sizeof(double));
+		p->misfit4=(double *)malloc(p->fileN*sizeof(double));
+		p->M1_B=(double *)malloc(p->fileN*sizeof(double));
+		p->M1_E=(double *)malloc(p->fileN*sizeof(double));
+		p->M2_B=(double *)malloc(p->fileN*sizeof(double));
+		p->M2_E=(double *)malloc(p->fileN*sizeof(double));
 		p->norm2=(double *)malloc(p->fileN*sizeof(double));
 		p->stack=(double *)malloc(p->dlen*sizeof(double));
 		p->std=(double *)malloc(p->dlen*sizeof(double));

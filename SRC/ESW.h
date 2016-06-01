@@ -70,6 +70,12 @@ struct Data{
 	double  *ccc;                      // Cross-Correlation-Coefficients with ESW for each trace.
 	double  *misfit;                   // Half-height width difference between trace pulse and ESW pulse.
 	double  *misfit2;                  // Half-height area difference between trace pulse and ESW pulse.
+	double  *misfit3;                  // Peak to zero width difference between trace pulse and ESW pulse.
+	double  *misfit4;                  // Peak to zero area difference between trace pulse and ESW pulse.
+	double  *M1_B;                     // Begin time of misfit (Half height) estimation. (relative to prem)
+	double  *M1_E;                     // End time of misfit (Half height) estimation. (relative to prem)
+	double  *M2_B;                     // Begin time of misfit (whole trace) estimation. (relative to prem)
+	double  *M2_E;                     // End time of misfit (whole trace) estimation. (relative to prem)
 	double  *norm2;                    // 2-norm difference between trace and ESW through ESW-window.
 	double  *amplitude;                // Waveform absolute amplitude is recored here. In program we usually normalized the peak to 1.
 	double  *stack;
