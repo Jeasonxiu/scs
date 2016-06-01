@@ -82,7 +82,7 @@ EOF
 select stlo,stla,D_T_S_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All>${AveVal};
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Lesser << EOF
-select stlo,stla,D_T_S_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<=${AveVal};
+select stlo,stla,${AveVal}-D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<=${AveVal};
 EOF
 
 	# ScS dT.
@@ -98,7 +98,7 @@ EOF
 select stlo,stla,D_T_ScS_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All>${AveVal};
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Lesser << EOF
-select stlo,stla,D_T_ScS_All-${AveVal} from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All<=${AveVal};
+select stlo,stla,${AveVal}-D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All<=${AveVal};
 EOF
 
     # Plot Begin.
