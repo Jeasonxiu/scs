@@ -47,6 +47,7 @@ ${SRCDIR}/a10.ESW_OneCate.sh
 # ${SRCDIR}/b10_1.ESW_OneCate_S_Modified.sh
 # ${SRCDIR}/b10_2.ESW_OneCate_ScS.sh
 ${SRCDIR}/b10_3.Catalog_S_with_misfit_position.sh
+${SRCDIR}/b10_4.Catalog_ScS_with_misfit_position.sh
 # ${SRCDIR}/b11_1.ClusterWaveform.sh
 # ${SRCDIR}/b11_2.Distribution/plot.sh
 # ${SRCDIR}/b12_1.ESW_S_Catalog.sh
