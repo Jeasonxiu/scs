@@ -12,10 +12,10 @@ PLOTSRCDIR=${PLOTSRCDIR%/*}
 # ===========================================================
 
 VERTICNUM=2
-HORIZNUM=1
-VERTICPER="0.75"
+HORIZNUM=2
+VERTICPER="0.7"
 HORIZPER="0.8"
-PLOTORIENT="-P"
+PLOTORIENT=""
 
 if [ -z ${PLOTORIENT} ]
 then
@@ -61,25 +61,26 @@ do
         continue
     fi
 
-    echo "    ==> Plotting Misfit Distribution of ${EQ}..."
+    echo "    ==> Plotting Misfit2 Source Distribution of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
 select evde from Master_a10 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
+	Vs=`${BASHCODEDIR}/prem_velocity.sh S ${evde}`
 
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Thin << EOF
-select stlo,stla,-1.0*Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All<=0;
+	mysql -N -u shule ${DB} > tmpfile_az_takeoff_MisfitS_Thin << EOF
+select az,asin(Srayp*${Vs}/(6371.0-evde))*180.0/PI(),-1.0*Misfit2_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_S_All<=0;
 EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Fat << EOF
-select stlo,stla,Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All>0;
+	mysql -N -u shule ${DB} > tmpfile_az_takeoff_MisfitS_Fat << EOF
+select az,asin(Srayp*${Vs}/(6371.0-evde))*180.0/PI(),Misfit2_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_S_All>0;
 EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Thin << EOF
-select stlo,stla,-1.0*Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All<=0;
+	mysql -N -u shule ${DB} > tmpfile_az_takeoff_MisfitScS_Thin << EOF
+select az,asin(ScSrayp*${Vs}/(6371.0-evde))*180.0/PI(),-1.0*Misfit2_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_ScS_All<=0;
 EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Fat << EOF
-select stlo,stla,Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All>0;
+	mysql -N -u shule ${DB} > tmpfile_az_takeoff_MisfitScS_Fat << EOF
+select az,asin(ScSrayp*${Vs}/(6371.0-evde))*180.0/PI(),Misfit2_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_ScS_All>0;
 EOF
 
     # Plot Begin.

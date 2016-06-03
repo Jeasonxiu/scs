@@ -51,15 +51,18 @@
 
 # ${SRCDIR}/b10_5.Misfit_Receiver/plot.sh
 # ${SRCDIR}/b10_6.Misfit2_Receiver/plot.sh
-# ${SRCDIR}/b10_7.Misfit3_Receiver/plot.sh
-# ${SRCDIR}/b10_8.Misfit4_Receiver/plot.sh
+${SRCDIR}/b10_7.Misfit3_Receiver/plot.sh
+${SRCDIR}/b10_8.Misfit4_Receiver/plot.sh
 # ${SRCDIR}/b10_9.Scaled_dT_Distribution/plot.sh
 # ${SRCDIR}/b10_10.RealdT_Distribution/plot.sh
 # ${SRCDIR}/b10_11.Misfit_dT/plot.sh
 # ${SRCDIR}/b10_12.Misfit2_dT/plot.sh
 # ${SRCDIR}/b10_13.Misfit3_dT/plot.sh
 # ${SRCDIR}/b10_14.Misfit4_dT/plot.sh
-${SRCDIR}/b10_15.Misfit_Source/plot.sh
+# ${SRCDIR}/b10_15.Misfit_Source/plot.sh
+# ${SRCDIR}/b10_16.Misfit2_Source/plot.sh
+# ${SRCDIR}/b10_17.Misfit3_Source/plot.sh
+# ${SRCDIR}/b10_18.Misfit4_Source/plot.sh
 
 # ${SRCDIR}/b11_1.ClusterWaveform.sh
 # ${SRCDIR}/b11_2.Distribution/plot.sh

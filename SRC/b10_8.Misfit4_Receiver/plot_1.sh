@@ -20,8 +20,8 @@ gmt pscoast -JX${width}id/${height}id ${REG} -W0.5p,black -A2000 -Dh -O -K >> ${
 NR1=`wc -l < tmpfile_stlo_stla_MisfitS_Thin`
 NR2=`wc -l < tmpfile_stlo_stla_MisfitS_Fat`
 
-gmt psxy tmpfile_stlo_stla_MisfitS_Thin ${REG} ${PROJ} -Sx -Wblue -N -O -K >> ${OUTFILE}
-gmt psxy tmpfile_stlo_stla_MisfitS_Fat ${REG} ${PROJ} -Sc -Wred -N -O -K >> ${OUTFILE}
+gmt psxy tmpfile_stlo_stla_MisfitS_Thin ${REG} ${PROJ} -Sx -Wblue -O -K >> ${OUTFILE}
+gmt psxy tmpfile_stlo_stla_MisfitS_Fat ${REG} ${PROJ} -Sc -Wred -O -K >> ${OUTFILE}
 
 cat > tmpfile_$$ << EOF
 ${XMIN} ${YMIN} S Misfit4, Thin(@;blue;${NR1}@;;) + Fat(@;red;${NR2}@;;).
