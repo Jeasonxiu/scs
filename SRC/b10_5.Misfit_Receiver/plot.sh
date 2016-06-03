@@ -61,48 +61,25 @@ do
         continue
     fi
 
-    echo "    ==> Plotting dT Distribution of ${EQ}..."
+    echo "    ==> Plotting Misfit Distribution of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
-select evde from Master_a13 where eq=${EQ} limit 1;
+select evde from Master_a10 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
 
-	# S dT.
-	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
-select D_T_S_All from Master_a10 where eq=${EQ} and wantit=1;
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Thin << EOF
+select stlo,stla,-1.0*Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All<=0;
 EOF
-	${EXECDIR}/GetAve.out 0 2 0 << EOF
-tmpfile_$$
-tmpfile_out_$$
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Fat << EOF
+select stlo,stla,Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All>0;
 EOF
-	MinVal=`minmax -C tmpfile_$$ | awk '{print $1}'`
-	MaxVal=`minmax -C tmpfile_$$ | awk '{print $2}'`
-	read AveVal < tmpfile_out_$$
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Greater << EOF
-select stlo,stla,(D_T_S_All-${AveVal})/(${MaxVal}-${AveVal}) from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All>${AveVal};
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Thin << EOF
+select stlo,stla,-1.0*Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All<=0;
 EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Lesser << EOF
-select stlo,stla,(${AveVal}-D_T_S_All)/(${AveVal}-${MinVal}) from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<=${AveVal};
-EOF
-
-	# ScS dT.
-	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
-select D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1;
-EOF
-	${EXECDIR}/GetAve.out 0 2 0 << EOF
-tmpfile_$$
-tmpfile_out_$$
-EOF
-	MinVal=`minmax -C tmpfile_$$ | awk '{print $1}'`
-	MaxVal=`minmax -C tmpfile_$$ | awk '{print $2}'`
-	read AveVal < tmpfile_out_$$
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Greater << EOF
-select stlo,stla,(D_T_ScS_All-${AveVal})/(${MaxVal}-${AveVal}) from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All>${AveVal};
-EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Lesser << EOF
-select stlo,stla,(${AveVal}-D_T_ScS_All)/(${AveVal}-${MinVal}) from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All<=${AveVal};
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Fat << EOF
+select stlo,stla,Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All>0;
 EOF
 
     # Plot Begin.

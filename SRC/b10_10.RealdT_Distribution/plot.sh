@@ -13,7 +13,7 @@ PLOTSRCDIR=${PLOTSRCDIR%/*}
 
 VERTICNUM=2
 HORIZNUM=1
-VERTICPER="0.85"
+VERTICPER="0.75"
 HORIZPER="0.8"
 PLOTORIENT="-P"
 
@@ -61,28 +61,37 @@ do
         continue
     fi
 
-    echo "    ==> Plotting Misfit-dT relation of ${EQ}..."
+    echo "    ==> Plotting dT Distribution of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
-select evde from Master_a13 where eq=${EQ} limit 1;
+select evde from Master_a10 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
 
-	mysql -N -u shule ${DB} > tmpfile_MisfitS_DTS_Thin << EOF
-select Misfit_S_All,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All<=0;
+	# S dT.
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_dot << EOF
+select stlo,stla,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and abs(D_T_S_All)<=0.5;
+EOF
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Linear_Slow << EOF
+select stlo,stla,D_T_S_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All>0.5;
+EOF
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Linear_Fast << EOF
+select stlo,stla,D_T_S_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<-0.5;
 EOF
 
-	mysql -N -u shule ${DB} > tmpfile_MisfitS_DTS_Fat << EOF
-select Misfit_S_All,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All>0;
+
+	# ScS dT.
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_dot << EOF
+select stlo,stla,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and abs(D_T_ScS_All)<=0.5;
+EOF
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Linear_Slow << EOF
+select stlo,stla,D_T_ScS_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All>0.5;
+EOF
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Linear_Fast << EOF
+select stlo,stla,D_T_ScS_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All<-0.5;
 EOF
 
-	mysql -N -u shule ${DB} > tmpfile_MisfitScS_DTScS_Thin << EOF
-select Misfit_ScS_All,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All<=0;
-EOF
-	mysql -N -u shule ${DB} > tmpfile_MisfitScS_DTScS_Fat << EOF
-select Misfit_ScS_All,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All>0;
-EOF
 
     # Plot Begin.
 

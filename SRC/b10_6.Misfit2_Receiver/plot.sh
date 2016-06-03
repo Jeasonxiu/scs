@@ -61,25 +61,25 @@ do
         continue
     fi
 
-    echo "    ==> Plotting Misfit Distribution of ${EQ}..."
+    echo "    ==> Plotting Misfit2 Distribution of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
-select evde from Master_a13 where eq=${EQ} limit 1;
+select evde from Master_a10 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
 
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Thin << EOF
-select stlo,stla,-1.0*Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All<=0;
+select stlo,stla,-1.0*Misfit2_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_S_All<=0;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitS_Fat << EOF
-select stlo,stla,Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All>0;
+select stlo,stla,Misfit2_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_S_All>0;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Thin << EOF
-select stlo,stla,-1.0*Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All<=0;
+select stlo,stla,-1.0*Misfit2_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_ScS_All<=0;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_stlo_stla_MisfitScS_Fat << EOF
-select stlo,stla,Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All>0;
+select stlo,stla,Misfit2_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit2_ScS_All>0;
 EOF
 
     # Plot Begin.

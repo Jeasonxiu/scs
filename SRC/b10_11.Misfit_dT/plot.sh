@@ -61,27 +61,27 @@ do
         continue
     fi
 
-    echo "    ==> Plotting Misfit4-dT relation of ${EQ}..."
+    echo "    ==> Plotting Misfit-dT relation of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
-select evde from Master_a13 where eq=${EQ} limit 1;
+select evde from Master_a10 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
 
 	mysql -N -u shule ${DB} > tmpfile_MisfitS_DTS_Thin << EOF
-select Misfit4_S_All,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit4_S_All<=0;
+select Misfit_S_All,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All<=0;
 EOF
 
 	mysql -N -u shule ${DB} > tmpfile_MisfitS_DTS_Fat << EOF
-select Misfit4_S_All,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit4_S_All>0;
+select Misfit_S_All,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_S_All>0;
 EOF
 
 	mysql -N -u shule ${DB} > tmpfile_MisfitScS_DTScS_Thin << EOF
-select Misfit4_ScS_All,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit4_ScS_All<=0;
+select Misfit_ScS_All,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All<=0;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_MisfitScS_DTScS_Fat << EOF
-select Misfit4_ScS_All,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit4_ScS_All>0;
+select Misfit_ScS_All,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and Misfit_ScS_All>0;
 EOF
 
     # Plot Begin.
