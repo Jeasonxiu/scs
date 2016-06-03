@@ -61,7 +61,7 @@ do
         continue
     fi
 
-    echo "    ==> Plotting dT Distribution of ${EQ}..."
+    echo "    ==> Plotting Smoothed dT Distribution of ${EQ}..."
 
     # Gather information.
 	mysql -N -u shule ${DB} > tmpfile_$$ << EOF
@@ -69,28 +69,31 @@ select evde from Master_a10 where eq=${EQ} limit 1;
 EOF
 	read evde < tmpfile_$$
 
-	# S dT.
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_dot << EOF
-select stlo,stla,D_T_S_All from Master_a10 where eq=${EQ} and wantit=1 and abs(D_T_S_All)<=0.5;
-EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Linear_Slow << EOF
-select stlo,stla,D_T_S_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All>0.5;
-EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_Linear_Fast << EOF
-select stlo,stla,-1.0*D_T_S_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_S_All<-0.5;
+	# dT.
+	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTS_dTScS << EOF
+select stlo,stla,D_T_S_All,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1;
 EOF
 
+	# Make grid smoothed dT.
+	${EXECDIR}/Smoothed_dT.out 0 3 6 << EOF
+tmpfile_stlo_stla_dTS_dTScS
+tmpfile_stlo_stla_Smoothed_dTS
+tmpfile_stlo_stla_Smoothed_dTScS
+-130
+-60
+1
+20
+50
+1
+EOF
 
-	# ScS dT.
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_dot << EOF
-select stlo,stla,D_T_ScS_All from Master_a10 where eq=${EQ} and wantit=1 and abs(D_T_ScS_All)<=0.5;
-EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Linear_Slow << EOF
-select stlo,stla,D_T_ScS_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All>0.5;
-EOF
-	mysql -N -u shule ${DB} > tmpfile_stlo_stla_dTScS_Linear_Fast << EOF
-select stlo,stla,-1.0*D_T_ScS_All/6 from Master_a10 where eq=${EQ} and wantit=1 and D_T_ScS_All<-0.5;
-EOF
+	awk '{if ($3<0.5 && $3>-0.5) print $1,$2,$3}' tmpfile_stlo_stla_Smoothed_dTS > tmpfile_stlo_stla_dTS_dot
+	awk '{if ($3>0.5) print $1,$2,$3/6}' tmpfile_stlo_stla_Smoothed_dTS > tmpfile_stlo_stla_dTS_Linear_Slow
+	awk '{if ($3<-0.5) print $1,$2,-$3/6}' tmpfile_stlo_stla_Smoothed_dTS > tmpfile_stlo_stla_dTS_Linear_Fast
+
+	awk '{if ($3<0.5 && $3>-0.5) print $1,$2,$3}' tmpfile_stlo_stla_Smoothed_dTScS > tmpfile_stlo_stla_dTScS_dot
+	awk '{if ($3>0.5) print $1,$2,$3/6}' tmpfile_stlo_stla_Smoothed_dTScS > tmpfile_stlo_stla_dTScS_Linear_Slow
+	awk '{if ($3<-0.5) print $1,$2,-$3/6}' tmpfile_stlo_stla_Smoothed_dTScS > tmpfile_stlo_stla_dTScS_Linear_Fast
 
 
     # Plot Begin.
