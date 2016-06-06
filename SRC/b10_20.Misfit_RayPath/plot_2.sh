@@ -1,53 +1,56 @@
 #!/bin/bash
 
-ylabel="LAT"
-xlabel="LON"
-XMIN=-130
-XMAX=-60
+Num=`basename $0`
+Num=${Num#plot_}
+Num=${Num%.sh}
+
+
+ylabel=""
+xlabel=""
+XMIN=-125.5
+XMAX=-59.5
 XINC=20
 XNUM=10
-YMIN=20
-YMAX=50
+YMIN=-29.5
+YMAX=50.5
 YINC=10
 YNUM=10
+
+if [ ${Num} -eq 28 ]
+then
+	YPOSI="-0.23"
+	BAXIS=-Ba${XINC}g${XNUM}/a${XINC}g${YNUM}WS
+else
+	YPOSI="-0.05"
+	BAXIS="-Bg${XNUM}/g${YNUM}WS"
+fi
 
 PROJ=-JX${width}i/${height}i
 REG="-R${XMIN}/${XMAX}/${YMIN}/${YMAX}"
 
-gmt psbasemap ${REG} ${PROJ} -Ba${XNUM}f${XINC}g${XNUM}:"${xlabel}":/a${YNUM}f${YINC}g${YNUM}:"${ylabel}":WS -O -K >> ${OUTFILE}
-gmt pscoast -JX${width}id/${height}id ${REG} -W0.5p,black -A2000 -Dh -O -K >> ${OUTFILE}
+scale=`minmax -C tmpfile_S_Grid_${Num} | awk '{if (-$5>$6) print -$5; else print $6}'`
+if [ ${scale} -eq 0 ]
+then
+	exit 0
+fi
+if [ ${scale} -eq 1 ]
+then
+	scale="2"
+fi
 
-gmt psxy tmpfile_stlo_stla_dTScS_dot ${REG} ${PROJ} -Sc0.05 -Gblack -Wblack -O -K >> ${OUTFILE}
-gmt psxy tmpfile_stlo_stla_dTScS_Linear_Fast ${REG} ${PROJ} -Sc -W0.8p,blue -O -K >> ${OUTFILE}
-gmt psxy tmpfile_stlo_stla_dTScS_Linear_Slow ${REG} ${PROJ} -Sc -W0.8p,red -O -K >> ${OUTFILE}
+gmt xyz2grd tmpfile_S_Grid_${Num} -Gtmp.grd ${REG} -I1/1
+gmt makecpt -Cpolar -T-${scale}/${scale}/`echo "${scale}" |awk '{print 2*$1/50}'` > tmpfile.cpt
+gmt grdimage ${REG} ${PROJ} tmp.grd -Ctmpfile.cpt -O -K >> ${OUTFILE}
+gmt psscale -Ctmpfile.cpt -D`echo "${width}" | awk '{print $1/2}'`i/${YPOSI}i/${width}i/0.05ih -B`echo "${scale}"| awk '{printf "%d",$1/2}'` -O -K >> ${OUTFILE}
+gmt pscoast -JX${width}id/${height}id ${REG} -W0.2p,black -A2000 -Dh -O -K >> ${OUTFILE}
 
+gmt psbasemap ${REG} ${PROJ} ${BAXIS} -O -K >> ${OUTFILE}
+
+D1=`awk -v N=${Num} 'NR==N {print $0}' tmpfile_depth`
+D2=`awk -v N=$((Num+1)) 'NR==N {print $0}' tmpfile_depth`
 cat > tmpfile_$$ << EOF
-${XMIN} ${YMIN} ScS dT, @;blue;Fast@;;, @;red;Slow@;;.
+${XMIN} ${YMIN} ${D1} ~ ${D2} km.
 EOF
-gmt pstext tmpfile_$$ -F+jLB+f10p -J -R -N -O -K >> ${OUTFILE}
-
-# Plot scale.
-
-gmt psxy ${REG} ${PROJ} -Sc -W0.8p,black -N -O -K >> ${OUTFILE} << EOF
--115 54.9 `echo "1/6" | bc -l`
--105 54.9 `echo "3/6" | bc -l`
--95  54.9 `echo "5/6" | bc -l`
--85  54.9 `echo "7/6" | bc -l`
--75  54.9 `echo "9/6" | bc -l`
-EOF
-gmt psxy ${REG} ${PROJ} -Sc -Gblack -Wblack -N -O -K >> ${OUTFILE} << EOF
--125 54.9 `echo "0.5/6" | bc -l`
-EOF
-
-cat > tmpfile_$$ << EOF
--125 52 <0.5
--115 52 1
--105 52 3
--95  52 5
--85  52 7
--75  52 9
--65  52 sec.
-EOF
-gmt pstext tmpfile_$$ -F+jCB+f10p -J -R -N -O -K >> ${OUTFILE}
+gmt pstext tmpfile_$$ -F+jLB+f10p ${PROJ} ${REG} -N -O -K >> ${OUTFILE}
 
 exit 0

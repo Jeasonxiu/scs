@@ -11,11 +11,11 @@ PLOTSRCDIR=${PLOTSRCDIR%/*}
 # May 28 2015
 # ===========================================================
 
-VERTICNUM=2
-HORIZNUM=1
+VERTICNUM=4
+HORIZNUM=7
 VERTICPER="0.75"
 HORIZPER="0.8"
-PLOTORIENT="-P"
+PLOTORIENT=""
 
 if [ -z ${PLOTORIENT} ]
 then
@@ -74,36 +74,38 @@ EOF
 select concat("${WORKDIR_Sampling}/",PairName,"_S.path"),Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_ScS_pathfile_misfit << EOF
-select concat("${WORKDIR_Sampling}/",PairName,"_S.path"),Misfit_S_All from Master_a10 where eq=${EQ} and wantit=1;
+select concat("${WORKDIR_Sampling}/",PairName,"_ScS.path"),Misfit_ScS_All from Master_a10 where eq=${EQ} and wantit=1;
 EOF
 
 	# Count ray path along the grid.
-	${EXECDIR}/MisfitGirdHunt.out 0 2 6 << EOF
-tmpfile_S_pathfile_misfit 
+	${EXECDIR}/MisfitGirdHunt.out 0 3 9 << EOF
+tmpfile_S_pathfile_misfit
 tmpfile_S_Grid_
+tmpfile_depth
 -130
 -60
 1
--25
+-30
 50
 1
 0
 2891
-10
+104
 EOF
 
-	${EXECDIR}/MisfitGirdHunt.out 0 2 6 << EOF
-tmpfile_ScS_pathfile_misfit 
+	${EXECDIR}/MisfitGirdHunt.out 0 3 9 << EOF
+tmpfile_ScS_pathfile_misfit
 tmpfile_ScS_Grid_
+tmpfile_depth
 -130
 -60
 1
--25
+-30
 50
 1
 0
 2891
-10
+104
 EOF
 
     # Plot Begin.
