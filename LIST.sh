@@ -63,7 +63,9 @@ ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/b10_16.Misfit2_Source/plot.sh
 # ${SRCDIR}/b10_17.Misfit3_Source/plot.sh
 # ${SRCDIR}/b10_18.Misfit4_Source/plot.sh
-${SRCDIR}/b10_19.Smoothed_dT_Distribution/plot.sh
+# ${SRCDIR}/b10_19.Smoothed_dT_Distribution/plot.sh
+${SRCDIR}/b10_20.Misfit_S_RayPath/plot.sh
+# ${SRCDIR}/b10_21.Misfit_ScS_RayPath/plot.sh
 
 # ${SRCDIR}/b11_1.ClusterWaveform.sh
 # ${SRCDIR}/b11_2.Distribution/plot.sh
