@@ -59,7 +59,7 @@ EOF
 
 		# Information collection.
 		mysql -N -u shule ${DB} > tmpfile_Cin_$$ << EOF
-select file,stnm,${ReferencePhase},${N_A_S},Rad_Pat_${ReferencePhase} from Master_$$ where eq=${EQ} and Category=${cate} and WantIt=1;
+select file,stnm,${ReferencePhase},0.0,${N_A_S},Rad_Pat_${ReferencePhase} from Master_$$ where eq=${EQ} and Category=${cate} and WantIt=1;
 EOF
 
 

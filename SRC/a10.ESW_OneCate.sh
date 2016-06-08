@@ -61,7 +61,7 @@ EOF
 
 	# Information collection.
 	mysql -N -u shule ${DB} > tmpfile_Cin_$$ << EOF
-select file,stnm,${ReferencePhase},${N_A_S},Rad_Pat_${ReferencePhase} from Master_$$ where eq=${EQ} and WantIt=1;
+select file,stnm,${ReferencePhase},0.0,${N_A_S},Rad_Pat_${ReferencePhase} from Master_$$ where eq=${EQ} and WantIt=1;
 EOF
 
     # C code.
@@ -177,7 +177,7 @@ EOF
 
 	# Information collection.
 	mysql -N -u shule ${DB} > tmpfile_Cin_$$ << EOF
-select file,stnm,${MainPhase}+D_T_S_All,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and WantIt=1;
+select file,stnm,${MainPhase},D_T_S_All,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and WantIt=1;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_POLARITY << EOF
 select stnm,Polarity_S_All from Master_$$ where eq=${EQ} and WantIt=1;
