@@ -124,8 +124,11 @@ void MakeStack(struct Data *p,int quick){
     for (N=0;N<stackloopN;N++){
 
         // Shift_Stack and make stack N.
-        if (N==0 || contribute==0){
+		if (contribute==0){
             shift_stack(p->data,p->fileN,p->dlen,0,p->shift,0,p->weight,p->stack,p->std);
+		}
+        else if (N==0){
+            shift_stack(p->data,p->fileN,p->dlen,1,p->shift,0,p->weight,p->stack,p->std);
         }
         else{
             shift_stack(p->data,p->fileN,p->dlen,1,p->shift,1,p->weight,p->stack,p->std);

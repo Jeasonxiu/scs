@@ -60,7 +60,7 @@ EOF
 
 		# Information collection.
 		mysql -N -u shule ${DB} > tmpfile_Cin_$$ << EOF
-select file,stnm,${MainPhase}+D_T_S,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and Category=${cate} and WantIt=1;
+select file,stnm,${MainPhase},D_T_S,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and Category=${cate} and WantIt=1;
 EOF
 		mysql -N -u shule ${DB} > tmpfile_POLARITY << EOF
 select stnm,Polarity_S from Master_$$ where eq=${EQ} and WantIt=1;
