@@ -44,9 +44,9 @@ ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/b06_3.S_ZoomDistinctSum.sh
 # ${SRCDIR}/b06_4.ScS_ZoomDistinctSum.sh
 # ${SRCDIR}/b06_5.DataSet.sh
-# ${SRCDIR}/b10_1.ESW_OneCate_S.sh
+${SRCDIR}/b10_1.ESW_OneCate_S.sh
 # ${SRCDIR}/b10_1.ESW_OneCate_S_Modified.sh
-# ${SRCDIR}/b10_2.ESW_OneCate_ScS.sh
+${SRCDIR}/b10_2.ESW_OneCate_ScS.sh
 # ${SRCDIR}/b10_3.Catalog_S_with_misfit_position.sh
 # ${SRCDIR}/b10_4.Catalog_ScS_with_misfit_position.sh
 # ${SRCDIR}/b10_5.Misfit_Receiver/plot.sh
@@ -64,7 +64,7 @@ ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/b10_17.Misfit3_Source/plot.sh
 # ${SRCDIR}/b10_18.Misfit4_Source/plot.sh
 # ${SRCDIR}/b10_19.Smoothed_dT_Distribution/plot.sh
-${SRCDIR}/b10_20.Misfit_S_RayPath/plot.sh
+# ${SRCDIR}/b10_20.Misfit_S_RayPath/plot.sh
 # ${SRCDIR}/b10_21.Misfit_ScS_RayPath/plot.sh
 
 # ${SRCDIR}/b11_1.ClusterWaveform.sh
