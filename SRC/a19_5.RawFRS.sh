@@ -31,7 +31,7 @@ for EQ in ${EQnames}
 do
 	# Check number of valid traces.
 	cat > tmpfile_CheckValid_$$ << EOF
-select count(*) from Master_$$ where eq=${EQ} and wantit=1;
+select count(*) from Master_a17 where eq=${EQ} and wantit=1;
 EOF
 	NR=`mysql -N -u shule ${DB} < tmpfile_CheckValid_$$`
 	if [ ${NR} -eq 0 ]

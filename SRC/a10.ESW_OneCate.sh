@@ -111,6 +111,8 @@ EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName       varchar(22) not null unique primary key,
+ESWFile_S_All  varchar(200) comment "S ESW file by all data.",
+FullStackFile_S_All  varchar(200) comment "S ESW full stack file by all data.",
 D_T_S_All      double comment "S arrival relative to PREM, ESW by all data.",
 CCC_S_All      double comment "S wave shape CCC, ESW by all data.",
 SNR_S_All      double comment "S SNR, ESW by all data.",
@@ -137,7 +139,9 @@ Amp_S_All      double comment "S amplitude after filtering, ESW by all data."
 load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,@tmp2,D_T_S_All,CCC_S_All,SNR_S_All,Weight_S_All,Misfit_S_All,Misfit2_S_All,Misfit3_S_All,Misfit4_S_All,M1_B_S_All,M1_E_S_All,M2_B_S_All,M2_E_S_All,Norm2_S_All,Peak_S_All,NA_S_All,N_T1_S_All,N_T2_S_All,S_T1_S_All,S_T2_S_All,Polarity_S_All,@tmp3,WL_S_All,Amp_S_All)
-set PairName=concat(@tmp1,"_",@tmp2);
+set PairName=concat(@tmp1,"_",@tmp2),
+ESWFile_S_All="${WORKDIR_ESFAll}/${EQ}_${ReferencePhase}/${EQ}.ESF_F",
+FullStackFile_S_All="${WORKDIR_ESFAll}/${EQ}_${ReferencePhase}/fullstack";
 EOF
 
 	# update Master_$$.
@@ -229,6 +233,8 @@ EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName         varchar(22) not null unique primary key,
+ESWFile_ScS_All  varchar(200) comment "ScS ESW file by all data.",
+FullStackFile_ScS_All  varchar(200) comment "ScS ESW full stack file by all data.",
 D_T_ScS_All      double comment "ScS arrival relative to PREM, ESW by all data.",
 CCC_ScS_All      double comment "ScS wave shape CCC, ESW by all data.",
 SNR_ScS_All      double comment "ScS SNR, ESW by all data.",
@@ -254,7 +260,9 @@ Amp_ScS_All      double comment "ScS amplitude after filtering, ESW by all data.
 load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,@tmp2,D_T_ScS_All,CCC_ScS_All,SNR_ScS_All,Weight_ScS_All,Misfit_ScS_All,Misfit2_ScS_All,Misfit3_ScS_All,Misfit4_ScS_All,M1_B_ScS_All,M1_E_ScS_All,M2_B_ScS_All,M2_E_ScS_All,Norm2_ScS_All,Peak_ScS_All,NA_ScS_All,N_T1_ScS_All,N_T2_ScS_All,S_T1_ScS_All,S_T2_ScS_All,Polarity_ScS_All,@tmp3,@tmp4,Amp_ScS_All)
-set PairName=concat(@tmp1,"_",@tmp2);
+set PairName=concat(@tmp1,"_",@tmp2),
+ESWFile_ScS_All="${WORKDIR_ESFAll}/${EQ}_${MainPhase}/${EQ}.ESF_F",
+FullStackFile_ScS_All="${WORKDIR_ESFAll}/${EQ}_${MainPhase}/fullstack";
 EOF
 
 	# update Master_$$.

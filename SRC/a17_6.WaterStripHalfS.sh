@@ -21,7 +21,7 @@ echo "--> `basename $0` is running. (`date`)"
 # Continue from last modification.
 mysql -u shule ${DB} << EOF
 drop table if exists Master_$$;
-create table Master_$$ as select * from Master_a13;
+create table Master_$$ as select * from Master_a16;
 EOF
 
 
