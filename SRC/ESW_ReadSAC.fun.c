@@ -18,7 +18,7 @@ void ESW_ReadSAC(struct Data *p){
     int    count,count2,fileN,*bad;
     FILE   *fpin,*fpout;
     char   **filelist,outfile[200];
-    double *ptime,AMP,nanchor;
+    double *ptime,AMP,nanchor,shift;
 
     filelist=(char **)malloc(p->fileN*sizeof(char *));
     for (count=0;count<p->fileN;count++){
@@ -30,8 +30,9 @@ void ESW_ReadSAC(struct Data *p){
     // Read in sac file names, ptime, rad_pat.
     fpin=fopen(p->INFILE,"r");
     for (count=0;count<p->fileN;count++){
-        fscanf(fpin,"%s%s%lf%lf%lf",filelist[count],p->stnm[count],ptime+count,&nanchor,p->rad_pat+count);
+        fscanf(fpin,"%s%s%lf%lf%lf%lf",filelist[count],p->stnm[count],ptime+count,&shift,&nanchor,p->rad_pat+count);
 
+		p->shift[count]=(int)ceil(shift/p->delta);
         p->ploc[count]=(int)ceil(-p->C1/p->delta);
         p->naloc[count]=(int)ceil((nanchor-ptime[count])/p->delta)+p->ploc[count];
     }
