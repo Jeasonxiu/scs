@@ -1,16 +1,17 @@
 #!/bin/bash
 
 #=================================================================
-# This script: Stretch / Shrink ESF of S to looks like ESF of ScS.
-#              Also, write none-stretched ESF S files in the same
-#              format.
+# This script: Stretch S ESW or ScS traces to match their shape.
+# Note: Do this record by record.
+# Then deconvolve the ESW from the signal.
 #
 # Outputs:
 #
 #           ${WORKDIR_Stretch}/${EQ}/
+#           ${WORKDIR_WaterDecon}/${EQ}/
 #
 # Shule Yu
-# Jun 22 2014
+# Jun 09 2016
 #==============================================================
 
 echo ""
@@ -36,13 +37,13 @@ EOF
 		continue
 	fi
 
-    echo "    ==> ${EQ} Stretch/Shrink begin !"
-
 	rm -rf ${WORKDIR_Stretch}/${EQ}
     mkdir -p ${WORKDIR_Stretch}/${EQ}
     cd ${WORKDIR_Stretch}/${EQ}
     cp ${WORKDIR}/tmpfile_INFILE_${RunNumber} ${WORKDIR_Stretch}/${EQ}/INFILE
     trap "rm -rf ${WORKDIR_Stretch}/${EQ} ${WORKDIR}/*_${RunNumber}; exit 1" SIGINT
+
+    echo "    ==> ${EQ} Stretching begin !"
 
     for cate in `seq 1 ${CateN}`
     do
@@ -67,20 +68,25 @@ select PairName from Master_$$ where eq=${EQ} and wantit=1 and Category=${cate};
 EOF
 
         # C Code.
-        ${EXECDIR}/StretchUp.out 3 3 7 << EOF
+        ${EXECDIR}/FinalStretch.out 3 7 8 << EOF
 ${nXStretch}
 ${nYStretch}
 ${cate}
 ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/fullstack
 ${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/fullstack
 ${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.stretched
+${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.newScS
+${WORKDIR_Stretch}/${EQ}/Stretch_Info.${cate}
+${WORKDIR_Stretch}/${EQ}/plotfile_shifted_original_${cate}
+${WORKDIR_Stretch}/${EQ}/Stretch_Info.Best.${cate}
 ${LCompare}
 ${RCompare}
-${R1}
-${R2}
+-2.0
+2.0
 ${V1}
 ${V2}
 ${AMPlevel_Default}
+${DELTA}
 EOF
 
         if [ $? -ne 0 ]

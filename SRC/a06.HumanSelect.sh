@@ -14,7 +14,7 @@ echo ""
 echo "--> `basename $0` is running. (`date`)"
 cd ${WORKDIR_HandPick}
 cp ${WORKDIR}/tmpfile_INFILE_${RunNumber} ${WORKDIR_HandPick}/INFILE
-trap "rm -f ${WORKDIR_HandPick}/tmpfile* ${WORKDIR_HandPick}/*checked ${WORKDIR}/*_${RunNumber}; exit 1" SIGINT
+trap "rm -f ${WORKDIR_HandPick}/tmpfile*$$ ${WORKDIR_HandPick}/*checked ${WORKDIR}/*_${RunNumber}; exit 1" SIGINT
 
 # Continue from last modification.
 mysql -u shule ${DB} << EOF
@@ -35,6 +35,7 @@ do
 select count(*) from Master_$$ where eq=${EQ} and wantit=1;
 EOF
 	NR=`mysql -N -u shule ${DB} < tmpfile_CheckValid_$$`
+	rm -f tmpfile_CheckValid_$$
 	if [ ${NR} -eq 0 ]
 	then
 		continue
@@ -94,7 +95,7 @@ drop table if exists Master_$$;
 EOF
 
 # Clean up.
-rm -f ${WORKDIR_HandPick}/tmpfile* ${WORKDIR_HandPick}/*checked
+rm -f ${WORKDIR_HandPick}/tmpfile*$$ ${WORKDIR_HandPick}/*checked
 
 cd ${WORKDIR}
 
