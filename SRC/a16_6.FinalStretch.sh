@@ -104,6 +104,7 @@ DeconSource  varchar(200) comment "Decon source file for this pair."
 );
 load data local infile "tmpfile_PairName_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
+(PairName)
 set DeconSource="${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.stretched";
 EOF
 		# update Master_$$.

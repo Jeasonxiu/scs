@@ -44,8 +44,6 @@ EOF
     cp ${WORKDIR}/tmpfile_INFILE_${RunNumber} ${WORKDIR_Stretch}/${EQ}/INFILE
     trap "rm -rf ${WORKDIR_Stretch}/${EQ} ${WORKDIR}/*_${RunNumber}; exit 1" SIGINT
 
-    # Set specialized EQ parameters.
-
     for cate in `seq 1 ${CateN}`
     do
 
@@ -105,6 +103,7 @@ DeconSource  varchar(200) comment "Decon source file for this pair."
 );
 load data local infile "tmpfile_PairName_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
+(PairName)
 set DeconSource="${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.stretched";
 EOF
 			# update Master_$$.
@@ -143,6 +142,7 @@ DeconSource  varchar(200) comment "Decon source file for this pair."
 );
 load data local infile "tmpfile_PairName_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
+(PairName)
 set DeconSource="${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.stretched";
 EOF
 	# update Master_$$.

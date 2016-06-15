@@ -168,7 +168,7 @@ SS
 
 
 # a20 & a41.
-<WeightScheme>                   1
+<WeightScheme>                   4
 								 1 / 2 / 3 / others
 
 <WeightNormalize>                No
@@ -562,6 +562,10 @@ PLOTTIMEMAX_Catalog>            50
 
 <EQs_BEGIN>
 
+200711180540
+
+<EQs_END>
+
 200608250044
 200705251747
 200707211327
@@ -580,8 +584,6 @@ PLOTTIMEMAX_Catalog>            50
 201205141000
 201205280507
 201308230834
-
-<EQs_END>
 
 # ==========================================================
 #             ! Models goes into calculation !

@@ -24,11 +24,11 @@
 # ${SRCDIR}/a17_5.Raw.sh
 # ${SRCDIR}/a17_6.WaterStripHalfS.sh
 ${SRCDIR}/a16_a17.StretchDecon.sh
-# ${SRCDIR}/a19_1.WaterFRS.sh
+${SRCDIR}/a19_1.WaterFRS.sh
 # ${SRCDIR}/a19_3.SubtractFRS.sh
 # ${SRCDIR}/a19_5.RawFRS.sh
 # ${SRCDIR}/a19_6.WaterStripHalfSFRS.sh
-# ${SRCDIR}/a20.WeightScheme.sh
+${SRCDIR}/a20.WeightScheme.sh
 # ${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
 # ${SRCDIR}/a22.StackData.sh
@@ -87,7 +87,7 @@ ${SRCDIR}/a16_a17.StretchDecon.sh
 # ${SRCDIR}/b17_2.DeconProfile.sh
 # ${SRCDIR}/b17_3.DeconFreq.sh
 # ${SRCDIR}/b19.DeconFRS_Compare.sh
-# ${SRCDIR}/b20_1.CatalogAll.sh
+${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/b20_2.CatalogCompareDeconMethod.sh
 # ${SRCDIR}/b20_3.WeightHistogram.sh
 # ${SRCDIR}/b21_1.CircleBin.sh

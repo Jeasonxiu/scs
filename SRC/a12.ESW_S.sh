@@ -140,8 +140,8 @@ load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,@tmp2,D_T_S,CCC_S,SNR_S,Weight_S,Misfit_S,Misfit2_S,Misfit3_S,Misfit4_S,M1_B_S,M1_E_S,M2_B_S,M2_E_S,Norm2_S,Peak_S,NA_S,N_T1_S,N_T2_S,S_T1_S,S_T2_S,Polarity_S,@tmp3,WL_S,Amp_S)
 set PairName=concat(@tmp1,"_",@tmp2),
-ESWFile_S="${WORKDIR_ESFAll}/${EQ}_${ReferencePhase}/${cate}/${EQ}.ESF_F",
-FullStackFile_S="${WORKDIR_ESFAll}/${EQ}_${ReferencePhase}/${cate}/fullstack";
+ESWFile_S="${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/${EQ}.ESF_F",
+FullStackFile_S="${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/fullstack";
 EOF
 
 		# update Master_$$.
