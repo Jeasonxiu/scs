@@ -380,7 +380,7 @@ EOF
 
         ### 6.6. Info.
         pstext ${PROJFRS} ${REGFRS} -X${onethirdwidth}i -N -O -K >> ${OUTFILE} << EOF
-0 0.9 9 0 0 LT ${STNM}  ${Gcarc}    ${Ts_D}    ${Ver_D}
+0 0.9 9 0 0 LT ${STNM}  ${Gcarc}    `echo ${Ts_D}|awk '{printf "%.3lf",$1}'`    `echo ${Ver_D}|awk '{printf "%.4lf",$1}'`
 EOF
         # Plot a little map.
         pscoast -Jx${xscale}id/${yscale}id -R${RLOMIN}/${RLOMAX}/${RLAMIN}/${RLAMAX} -Dl -A40000 -W3,gray,faint -X` echo "1.15*${onesixthwidth}" | bc -l`i -O -K >> ${OUTFILE}
