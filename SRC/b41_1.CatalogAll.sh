@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # ================================================================
+# SYNTHESIS
 # Plot All waveforms. ScS + Stretched S; S + S esf; ScS + ScS esf;
 # deconed ScS; FRS; map.
 #
@@ -59,6 +60,7 @@ EOF
     YYYY=`echo ${EQ} | cut -b 1-4`
     MM=`echo ${EQ}   | cut -b 5-6`
     DD=`echo ${EQ}   | cut -b 7-8`
+
 
     # ================================================
     #         ! Make Plot Data !
