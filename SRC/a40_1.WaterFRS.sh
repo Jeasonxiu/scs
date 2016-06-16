@@ -13,7 +13,7 @@
 #==============================================================
 
 echo ""
-echo "--> `basename $0` is running. "
+echo "--> `basename $0` is running. (`date`)"
 rm -rf ${WORKDIR_WaterFRS}
 mkdir -p ${WORKDIR_WaterFRS}
 cd ${WORKDIR_WaterFRS}
