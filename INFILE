@@ -8,9 +8,9 @@
 <WORKDIR>                        /home/shule/PROJ/t041.ScS_Stripping
 <DB>                             ScS
 
-<SYNDATADIR>                     /home/shule/PROJ/t053.ULVZ_Flat
-<SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_Flat
-<SYNDB>                          ULVZ_Flat
+<SYNDATADIR>                     /home/shule/PROJ/t039.ULVZ
+<SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_1D_REFL
+<SYNDB>                          ULVZ_1D_REFL
 
 <BASHCODEDIR>                    /home/shule/Research/Fun.Bash.c001
 <CCODEDIR>                       /home/shule/Research/Fun.C.c002
@@ -512,8 +512,8 @@ PLOTTIMEMAX_Catalog>            50
 <PropertyZ_Label>                %
 
 <Property4D_MS>                  Thickness
-<Property4D_MIN>                 10
-<Property4D_MAX>                 10
+<Property4D_MIN>                 20
+<Property4D_MAX>                 20
 <Property4D_INC>                 5
 <Property4D_Label>               km
 
@@ -562,8 +562,6 @@ PLOTTIMEMAX_Catalog>            50
 
 <EQs_BEGIN>
 
-
-
 200608250044
 200705251747
 200707211327
@@ -589,7 +587,6 @@ PLOTTIMEMAX_Catalog>            50
 #             ! Models goes into calculation !
 # ==========================================================
 
-<EQsSYN_BEGIN>
 
 201500000001
 201500000002
@@ -976,10 +973,12 @@ PLOTTIMEMAX_Catalog>            50
 201500000383
 201500000384
 
-<EQsSYN_END>
 
+<EQsSYN_BEGIN>
 
 201500000273
 201500000276
 201500000285
 201500000288
+
+<EQsSYN_END>
