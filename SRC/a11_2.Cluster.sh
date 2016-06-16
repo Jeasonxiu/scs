@@ -14,6 +14,7 @@
 echo ""
 echo "--> `basename $0` is running. (`date`)"
 
+
 # Continue from last modification.
 mysql -u shule ${DB} << EOF
 drop table if exists Master_$$;
@@ -39,7 +40,7 @@ EOF
 		continue
 	fi
 
-    rm -r ${WORKDIR_Category}/${EQ}
+    rm -rf ${WORKDIR_Category}/${EQ}
     mkdir -p ${WORKDIR_Category}/${EQ}
     cd ${WORKDIR_Category}/${EQ}
     cp ${WORKDIR}/tmpfile_INFILE_${RunNumber} ${WORKDIR_Category}/${EQ}/INFILE

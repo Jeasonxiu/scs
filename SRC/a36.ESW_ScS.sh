@@ -8,14 +8,14 @@
 #
 #           ${WORKDIR_ESF}/${EQ}_ScS/
 #
-# Mysql:    Update ScS.Master
+# Mysql:    ScS.Master_a36
 #
 # Shule Yu
 # Jun 22 2014
 # ==============================================================
 
 echo ""
-echo "--> `basename $0` is running. "
+echo "--> `basename $0` is running. (`date`)"
 
 # Continue from last modification.
 mysql -u shule ${SYNDB} << EOF
@@ -27,7 +27,7 @@ EOF
 for EQ in ${EQnames}
 do
 
-    echo "    ==> EQ ${EQ}. E.S.F begin ! ( ${MainPhase}_${COMP} )."
+	echo "    ==> EQ ${EQ}. E.S.F begin ! ( ${MainPhase}_${COMP} )."
 
     # EQ specialized parameters.
 
@@ -48,7 +48,7 @@ do
 
 		# Information collection.
 		mysql -N -u shule ${SYNDB} > tmpfile_Cin_$$ << EOF
-select file,stnm,${MainPhase}+D_T_S,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and Category=${cate} and WantIt=1;
+select file,stnm,${MainPhase},D_T_S,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and Category=${cate} and WantIt=1;
 EOF
 		mysql -N -u shule ${SYNDB} > tmpfile_POLARITY << EOF
 select stnm,Polarity_S from Master_$$ where eq=${EQ} and WantIt=1;
@@ -101,11 +101,13 @@ EOF
 		# format infile.
 		sed 's/[[:blank:]]\+/,/g' ${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/${EQ}.ESF_DT | awk 'NR>1 {print $0}' > tmpfile_in_$$
 
-		# put the calculation into Master.
+		# put the calculation into Master_$$.
 		mysql -u shule ${SYNDB} << EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName     varchar(22) not null unique primary key,
+ESWFile_ScS  varchar(200) comment "ScS ESW file.",
+FullStackFile_ScS  varchar(200) comment "ScS ESW full stack file.",
 D_T_ScS      double comment "ScS arrival relative to PREM, ESW by categorized data.",
 CCC_ScS      double comment "ScS wave shape CCC, ESW by categorized data.",
 SNR_ScS      double comment "ScS SNR, ESW by categorized data.",
@@ -131,10 +133,12 @@ Amp_ScS      double comment "ScS amplitude after filtering, ESW by categorized d
 load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,@tmp2,D_T_ScS,CCC_ScS,SNR_ScS,Weight_ScS,Misfit_ScS,Misfit2_ScS,Misfit3_ScS,Misfit4_ScS,M1_B_ScS,M1_E_ScS,M2_B_ScS,M2_E_ScS,Norm2_ScS,Peak_ScS,NA_ScS,N_T1_ScS,N_T2_ScS,S_T1_ScS,S_T2_ScS,Polarity_ScS,@tmp3,@tmp4,Amp_ScS)
-set PairName=concat(@tmp1,"_",@tmp2);
+set PairName=concat(@tmp1,"_",@tmp2),
+ESWFile_ScS="${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/${EQ}.ESF_F",
+FullStackFile_ScS="${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/fullstack";
 EOF
 
-		# update Master.
+		# update Master_$$.
 		${BASHCODEDIR}/UpdateTable.sh ${SYNDB} Master_$$ tmptable$$ PairName
 		mysql -u shule ${SYNDB} << EOF
 update Master_$$ set WantIt=0 where eq=${EQ} and Weight_ScS=0;

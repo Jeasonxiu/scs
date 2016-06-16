@@ -14,8 +14,8 @@
 
 echo ""
 echo "--> `basename $0` is running. (`date`)"
+rm -rf ${WORKDIR_WaterFRS}
 mkdir -p ${WORKDIR_WaterFRS}
-rm -rf ${WORKDIR_WaterFRS}/*
 cd ${WORKDIR_WaterFRS}
 cp ${WORKDIR}/tmpfile_INFILE_${RunNumber} ${WORKDIR_WaterFRS}/INFILE
 trap "rm -f ${WORKDIR_WaterFRS}/tmpfile* ${WORKDIR}/*_${RunNumber}; exit 1" SIGINT

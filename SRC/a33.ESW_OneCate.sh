@@ -9,14 +9,14 @@
 #
 #           ${WORKDIR_ESFAll}/${EQ}/
 #
-# Mysql:    Update ScS.Master
+# Mysql:    ScS.Master_a33
 #
 # Shule Yu
 # Jun 22 2014
 # ==============================================================
 
 echo ""
-echo "--> `basename $0` is running. "
+echo "--> `basename $0` is running. (`date`)"
 
 # Continue from last modification.
 mysql -u shule ${SYNDB} << EOF
@@ -46,7 +46,7 @@ do
 
 	# Information collection.
 	mysql -N -u shule ${SYNDB} > tmpfile_Cin_$$ << EOF
-select file,stnm,${ReferencePhase},${N_A_S},Rad_Pat_${ReferencePhase} from Master_$$ where eq=${EQ} and WantIt=1;
+select file,stnm,${ReferencePhase},0.0,${N_A_S},Rad_Pat_${ReferencePhase} from Master_$$ where eq=${EQ} and WantIt=1;
 EOF
 
     # C code.
@@ -91,11 +91,13 @@ EOF
 	# format infile.
 	sed 's/[[:blank:]]\+/,/g' ${WORKDIR_ESFAll}/${EQ}_${ReferencePhase}/${EQ}.ESF_DT | awk 'NR>1 {print $0}' > tmpfile_in_$$
 
-    # put the calculation into Master.
+    # put the calculation into Master_$$.
 	mysql -u shule ${SYNDB} << EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName       varchar(22) not null unique primary key,
+ESWFile_S_All  varchar(200) comment "S ESW file by all data.",
+FullStackFile_S_All  varchar(200) comment "S ESW full stack file by all data.",
 D_T_S_All      double comment "S arrival relative to PREM, ESW by all data.",
 CCC_S_All      double comment "S wave shape CCC, ESW by all data.",
 SNR_S_All      double comment "S SNR, ESW by all data.",
@@ -122,10 +124,12 @@ Amp_S_All      double comment "S amplitude after filtering, ESW by all data."
 load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,@tmp2,D_T_S_All,CCC_S_All,SNR_S_All,Weight_S_All,Misfit_S_All,Misfit2_S_All,Misfit3_S_All,Misfit4_S_All,M1_B_S_All,M1_E_S_All,M2_B_S_All,M2_E_S_All,Norm2_S_All,Peak_S_All,NA_S_All,N_T1_S_All,N_T2_S_All,S_T1_S_All,S_T2_S_All,Polarity_S_All,@tmp3,WL_S_All,Amp_S_All)
-set PairName=concat(@tmp1,"_",@tmp2);
+set PairName=concat(@tmp1,"_",@tmp2),
+ESWFile_S_All="${WORKDIR_ESFAll}/${EQ}_${ReferencePhase}/${EQ}.ESF_F",
+FullStackFile_S_All="${WORKDIR_ESFAll}/${EQ}_${ReferencePhase}/fullstack";
 EOF
 
-	# update Master.
+	# update Master_$$.
 	${BASHCODEDIR}/UpdateTable.sh ${SYNDB} Master_$$ tmptable$$ PairName
 	mysql -u shule ${SYNDB} << EOF
 update Master_$$ set WantIt=0 where eq=${EQ} and Weight_S_All=0;
@@ -162,7 +166,7 @@ EOF
 
 	# Information collection.
 	mysql -N -u shule ${SYNDB} > tmpfile_Cin_$$ << EOF
-select file,stnm,${MainPhase}+D_T_S_All,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and WantIt=1;
+select file,stnm,${MainPhase},D_T_S_All,${N_A_ScS},Rad_Pat_${MainPhase} from Master_$$ where eq=${EQ} and WantIt=1;
 EOF
 	mysql -N -u shule ${SYNDB} > tmpfile_POLARITY << EOF
 select stnm,Polarity_S_All from Master_$$ where eq=${EQ} and WantIt=1;
@@ -214,11 +218,13 @@ EOF
 	# format infile.
 	sed 's/[[:blank:]]\+/,/g' ${WORKDIR_ESFAll}/${EQ}_${MainPhase}/${EQ}.ESF_DT | awk 'NR>1 {print $0}' > tmpfile_in_$$
 
-    # put the calculation into Master.
+    # put the calculation into Master_$$.
 	mysql -u shule ${SYNDB} << EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName         varchar(22) not null unique primary key,
+ESWFile_ScS_All  varchar(200) comment "ScS ESW file by all data.",
+FullStackFile_ScS_All  varchar(200) comment "ScS ESW full stack file by all data.",
 D_T_ScS_All      double comment "ScS arrival relative to PREM, ESW by all data.",
 CCC_ScS_All      double comment "ScS wave shape CCC, ESW by all data.",
 SNR_ScS_All      double comment "ScS SNR, ESW by all data.",
@@ -244,10 +250,12 @@ Amp_ScS_All      double comment "ScS amplitude after filtering, ESW by all data.
 load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,@tmp2,D_T_ScS_All,CCC_ScS_All,SNR_ScS_All,Weight_ScS_All,Misfit_ScS_All,Misfit2_ScS_All,Misfit3_ScS_All,Misfit4_ScS_All,M1_B_ScS_All,M1_E_ScS_All,M2_B_ScS_All,M2_E_ScS_All,Norm2_ScS_All,Peak_ScS_All,NA_ScS_All,N_T1_ScS_All,N_T2_ScS_All,S_T1_ScS_All,S_T2_ScS_All,Polarity_ScS_All,@tmp3,@tmp4,Amp_ScS_All)
-set PairName=concat(@tmp1,"_",@tmp2);
+set PairName=concat(@tmp1,"_",@tmp2),
+ESWFile_ScS_All="${WORKDIR_ESFAll}/${EQ}_${MainPhase}/${EQ}.ESF_F",
+FullStackFile_ScS_All="${WORKDIR_ESFAll}/${EQ}_${MainPhase}/fullstack";
 EOF
 
-	# update Master.
+	# update Master_$$.
 	${BASHCODEDIR}/UpdateTable.sh ${SYNDB} Master_$$ tmptable$$ PairName
 	mysql -u shule ${SYNDB} << EOF
 update Master_$$ set WantIt=0 where eq=${EQ} and Weight_ScS_All=0;
