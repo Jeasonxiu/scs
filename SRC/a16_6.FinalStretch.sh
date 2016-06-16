@@ -17,14 +17,21 @@
 echo ""
 echo "--> `basename $0` is running. (`date`)"
 
+# Continue from last modification.
+mysql -u shule ${DB} << EOF
+drop table if exists Master_$$;
+create table Master_$$ as select * from Master_a13;
+EOF
+
 # Work Begins.
 for EQ in ${EQnames}
 do
 	# Check number of valid traces.
 	cat > tmpfile_CheckValid_$$ << EOF
-select count(*) from Master_a13 where eq=${EQ} and wantit=1;
+select count(*) from Master_$$ where eq=${EQ} and wantit=1;
 EOF
 	NR=`mysql -N -u shule ${DB} < tmpfile_CheckValid_$$`
+	rm -f tmpfile_CheckValid_$$
 	if [ ${NR} -eq 0 ]
 	then
 		continue
@@ -55,6 +62,11 @@ EOF
             continue
         fi
 
+		# Gather Information.
+		mysql -N -u shule ${DB} > tmpfile_PairName_$$ << EOF
+select PairName from Master_$$ where eq=${EQ} and wantit=1 and Category=${cate};
+EOF
+
         # C Code.
         ${EXECDIR}/FinalStretch.out 3 7 8 << EOF
 ${nXStretch}
@@ -62,11 +74,11 @@ ${nYStretch}
 ${cate}
 ${WORKDIR_ESF}/${EQ}_${ReferencePhase}/${cate}/fullstack
 ${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/fullstack
-${EQ}.ESF_F${cate}.stretched
-${EQ}.ESF_F${cate}.newScS
-Stretch_Info.${cate}
-plotfile_shifted_original_${cate}
-Stretch_Info.Best.${cate}
+${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.stretched
+${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.newScS
+${WORKDIR_Stretch}/${EQ}/Stretch_Info.${cate}
+${WORKDIR_Stretch}/${EQ}/plotfile_shifted_original_${cate}
+${WORKDIR_Stretch}/${EQ}/Stretch_Info.Best.${cate}
 ${LCompare}
 ${RCompare}
 -2.0
@@ -83,9 +95,33 @@ EOF
             continue
         fi
 
+		# put the calculation into Master_$$.
+		mysql -u shule ${DB} << EOF
+drop table if exists tmptable$$;
+create table tmptable$$(
+PairName     varchar(22) not null unique primary key,
+DeconSource  varchar(200) comment "Decon source file for this pair."
+);
+load data local infile "tmpfile_PairName_$$" into table tmptable$$
+fields terminated by "," lines terminated by "\n"
+(PairName)
+set DeconSource="${WORKDIR_Stretch}/${EQ}/${EQ}.ESF_F${cate}.stretched";
+EOF
+		# update Master_$$.
+		${BASHCODEDIR}/UpdateTable.sh ${DB} Master_$$ tmptable$$ PairName
+
     done # Done Category loop.
 
+	rm -f tmpfile*$$
+
 done # Done EQ loop.
+
+mysql -u shule ${DB} << EOF
+drop table if exists tmptable$$;
+drop table if exists Master_a16;
+create table Master_a16 as select * from Master_$$;
+drop table if exists Master_$$;
+EOF
 
 cd ${WORKDIR}
 

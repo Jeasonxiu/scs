@@ -21,7 +21,7 @@ echo "--> `basename $0` is running. (`date`)"
 # Continue from last modification.
 mysql -u shule ${DB} << EOF
 drop table if exists Master_$$;
-create table Master_$$ as select * from Master_a13;
+create table Master_$$ as select * from Master_a16;
 EOF
 
 
@@ -33,6 +33,7 @@ do
 select count(*) from Master_$$ where eq=${EQ} and wantit=1;
 EOF
 	NR=`mysql -N -u shule ${DB} < tmpfile_CheckValid_$$`
+	rm -f tmpfile_CheckValid_$$
 	if [ ${NR} -eq 0 ]
 	then
 		continue
