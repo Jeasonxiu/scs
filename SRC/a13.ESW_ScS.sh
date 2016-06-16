@@ -30,6 +30,7 @@ do
 select count(*) from Master_$$ where eq=${EQ} and wantit=1;
 EOF
 	NR=`mysql -N -u shule ${DB} < tmpfile_CheckValid_$$`
+	rm -f tmpfile_CheckValid_$$
 	if [ ${NR} -eq 0 ]
 	then
 		continue
@@ -113,6 +114,8 @@ EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName     varchar(22) not null unique primary key,
+ESWFile_ScS  varchar(200) comment "ScS ESW file.",
+FullStackFile_ScS  varchar(200) comment "ScS ESW full stack file.",
 D_T_ScS      double comment "ScS arrival relative to PREM, ESW by categorized data.",
 CCC_ScS      double comment "ScS wave shape CCC, ESW by categorized data.",
 SNR_ScS      double comment "ScS SNR, ESW by categorized data.",
@@ -138,7 +141,9 @@ Amp_ScS      double comment "ScS amplitude after filtering, ESW by categorized d
 load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,@tmp2,D_T_ScS,CCC_ScS,SNR_ScS,Weight_ScS,Misfit_ScS,Misfit2_ScS,Misfit3_ScS,Misfit4_ScS,M1_B_ScS,M1_E_ScS,M2_B_ScS,M2_E_ScS,Norm2_ScS,Peak_ScS,NA_ScS,N_T1_ScS,N_T2_ScS,S_T1_ScS,S_T2_ScS,Polarity_ScS,@tmp3,@tmp4,Amp_ScS)
-set PairName=concat(@tmp1,"_",@tmp2);
+set PairName=concat(@tmp1,"_",@tmp2),
+ESWFile_ScS="${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/${EQ}.ESF_F",
+FullStackFile_ScS="${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/fullstack";
 EOF
 
 		# update Master_$$.

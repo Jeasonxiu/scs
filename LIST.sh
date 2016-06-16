@@ -9,7 +9,6 @@
 # ${SRCDIR}/a08.AddRadpat.sh
 # ${SRCDIR}/a09.CorrectDepth.sh
 # ${SRCDIR}/a10.ESW_OneCate.sh
-# ${SRCDIR}/a10.ESW_OneCate_Modified.sh
 # ${SRCDIR}/a11_1.ClusterThin.sh
 # ${SRCDIR}/a11_2.Cluster.sh
 ${SRCDIR}/a11_3.ClusterMisfit.sh
@@ -25,6 +24,7 @@ ${SRCDIR}/a17_1.Decon.sh
 # ${SRCDIR}/a17_3.Subtract.sh
 # ${SRCDIR}/a17_5.Raw.sh
 # ${SRCDIR}/a17_6.WaterStripHalfS.sh
+${SRCDIR}/a16_a17.StretchDecon.sh
 ${SRCDIR}/a19_1.WaterFRS.sh
 # ${SRCDIR}/a19_3.SubtractFRS.sh
 # ${SRCDIR}/a19_5.RawFRS.sh
@@ -34,7 +34,6 @@ ${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
 ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/a23.BinBootStrap.sh
-# ${SRCDIR}/a24_1.StackModels_1D.sh
 
 
 # ${SRCDIR}/b01.TheoCalc.sh
@@ -44,9 +43,7 @@ ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/b06_3.S_ZoomDistinctSum.sh
 # ${SRCDIR}/b06_4.ScS_ZoomDistinctSum.sh
 # ${SRCDIR}/b06_5.DataSet.sh
-
 # ${SRCDIR}/b10_1.ESW_OneCate_S.sh
-# ${SRCDIR}/b10_1.ESW_OneCate_S_Modified.sh
 # ${SRCDIR}/b10_2.ESW_OneCate_ScS.sh
 # ${SRCDIR}/b10_3.Catalog_S_with_misfit_position.sh
 # ${SRCDIR}/b10_4.Catalog_ScS_with_misfit_position.sh
@@ -91,7 +88,7 @@ ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/b17_2.DeconProfile.sh
 # ${SRCDIR}/b17_3.DeconFreq.sh
 # ${SRCDIR}/b19.DeconFRS_Compare.sh
-# ${SRCDIR}/b20_1.CatalogAll.sh
+${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/b20_2.CatalogCompareDeconMethod.sh
 # ${SRCDIR}/b20_3.WeightHistogram.sh
 # ${SRCDIR}/b21_1.CircleBin.sh
@@ -140,6 +137,7 @@ ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b68.SectionELV/plot.sh
 
 #  ================        under construction        ==================
+# ${SRCDIR}/a24_1.StackModels_1D.sh
 
 # ${SRCDIR}/a51.ULVZboostrap.sh
 # ${SRCDIR}/a52.PREMboostrap.sh
