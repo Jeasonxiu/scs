@@ -271,7 +271,7 @@ rm -f libt041.a libASU_tools.a
 ar cr libt041.a *.o
 
 # Executables (c) .
-for code in `ls ${SRCDIR}/*.c | grep -v fun.c`
+for code in `ls -rt ${SRCDIR}/*.c 2>/dev/null | grep -v fun.c`
 do
     name=`basename ${code}`
     name=${name%.c}
@@ -287,7 +287,7 @@ do
 done
 
 # Executables (c++).
-for code in `ls ${SRCDIR}/*.cpp 2>/dev/null | grep -v fun.cpp`
+for code in `ls -rt ${SRCDIR}/*.cpp 2>/dev/null | grep -v fun.cpp`
 do
     name=`basename ${code}`
     name=${name%.cpp}
