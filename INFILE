@@ -9,8 +9,8 @@
 <DB>                             ScS
 
 <SYNDATADIR>                     /home/shule/PROJ/t039.ULVZ
-<SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_1D_REFL
-<SYNDB>                          ULVZ_1D_REFL
+<SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_1D_REFL_Original
+<SYNDB>                          ULVZ_1D_REFL_Original
 
 <BASHCODEDIR>                    /home/shule/Research/Fun.Bash.c001
 <CCODEDIR>                       /home/shule/Research/Fun.C.c002
@@ -589,5 +589,23 @@ PLOTTIMEMAX_Catalog>            50
 
 <EQsSYN_BEGIN>
 
+201500000032
+201500000063
+201500000094
+201500000035
+201500000066
+201500000097
+201500000038
+201500000069
+201500000100
+201500000041
+201500000072
+201500000103
+201500000044
+201500000075
+201500000106
+201500000047
+201500000078
+201500000109
 
 <EQsSYN_END>

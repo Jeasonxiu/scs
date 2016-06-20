@@ -6,14 +6,14 @@
 #
 # Outputs:
 #
-#  update   ${WORKDIR_FRS}/INFO_All
+# create ScS.Master_a41
 #
 # Shule Yu
 # Jun 22 2014
 #==============================================================
 
 echo ""
-echo "--> `basename $0` is running. "
+echo "--> `basename $0` is running. (`date`)"
 echo "    ==> Applying weighting scheme... because this is synthesis, we set every trace to 1."
 
 
@@ -37,9 +37,6 @@ drop table if exists Master_a41;
 create table Master_a41 as select * from Master_$$;
 drop table if exists Master_$$;
 EOF
-
-# Clean up.
-rm -f ${WORKDIR_FRS}/tmpfile*
 
 cd ${CODEDIR}
 
