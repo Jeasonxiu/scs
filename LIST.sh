@@ -87,7 +87,7 @@
 # ${SRCDIR}/b17_2.DeconProfile.sh
 # ${SRCDIR}/b17_3.DeconFreq.sh
 # ${SRCDIR}/b19.DeconFRS_Compare.sh
-${SRCDIR}/b20_1.CatalogAll.sh
+# ${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/b20_2.CatalogCompareDeconMethod.sh
 # ${SRCDIR}/b20_3.WeightHistogram.sh
 # ${SRCDIR}/b20_4.CatalogAll_StretchDecon.sh
@@ -103,7 +103,7 @@ ${SRCDIR}/b20_1.CatalogAll.sh
 
 
 #  ================        Supplementary        ==================
-
+# 
 # ${SRCDIR}/a52.PREM_Or_ULVZ.sh
 # ${SRCDIR}/a53.frequency.sh
 # ${SRCDIR}/a54.dataGame.sh
