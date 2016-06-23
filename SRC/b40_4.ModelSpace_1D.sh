@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ===========================================================
-# Plot Modeling result. Overlaping for comparison.
+# Plot 1D Modeling space. 
 #
 # Shule Yu
 # May 19 2015

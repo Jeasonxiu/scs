@@ -81,13 +81,16 @@ EOF
     F1=`grep ${EQ} ${WORKDIR}/EQ_Freq_${RunNumber} | awk '{print $2}'`
     F2=`grep ${EQ} ${WORKDIR}/EQ_Freq_${RunNumber} | awk '{print $3}'`
 
+	! [ -z ${F1} ] || F1="0.033"
+	! [ -z ${F2} ] || F2="0.3"
+
 
 	# Information collection.
 	mysql -N -u shule ${DB} > tmpfile_filelist << EOF
 select file from Master_a04 where eq=${EQ} and WantIt=1 order by gcarc;
 EOF
 	mysql -N -u shule ${DB} > tmpfile_pairname << EOF
-select PairName from Master_a04 where eq=${EQ} and WantIt=1 order by gcarc;
+select PairName from Master_a04 where eq=${EQ} and WantIt=1 order by netwk,gcarc;
 EOF
 
 

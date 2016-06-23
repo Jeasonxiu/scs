@@ -246,6 +246,9 @@ int main(int argc, char **argv){
 
 		taperd(ScSWaveformTapered_amp[index],NPTS_Cut,0.1);
 
+		// Modified taperd:
+// 		taperd_section(ScSWaveformTapered_amp[index],NPTS_Cut,0.425,0.1);
+
 	}
 
 	// Step 4. Make tstar operators and apply them to OldESW.
@@ -419,10 +422,10 @@ int main(int argc, char **argv){
 		}
 
 
-		if (IndexTs!=0){
-			cout << "Tstar ESW: " << Data[index].PairName << " " << index
-			     << " / " << Data.size() << endl;
-		}
+// 		if (IndexTs!=0){
+// 			cout << "Tstar ESW: " << Data[index].PairName << " " << index
+// 			     << " / " << Data.size() << endl;
+// 		}
 
 		// Notedown compare result.
 		DeconInput[index].Source=alteredESW[IndexTs][IndexVer].Signal;
@@ -438,8 +441,8 @@ int main(int argc, char **argv){
 
 		if (IndexTs==0){
 
-			cout << "Tstar ScS: " << Data[index].PairName << " " << index
-			     << " / " << Data.size() << endl;
+// 			cout << "Tstar ScS: " << Data[index].PairName << " " << index
+// 			     << " / " << Data.size() << endl;
 
 			OriginalDiff=Diff;
 
@@ -602,15 +605,27 @@ int main(int argc, char **argv){
 		outfp.close();
 
 	}
+	// Step 2. Do SNR measurements.
+	double *SNR=new double [Data.size()];
+	int P1=(int)ceil(P[S1_D]/P[delta]);
+	int N_Len=(int)ceil(P[AN]/P[delta]);
+	int S_Len=(int)ceil((P[S2_D]-P[S1_D])/P[delta]);
 
-	// Step 2. Output measurements.
+	for (size_t index=0;index<Data.size();index++){
+		SNR[index]=snr_envelope(DeconInput[index].Decon,NPTS_Cut,
+		                        NPTS_Cut/2+P1-N_Len,N_Len,NPTS_Cut/2+P1,S_Len)
+				  *snr_envelope(DeconInput[index].Decon,NPTS_Cut,
+		                        NPTS_Cut/2+P1+S_Len,N_Len,NPTS_Cut/2+P1,S_Len);
+	}
+
+	// Step 3. Output measurements.
 	outfp.open(PS[outfile]);
 	for (size_t index=0;index<Data.size();index++){
 		outfp << Data[index].PairName << " "
 			  << Data[index].NewESW << " "
               << -10 << " "
               << 10 << " "
-              << 10 << " "
+              << SNR[index] << " "
               << DeconInput[index].Shift << " "
               << DeconInput[index].CCC << " "
 			  << DeconInput[index].Ts << " "

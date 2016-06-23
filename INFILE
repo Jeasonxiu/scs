@@ -9,8 +9,8 @@
 <DB>                             ScS
 
 <SYNDATADIR>                     /home/shule/PROJ/t039.ULVZ
-<SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_1D_REFL_Original
-<SYNDB>                          ULVZ_1D_REFL_Original
+<SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_1D_REFL
+<SYNDB>                          ULVZ_1D_REFL
 
 <BASHCODEDIR>                    /home/shule/Research/Fun.Bash.c001
 <CCODEDIR>                       /home/shule/Research/Fun.C.c002
@@ -168,8 +168,8 @@ SS
 
 
 # a20 & a41.
-<WeightScheme>                   1
-								 1 / 2 / 3 / others
+<WeightScheme>                   4
+								 1 / 2 / 3 / 4 / others
 
 <WeightNormalize>                No
                                  No / All / EQ
@@ -539,9 +539,9 @@ PLOTTIMEMAX_Catalog>            50
 <Method_1DMS>                    Waterlevel
 
 <X_Name>                         Vs_Bot
-<X_MIN>                          0.80
-<X_MAX>                          0.88
-<X_INC>                          0.02
+<X_MIN>                          0.70
+<X_MAX>                          1.0
+<X_INC>                          0.06
 <XLabel>                         Vs
 
 <Y_Name>                         Thickness
@@ -551,16 +551,25 @@ PLOTTIMEMAX_Catalog>            50
 <YLabel>                         Thickness
 
 <GCARC1_1DMS>                    60
-<GCARC2_1DMS>                    60
+<GCARC2_1DMS>                    75
 <GCARCINC_1DMS>                  1
 
 <spaceX>                         0.1
+
+# For b40_5 compare:
+<Marker1_1D>                      Stretch_by_Record
+
+<CompareDIR>                     /NAS/shule/PROJ/t041.ULVZ_1D_REFL_Original/WaterFRS
+<Marker2_1D>                      Original
 
 # ==========================================================
 #             ! EQs goes into calculation !
 # ==========================================================
 
 <EQs_BEGIN>
+
+200705251747
+<EQs_END>
 
 200608250044
 200705251747
@@ -581,7 +590,6 @@ PLOTTIMEMAX_Catalog>            50
 201205280507
 201308230834
 
-<EQs_END>
 
 # ==========================================================
 #             ! Models goes into calculation !
