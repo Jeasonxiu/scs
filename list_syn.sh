@@ -16,6 +16,7 @@
 # ${SRCDIR}/a38_3.Subtract.sh
 # ${SRCDIR}/a38_5.Raw.sh
 # ${SRCDIR}/a38_6.WaterStripHalfS.sh
+# ${SRCDIR}/a37_a38.StretchDecon.sh
 # ${SRCDIR}/a40_1.WaterFRS.sh
 # ${SRCDIR}/a40_3.SubtractFRS.sh
 # ${SRCDIR}/a40_5.RawFRS.sh
@@ -38,12 +39,14 @@
 # ${SRCDIR}/b37_6.FinalStretch.sh
 # ${SRCDIR}/b38_1.DeconCatalog.sh
 # ${SRCDIR}/b38_2.DeconProfile.sh
-${SRCDIR}/b40_1.ModelSpace_2D.sh
+# ${SRCDIR}/b40_1.ModelSpace_2D.sh
 # ${SRCDIR}/b40_2.ModelSpace_2D_AmpAccounted.sh
 # ${SRCDIR}/b40_3.ModelSpace_2D_EdgeDist.sh
 # ${SRCDIR}/b40_4.ModelSpace_1D.sh
+# ${SRCDIR}/b40_5.ModelSpace_1D_Compare.sh
 # ${SRCDIR}/b40_5.ModelSpace_1D_StackNoisy.sh
 # ${SRCDIR}/b41_1.CatalogAll.sh
+# ${SRCDIR}/b41_4.CatalogAll_StretchDecon.sh
 
 #  ================        Supplementary        ==================
 

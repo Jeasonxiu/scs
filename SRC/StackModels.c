@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     char   **PS;
     double *P;
 
-    enum PIenum {NRecord,TraceLength};
+    enum PIenum {TraceLength};
     enum PSenum {infile,outfile};
     enum Penum  {DELTA};
 
@@ -56,23 +56,23 @@ int main(int argc, char **argv){
     }
 
     // Job begin.
-    int    *shift,count2;
-    char   INFILE[100];
+    int    *shift,count2,NRecord=filenr(PS[infile]);
+    char   INFILE[200];
     FILE   *fpin,*fpout,*fp;
     double **data,*weight,time,*stack,*std;
 
-    data=(double **)malloc(PI[NRecord]*sizeof(double *));
-    for (count=0;count<PI[NRecord];count++){
+    data=(double **)malloc(NRecord*sizeof(double *));
+    for (count=0;count<NRecord;count++){
         data[count]=(double *)malloc(PI[TraceLength]*sizeof(double));
     }
-    weight=(double *)malloc(PI[NRecord]*sizeof(double));
+    weight=(double *)malloc(NRecord*sizeof(double));
     stack=(double *)malloc(PI[TraceLength]*sizeof(double));
     std=(double *)malloc(PI[TraceLength]*sizeof(double));
 	shift=NULL;
 
     // Read in traces (data).
     fpin=fopen(PS[infile],"r");
-    for (count=0;count<PI[NRecord];count++){
+    for (count=0;count<NRecord;count++){
         fscanf(fpin,"%s%lf",INFILE,weight+count);
 
         fp=fopen(INFILE,"r");
@@ -84,7 +84,7 @@ int main(int argc, char **argv){
     fclose(fpin);
 
 
-    shift_stack(data,PI[NRecord],PI[TraceLength],0,shift,1,weight,stack,std);
+    shift_stack(data,NRecord,PI[TraceLength],0,shift,1,weight,stack,std);
 
     fpout=fopen(PS[outfile],"w");
     for (count=0;count<PI[TraceLength];count++){
@@ -93,7 +93,7 @@ int main(int argc, char **argv){
     fclose(fpout);
 
     // Free spaces.
-    for (count=0;count<PI[NRecord];count++){
+    for (count=0;count<NRecord;count++){
         free(data[count]);
     }
 

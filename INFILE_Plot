@@ -1,0 +1,87 @@
+
+# ==========================================================
+#                ! Parameters for Plotting !
+# ==========================================================
+
+# a05.
+<PLOTPERPAGE_Select>             15
+<PLOTTIMEMIN_Select>             -150
+<PLOTTIMEMAX_Select>             150
+<PLOTHEIGHT_Select>              9.5
+<PLOTWIDTH_Select>               4.5
+<TEXTWIDTH_Select>               2
+<Tick_Select>                    5
+
+
+# b06_5.
+<PROJ_Data>                      3.5
+<CLON_Data>                      -85
+<CLAT_Data>                      10
+<Depth_Data>                     2871
+
+
+# b10, b12_1 & b13_1.
+<PLOTTIMEMIN_Catalog>            -150
+<PLOTTIMEMAX_Catalog>            150
+<PLOTTIMEMIN_Catalog_ScS>        -200
+<PLOTTIMEMAX_Catalog_ScS>        50
+<Normalize_Catalog>              0
+<PLOTHEIGHT_Catalog>             9.25
+<PLOTWIDTH_Catalog>              5
+<TEXTWIDTH_Catalog>              2.5
+<PLOTPERPAGE_Catalog>            15
+<PLOTPERPAGE_Cate>               3
+<Tick_Catalog>                   5
+
+
+# b15_1, b15_2, b16.
+<PLOTHEIGHT_S>                   10.5
+<PLOTWIDTH_S>                    7
+<PLOTTIMEMIN_S>                  -15
+<PLOTTIMEMAX_S>                  25
+
+
+# b17_1, b38_1, b38_3.
+<Normalize_D>                    1
+<PLOTTIMEMIN_D>                  -50
+<PLOTTIMEMAX_D>                  50
+<PLOTHEIGHT_D>                   9.5
+<PLOTWIDTH_D>                    4.5
+<TEXTWIDTH_D>                    2
+<PLOTPERPAGE_D>                  9
+<Tick_D>                         5
+
+
+# b20.
+<PLOTHEIGHT_ALL>                 9.7
+<PLOTWIDTH_ALL>                  7
+<PLOTPERPAGE_ALL>                10
+<Tick_A>                         5
+
+
+# b22 & b23.
+<PLOTHEIGHT_Map>                 7
+<PLOTWIDTH_Map>                  7
+<Tick_Map>                       5
+
+
+# b25_1_1D & b25_2_Flat.
+# WM: WhichModel.
+<PLOTWIDTH_WM>                   10.0
+<PLOTHEIGHT_WM>                  7.5
+<TIMEMIN_WM>                     0
+<TIMEMAX_WM>                     15
+<Tick_WM>                        5
+
+
+# b40_1, b40_2, b40_3.
+# MS: ModelSpace.
+<PLOTWIDTH_MS>                   10.0
+<PLOTHEIGHT_MS>                  7.5
+<TIMEMIN_MS>                     0
+<TIMEMAX_MS>                     15
+<Tick_MS>                        5
+
+
+# b40_4, b40_5.
+<spaceX>                         0.1

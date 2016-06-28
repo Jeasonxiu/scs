@@ -45,6 +45,17 @@ cp ${CODEDIR}/LIST.sh ${WORKDIR}/LIST/LIST_`date +%m%d_%H%M`
 chmod -x ${WORKDIR}/LIST/*
 cd ${WORKDIR}
 
+# Deal with parameters for plotting.
+grep -n "<" ${CODEDIR}/INFILE_Plot     \
+| grep ">" | grep -v "BEGIN" | grep -v "END" \
+| awk 'BEGIN {FS="<"} {print $2}'            \
+| awk 'BEGIN {FS=">"} {print $1,$2}' > tmpfile_$$
+awk '{print $1}' tmpfile_$$ > tmpfile1_$$
+awk '{$1="";print "\""$0"\""}' tmpfile_$$ > tmpfile2_$$
+sed 's/\"[[:blank:]]/\"/' tmpfile2_$$ > tmpfile3_$$
+paste -d= tmpfile1_$$ tmpfile3_$$ > tmpfile_$$
+source ${WORKDIR}/tmpfile_$$
+
 # Deal with parameters.
 grep -n "<" ${WORKDIR}/tmpfile_INFILE_$$     \
 | grep ">" | grep -v "BEGIN" | grep -v "END" \
@@ -79,7 +90,7 @@ do
 	| sed 's/^[[:blank:]]*//g' > ${WORKDIR}/tmpfile_${Name}_$$
 done < tmpfile_parameters_$$
 
-# EQ and Model names.
+# EQ names.
 EQnames=`cat ${WORKDIR}/tmpfile_EQs_$$`
 Modelnames=`cat ${WORKDIR}/tmpfile_EQsSYN_$$`
 
@@ -101,8 +112,6 @@ WORKDIR_AmmonDecon=${WORKDIR}/AmmonDecon
 WORKDIR_SubtractDecon=${WORKDIR}/SubtractDecon
 WORKDIR_RawDecon=${WORKDIR}/RawDecon
 WORKDIR_WaterWL=${WORKDIR}/WaterWL
-WORKDIR_DeconS=${WORKDIR}/DeconS
-WORKDIR_DeconScS=${WORKDIR}/DeconScS
 WORKDIR_WaterFRS=${WORKDIR}/WaterFRS
 WORKDIR_WaterSFRS=${WORKDIR}/WaterSFRS
 WORKDIR_WaterHalfSFRS=${WORKDIR}/WaterHalfSFRS
@@ -111,11 +120,13 @@ WORKDIR_SubtractFRS=${WORKDIR}/SubtractFRS
 WORKDIR_WaterWLFRS=${WORKDIR}/WaterWLFRS
 WORKDIR_RawFRS=${WORKDIR}/RawFRS
 WORKDIR_Geo=${WORKDIR}/Geo
-WORKDIR_BootStrap=${WORKDIR}/BootStrap
 WORKDIR_Cluster=${WORKDIR}/Cluster
 WORKDIR_Model=${WORKDIR}/Modeling
 WORKDIR_Freq=${WORKDIR}/Frequency
 WORKDIR_Game=${WORKDIR}/Game
+WORKDIR_DeconS=${WORKDIR}/DeconS
+WORKDIR_DeconScS=${WORKDIR}/DeconScS
+WORKDIR_BootStrap=${WORKDIR}/BootStrap
 WORKDIR_Structure=${WORKDIR}/Structure
 WORKDIR_Preprocess=${WORKDIR}/Tomo
 WORKDIR_Stations=${WORKDIR}/Stations
@@ -336,6 +347,5 @@ EOF
 
 # Clean up.
 rm -f ${WORKDIR}/*_$$
-
 
 exit 0

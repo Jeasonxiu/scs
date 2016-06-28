@@ -45,9 +45,9 @@ scaleY=`echo "${PLOTHEIGHT_WM} ${PropertyY_MIN_WM} ${PropertyY_MAX_WM} ${Propert
 keys="<EQ> <${PropertyX_WM}> <${PropertyY_WM}> <${PropertyZ_WM}>"
 ${BASHCODEDIR}/Findfield.sh ${SYNDATADIR}/index "${keys}" | awk -v A=${PropertyX_MIN_WM} -v B=${PropertyX_MAX_WM} -v C=${PropertyY_MIN_WM} -v D=${PropertyY_MAX_WM} -v E=${PropertyZ_MIN_WM} -v F=${PropertyZ_MAX_WM} '{if ((A<=$2 && $2<=B) && (C<=$3 && $3<=D) && (E<=$4 && $4<=F)) print $0}' > model_x_y_z
 
-keys="<Model> <BinN> <${CompareKey_WM}>"
+keys="<Model> <BinN> <${CompareKey}>"
 ${BASHCODEDIR}/Findfield.sh ${WORKDIR_Model}/CompareCCC "${keys}" > model_bin_c
-if [ ${CompareKey_WM} = "CCC" ] || [ ${CompareKey_WM} = "CCC_new" ]
+if [ ${CompareKey} = "CCC" ] || [ ${CompareKey} = "CCC_Amp" ]
 then
     CompareString="-g -r -k 2,2"
 else

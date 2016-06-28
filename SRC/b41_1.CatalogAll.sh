@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # ================================================================
+# SYNTHESIS
 # Plot All waveforms. ScS + Stretched S; S + S esf; ScS + ScS esf;
 # deconed ScS; FRS; map.
 #
@@ -60,12 +61,13 @@ EOF
     MM=`echo ${EQ}   | cut -b 5-6`
     DD=`echo ${EQ}   | cut -b 7-8`
 
+
     # ================================================
     #         ! Make Plot Data !
     # ================================================
 
 	mysql -N -u shule ${SYNDB} > sort.lst << EOF
-select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,Peak_S,Peak_ScS,Shift_D from Master_a41 where eq=${EQ} and wantit=1 order by gcarc;
+select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,Peak_S,Peak_ScS,Shift_D from Master_a41 where eq=${EQ} and wantit=1 order by Misfit_ScS;
 EOF
 
 

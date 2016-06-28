@@ -77,19 +77,17 @@ EOF
     # ================================================
 
 	mysql -N -u shule ${DB} > tmpfile_info << EOF
-select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,HITLO,HITLA,Peak_S,Peak_ScS,Shift_D from Master_a20 where eq=${EQ} and wantit=1 order by gcarc;
+select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,HITLO,HITLA,Peak_S,Peak_ScS,Shift_D,SNR_D,DeconSource,Ts_D,Ver_D from Master_a20 where eq=${EQ} and wantit=1 order by SNR_D;
 EOF
 
     # Hand Select result.
 	rm -f sort.lst
-    while read STNM NETNM Weight Gcarc Cate D_T_S CCC_S Polarity_S D_T_ScS CCC_ScS CCC_St Polarity_ScS HITLO HITLA Peak_S Peak_ScS Shift_St
+    while read Line
     do
-
+        STNM=`echo ${Line} | awk '{print $1}'`
 		if [ ${flag_goodfile} -eq 1 ]
 		then
-
 			grep "${EQ}_${STNM}$" ${GoodDecon} >/dev/null 2>&1
-
 			if [ $? -ne 0 ]
 			then
 				Good=0
@@ -99,9 +97,7 @@ EOF
 		else
 			Good=1
 		fi
-
-        echo ${STNM} ${NETNM} ${Weight} ${Gcarc} ${Cate} ${D_T_S} ${CCC_S} ${Polarity_S} ${D_T_ScS} ${CCC_ScS} ${CCC_St} ${Polarity_ScS} ${HITLO} ${HITLA} ${Peak_S} ${Peak_ScS} ${Shift_St} ${Good} >> sort.lst
-
+        echo ${Line} ${Good} >> sort.lst
     done < tmpfile_info
 
     # ===================================
@@ -117,7 +113,7 @@ EOF
 
     page=0
     plot=$(($PLOTPERPAGE_ALL+1))
-    while read STNM NETNM Weight Gcarc Cate D_T_S CCC_S Polarity_S D_T_ScS CCC_ScS CCC_St Polarity_ScS HITLO HITLA Peak_S Peak_ScS Shift_St Good
+    while read STNM NETNM Weight Gcarc Cate D_T_S CCC_S Polarity_S D_T_ScS CCC_ScS CCC_St Polarity_ScS HITLO HITLA Peak_S Peak_ScS Shift_St SNR_D DeconSource Ts_D Ver_D Good
     do
 
         Gcarc=`printf "%.2lf" ${Gcarc}`
@@ -125,15 +121,15 @@ EOF
         ScSfile=${WORKDIR_ScS}/${Cate}/${STNM}.waveform
         Sesf=${WORKDIR_S}/${Cate}/${EQ}.ESF_F
         ScSesf=${WORKDIR_ScS}/${Cate}/${EQ}.ESF_F
-        Sesf_stretched=${WORKDIR_Decon}/${EQ}/${Cate}.esf
         deconfile=${WORKDIR_Decon}/${EQ}/${STNM}.trace
+        DeconSignal=${WORKDIR_Decon}/${EQ}/${STNM}.tapered
         frsfile=${WORKDIR_FRS}/${EQ}_${STNM}.frs
 
         awk '{if ($1 > -10 && $1 < 20) print $2}' ${Sfile} > tmp.xy
         AMP_S=`${BASHCODEDIR}/amplitude.sh tmp.xy`
         awk -v A=${AMP_S} '{print $1,$2/A}' ${Sfile} > S.xy
 
-        awk '{if ($1 > -10 && $1 < 20) print $2}' ${ScSfile} > tmp.xy
+        awk -v P1=${Peak_ScS} '{if ($1 > P1-2.5 && $1 < P1+2.5) print $2}' ${ScSfile} > tmp.xy
         AMP_ScS=`${BASHCODEDIR}/amplitude.sh tmp.xy`
         awk -v A=${AMP_ScS} '{print $1,$2/A}' ${ScSfile} > ScS.xy
 
@@ -155,7 +151,7 @@ EOF
             title1="${MM}/${DD}/${YYYY} All waveforms for ScS-Stripping Project.  Page: ${page}"
             title2="${EQ}  ELAT/ELON: ${EVLA} ${EVLO}  Depth: ${EVDE} km. Mag: ${EVMA}  NSTA: ${NSTA}"
             title3="Time tick interval: ${Tick_A} sec."
-            title4="Weight  STNM  Gcarc"
+            title4="STNM  Gcarc  Ts  Ver"
 
             pstext -JX7i/0.7i -R-1/1/-1/1 -X0.75i -Y10.45i -P -K > ${OUTFILE} << EOF
 0 -0.5 14 0 0 CB $title1
@@ -239,6 +235,7 @@ EOF
         fi
 
     ### 6.6. plot ScS waveform and Stretched S esf.
+
         psxy ${PROJ} ${REGESF} -W0.3p,black,. -m -O -K >> ${OUTFILE} << EOF
 -50 0
 50 0
@@ -256,15 +253,20 @@ EOF
 EOF
         done
 
+		if [ `echo "${Ts_D}<0" | bc` -eq 1 ]
+		then
+			TEXT1="ScS(*)"
+			TEXT2="S"
+		else
+			TEXT1="ScS"
+			TEXT2="S(*)"
+		fi
         pstext ${PROJ} ${REGESF} -O -K >> ${OUTFILE} << EOF
--50 1 6 0 0 LT ScS
--50 0.7 6 0 0 LT stretched S (${CCC_St})
+-50 1 6 0 0 LT ${TEXT1}
+-50 0.7 6 0 0 LT ${TEXT2}
 EOF
-        psxy -J -R -Sa0.06i -Gblue -N -O -K >> ${OUTFILE} << EOF
-${Peak_ScS} `echo "1.0/${AMP_ScS}" | bc -l`
-EOF
-        awk -v C=${Polarity_ScS} '{print $1,$2*C}' ScS.xy | psxy ${PROJ} ${REGESF} -O -K >> ${OUTFILE}
-        awk -v DT1=${Shift_St} -v DT2=${Peak_ScS} '{print $1+DT1+DT2,$2}' ${Sesf_stretched} | psxy ${PROJ} ${REGESF} -W${color[${Cate}]} -O -K >> ${OUTFILE}
+        psxy ${DeconSignal} ${PROJ} ${REGESF} -O -K >> ${OUTFILE}
+        awk -v DT1=${Shift_St} '{print $1-DT1,$2}' ${DeconSource} | psxy ${PROJ} ${REGESF} -W${color[${Cate}]} -O -K >> ${OUTFILE}
 
         ### 6.6. plot S waveform with S esf.
         psxy ${PROJ} ${REGESF} -W0.3p,black,. -X${onethirdwidth}i -m -O -K >> ${OUTFILE} << EOF
@@ -285,7 +287,7 @@ EOF
         done
 
         pstext ${PROJ} ${REGESF} -O -K >> ${OUTFILE} << EOF
--50 1 6 0 0 LT S(${CCC_S})
+-50 1 6 0 0 LT S
 EOF
         psxy -J -R -Sa0.06i -Gblue -N -O -K >> ${OUTFILE} << EOF
 ${Peak_S} `echo "1.0/${AMP_S}" | bc -l`
@@ -312,7 +314,7 @@ EOF
         done
 
         pstext ${PROJFRS} ${REGFRS} -O -K >> ${OUTFILE} << EOF
-`echo "${Time} * 0.05" | bc -l` 1 6 0 0 LT FRS
+`echo "${Time} * 0.05" | bc -l` 1 6 0 0 LT FRS (SNR_D: ${SNR_D})
 EOF
         psxy ${PROJFRS} ${REGFRS} ${frsfile} -O -K >> ${OUTFILE}
 
@@ -321,6 +323,26 @@ EOF
 EOF
 
         ### 6.6. plot Decon waveform.
+
+		### Signal & Noise window.
+        psxy ${PROJ} ${REGESF} -Glightblue -m -L -O -K >> ${OUTFILE} << EOF
+`echo "${S1_D} ${AN}"|awk '{print $1-$2}'` -1
+`echo "${S1_D} ${AN}"|awk '{print $1-$2}'` 1
+${S1_D} 1
+${S1_D} -1
+>
+${S2_D} 1
+${S2_D} -1
+`echo "${S2_D} ${AN}"|awk '{print $1+$2}'` -1
+`echo "${S2_D} ${AN}"|awk '{print $1+$2}'` 1
+EOF
+        psxy ${PROJ} ${REGESF} -Glightgreen -L -O -K >> ${OUTFILE} << EOF
+${S1_D} 1
+${S1_D} -1
+${S2_D} -1
+${S2_D} 1
+EOF
+
         psxy ${PROJ} ${REGESF} -W0.3p,black,. -m -O -K >> ${OUTFILE} << EOF
 -50 0
 50 0
@@ -346,9 +368,9 @@ ${Time} 0.5 0 -0.5
 -${Time} 0.5 0 -0.5
 EOF
         pstext ${PROJ} ${REGESF} -O -K >> ${OUTFILE} << EOF
--50 1 6 0 0 LT Decon (${Gcarc})
+-50 1 6 0 0 LT Decon
 EOF
-        awk 'NR>1 {print $0}' ${deconfile} | psxy ${PROJ} ${REGESF} -Wpurple -O -K >> ${OUTFILE}
+        psxy ${deconfile} ${PROJ} ${REGESF} -W25/25/112 -O -K >> ${OUTFILE}
 
         ### 6.6. plot ScS with ScS esf.
         psxy ${PROJ} ${REGESF} -W0.3p,black,. -X${onethirdwidth}i -m -O -K >> ${OUTFILE} << EOF
@@ -369,7 +391,7 @@ EOF
         done
 
         pstext ${PROJ} ${REGESF} -O -K >> ${OUTFILE} << EOF
--50 1 6 0 0 LT ScS(${CCC_ScS})
+-50 1 6 0 0 LT ScS
 EOF
         psxy -J -R -Sa0.06i -Gblue -N -O -K >> ${OUTFILE} << EOF
 ${Peak_ScS} `echo "1.0/${AMP_ScS}" | bc -l`
@@ -379,7 +401,7 @@ EOF
 
         ### 6.6. Info.
         pstext ${PROJFRS} ${REGFRS} -X${onethirdwidth}i -N -O -K >> ${OUTFILE} << EOF
-0 0.9 9 0 0 LT ${Weight}  ${STNM}  ${Gcarc}
+0 0.9 9 0 0 LT ${STNM}  ${Gcarc}    `echo ${Ts_D}|awk '{printf "%.3lf",$1}'`    `echo ${Ver_D}|awk '{printf "%.3lf",$1}'`
 EOF
         # Plot a little map.
         pscoast -Jx${xscale}id/${yscale}id -R${RLOMIN}/${RLOMAX}/${RLAMIN}/${RLAMAX} -Dl -A40000 -W3,gray,faint -X` echo "1.15*${onesixthwidth}" | bc -l`i -O -K >> ${OUTFILE}

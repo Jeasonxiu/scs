@@ -12,7 +12,7 @@
 # =========================================================
 
 echo ""
-echo "--> `basename $0` is running. "
+echo "--> `basename $0` is running. (`date`)"
 
 
 # Continue from last modification.

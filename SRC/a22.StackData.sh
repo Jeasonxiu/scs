@@ -30,10 +30,20 @@ trap "rm -f ${WORKDIR_Geo}/* ${WORKDIR}/*_${RunNumber} ; exit 1" SIGINT
 echo "    ==> Stacking FRSs through Bins."
 
 # C code I/O. Part I.
-# Amplitude Normalized:
-mysql -N -u shule ${DB} > tmpfile_trace_weight << EOF
+# Fix Radiation Pattern, S Amplitude.
+if [ ${RadFix} -eq 1 ]
+then
+	mysql -N -u shule ${DB} > tmpfile_trace_weight << EOF
 select concat("${WORKDIR_FRS}/",PairName,".frs"),Weight_Final*(Amp_ScS/Rad_Pat_ScS)/(Amp_S/Rad_Pat_S) from Master_a21 where wantit=1;
 EOF
+
+else
+
+	mysql -N -u shule ${DB} > tmpfile_trace_weight << EOF
+select concat("${WORKDIR_FRS}/",PairName,".frs"),Weight_Final from Master_a21 where wantit=1;
+EOF
+
+fi
 
 for file in `ls ${WORKDIR_Geo}/*.grid`
 do
@@ -75,9 +85,9 @@ EOF
     fi
 
     # Update *.grid files. add a column of weights.
-    awk 'NR>1 {print $0}' ${file} > tmpfile_$$
-    echo "`head -n 1 ${file} | sed s/\<Weight_Smooth\>//g` <Weight_Smooth>" > ${file}
-
+	keys=`head -n 1 ${file} | sed s/\<Weight_Smooth\>//g`
+    ${BASHCODEDIR}/Findfield.sh ${file} "${keys}" > tmpfile_$$
+	echo "${keys} <Weight_Smooth>" > ${file}
     paste tmpfile_$$ tmpfile_new_weights >> ${file}
 
 done # Done Bin loop.
