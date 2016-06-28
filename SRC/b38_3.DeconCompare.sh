@@ -51,9 +51,6 @@ do
     MM=`echo ${EQ}   | cut -b 5-6`
     DD=`echo ${EQ}   | cut -b 7-8`
 
-    xscale=`echo "${doubleh}/(${RLOMAX} - ${RLOMIN})" | bc -l`
-    yscale=`echo "${doubleh}/(${RLAMAX} - ${RLAMIN})" | bc -l`
-
     # ================================================
     #         ! Make Plot Data !
     # ================================================

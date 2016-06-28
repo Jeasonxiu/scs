@@ -28,11 +28,13 @@
 # ${SRCDIR}/a19_3.SubtractFRS.sh
 # ${SRCDIR}/a19_5.RawFRS.sh
 # ${SRCDIR}/a19_6.WaterStripHalfSFRS.sh
-${SRCDIR}/a20.WeightScheme.sh
-${SRCDIR}/a21_1.CircleBin.sh
+# ${SRCDIR}/a20.WeightScheme.sh
+# ${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
-${SRCDIR}/a22.StackData.sh
+# ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/a23.BinBootStrap.sh
+# ${SRCDIR}/a24_1.StackModels_1D.sh
+# ${SRCDIR}/a25_1.WhichModel_1D.sh
 
 
 # ${SRCDIR}/b01.TheoCalc.sh
@@ -95,11 +97,12 @@ ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/b21_2.GeneralBin.sh
 # ${SRCDIR}/b21_3.PathAtSampling.sh
 # ${SRCDIR}/b21_4.BinWeightHistogram.sh
-${SRCDIR}/b22_1.DataStackMap.sh
+# ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b22_2.BinCatalog.sh
 # ${SRCDIR}/b22_3.FinalDistMap.sh
 # ${SRCDIR}/b22_4.BinGcarcInc.sh
 # ${SRCDIR}/b23.BinBootStrap.sh
+# ${SRCDIR}/b25_1.WhichModel_1D.sh
 
 
 #  ================        Supplementary        ==================
@@ -137,7 +140,9 @@ ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b68.SectionELV/plot.sh
 
 #  ================        under construction        ==================
-# ${SRCDIR}/a24_1.StackModels_1D.sh
+# ${SRCDIR}/a24_2.StackModels_Flat.sh
+# ${SRCDIR}/a25_2.WhichModel_Flat.sh
+# ${SRCDIR}/b25_2.WhichModel_Flat.sh
 
 # ${SRCDIR}/a51.ULVZboostrap.sh
 # ${SRCDIR}/a52.PREMboostrap.sh
@@ -147,8 +152,5 @@ ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/a17_7.WaterStripS.sh
 # ${SRCDIR}/a19_2.NOFRS.sh
 # ${SRCDIR}/a19_7.WaterStripSFRS.sh
-# ${SRCDIR}/a25.WhichModel.sh
-# ${SRCDIR}/b25_1.WhichModel_1D.sh
-# ${SRCDIR}/b25_2.WhichModel_Flat.sh
 
 exit 0

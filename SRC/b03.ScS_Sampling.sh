@@ -50,7 +50,7 @@ echo "    ==> Total traces: ${NSTA}."
 cat > tmpfile_$$ << EOF
 0 0 ScS Sampling locations. Event-Station Pair: ${NSTA}
 EOF
-gmt pstext tmpfile_$$ -R-1/1/-1/1 -JX${PLOTWIDTH_Data}i/1i -F+jCB+f14p,1,black -Y10i -N -P -K > ${OUTFILE}
+gmt pstext tmpfile_$$ -R-1/1/-1/1 -JX7i/1i -F+jCB+f14p,1,black -Y10i -N -P -K > ${OUTFILE}
 
 REG="-R-180/180/-90/90"
 PROJ="-JR180/6.5i"

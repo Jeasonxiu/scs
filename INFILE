@@ -67,16 +67,6 @@ SS
 <TrafficP_END>
 
 
-# a05 & a06.
-<PLOTPERPAGE_Select>             15
-<PLOTTIMEMIN_Select>             -150
-<PLOTTIMEMAX_Select>             150
-<PLOTHEIGHT_Select>              9.5
-<PLOTWIDTH_Select>               4.5
-<TEXTWIDTH_Select>               2
-<Tick_Select>                    5
-
-
 # a09.
 <ShiftDepth>                     500
 
@@ -196,13 +186,17 @@ SS
 <LateralSize_AZ>                 4
 
 
-# a22. & a60. & b17_1,b17_2,b17_3. (DeconMethod)
+# a60. & b17_1,b17_2,b17_3. (DeconMethod)
+<DeconMethod>                    Waterlevel
+                                 Waterlevel / Ammon / Subtract / WaterWL / Raw / WaterHalfS / WaterS
+
+
+# a22.
+<RadFix>                         0
 <Adaptive>                       0
 <StdSig>                         0.05
 <Smooth_sigma>                   -1
-<DeconMethod>                    Waterlevel
 
-                                 Waterlevel / Ammon / Subtract / WaterWL / Raw / WaterHalfS / WaterS
 
 # a51.
 <BootN>                          500
@@ -309,97 +303,16 @@ TX2011_S
 # a67.
 <Threshold_STNM>                 7
 
+
 # a68.
 <D1_CC>                          60
 <D2_CC>                          75
 <DInc_CC>                        1
 
+
 # ==========================================================
-#                ! Parameters for plotting !
+#                    ! Parameters in Plotting !
 # ==========================================================
-
-# b08_5.
-<PLOTHEIGHT_Data>                7
-<PLOTWIDTH_Data>                 7
-<PROJ_Data>                      3.5
-<CLON>                           -85
-<CLAT>                           10
-<Depth_Data>                     2871
-<GCARCMIN>                       60
-<GCARCMAX>                       85
-
-
-# b10, b12_1 & b13_1.
-<PLOTTIMEMIN_Catalog>            -150
-<PLOTTIMEMAX_Catalog>            150
-<Normalize>                      0
-<PLOTHEIGHT_Catalog>             9.25
-<PLOTWIDTH_Catalog>              5
-<TEXTWIDTH_Catalog>              2.5
-<PLOTPERPAGE_Catalog>            15
-<PLOTPERPAGE_Cate>               3
-<Tick_Catalog>                   5
-# for ScS.
-PLOTTIMEMIN_Catalog>            -200
-PLOTTIMEMAX_Catalog>            50
-
-
-# b12_2.
-<PLOTHEIGHT_Dist>                4
-<PLOTWIDTH_Dist>                 7
-
-
-# b13_2 & b14_2.
-<PLOTHEIGHT_ESF_STD>             10.5
-<PLOTWIDTH_ESF_STD>              6
-<TEXTWIDTH_ESF_STD>              1.5
-<PLOTHEIGHT_Hist>                7.5
-<PLOTWIDTH_Hist>                 10
-<Hist_S_1>                       Cate          1   4   1    1
-<Hist_S_2>                       Gcarc         40  75  5    5
-<Hist_S_3>                       AZ            0   360 10   50
-<Hist_S_4>                       BAZ           0   360 10   50
-<Hist_S_5>                       CCC           -1  1   0.1  0.5
-<Hist_S_6>                       Misfit        -1  1   0.1  0.5
-<Hist_S_7>                       Weight        0   1   0.05 0.2
-<Hist_S_8>                       SNR           1   20 0.5  2
-<Hist_S_9>                       CCC_Before    -1  1   0.1  0.5
-<Hist_S_10>                      Misfit_Before -1  1   0.1  0.5
-<Hist_S_11>                      Polarity      -1  1   1    1
-<Hist_S_12>                      Rad_Pat       -1  1   0.1  0.5
-<Hist_ScS_1>                     Cate          1   4   1    1
-<Hist_ScS_2>                     Gcarc         40  75  5    5
-<Hist_ScS_3>                     AZ            0   360 10   50
-<Hist_ScS_4>                     BAZ           0   360 10   50
-<Hist_ScS_5>                     CCC           -1  1   0.1  0.5
-<Hist_ScS_6>                     Misfit        -1  1   0.1  0.5
-<Hist_ScS_7>                     Weight        0   1   0.05 0.2
-<Hist_ScS_8>                     SNR           1   20 0.5  2
-<Hist_ScS_9>                     CCC_Before    -1  1   0.1  0.5
-<Hist_ScS_10>                    Misfit_Before -1  1   0.1  0.5
-<Hist_ScS_11>                    Polarity      -1  1   1    1
-<Hist_ScS_12>                    Rad_Pat       -1  1   0.1  0.5
-
-
-# b15_1, b15_2, b16.
-<PLOTHEIGHT_S>                   10.5
-<PLOTWIDTH_S>                    6
-<PLOTTIMEMIN_S>                  -15
-<PLOTTIMEMAX_S>                  25
-<V_TimeMin>                      -30
-<V_TimeMax>                      40
-
-
-# b17_1, b38_1, b38_3.
-<Normalize_D>                    1
-<PLOTTIMEMIN_D>                  -50
-<PLOTTIMEMAX_D>                  50
-<PLOTHEIGHT_D>                   9.5
-<PLOTWIDTH_D>                    4.5
-<TEXTWIDTH_D>                    2
-<PLOTPERPAGE_D>                  9
-<Tick_D>                         5
-
 
 # b19 & b40_2~4.
 <Marker1>                        Waterlevel
@@ -413,19 +326,6 @@ PLOTTIMEMAX_Catalog>            50
                                  Ammon / Waterlevel / Subtract / AnyName (read from CompareDecon folder)
 
 
-# b20.
-<PLOTHEIGHT_ALL>                 9.7
-<PLOTWIDTH_ALL>                  7
-<PLOTPERPAGE_ALL>                10
-<Tick_A>                         5
-
-
-# b22.
-<Normalize_M>                    0
-<PLOTHEIGHT_Map>                 7
-<PLOTWIDTH_Map>                  7
-<TickMap>                        5
-
 # b22_2.
 <StartBin>                       1
 <FinalBin>                       81
@@ -437,20 +337,25 @@ PLOTTIMEMAX_Catalog>            50
 <BeginBin>                       1
 <EndBin>                         81
 
-# b24_1_1D.
-<PLOTX_M>                        16
-<PLOTY_M>                        6
-<PLOTWIDTH_M>                    10
-<PLOTHEIGHT_M>                   8
-<TIMEMIN_M>                      0
-<TIMEMAX_M>                      15
-<Tick_M>                         5
-<CompareKey>                     CCC_new
-                                 CCC Norm2 Norm1 CCC_new
-
-# b24_2_Flat.
+# b25_1_1D, b25_2_Flat.
 # WM: WhichModel.
 
+<CompareKey>                     CCC_Amp
+
+# b25_1_1D, b40_4, b40_5
+<X_Name>                         Vs_Bot
+<X_MIN>                          0.70
+<X_MAX>                          1.0
+<X_INC>                          0.06
+<XLabel>                         Vs
+
+<Y_Name>                         Thickness
+<Y_MIN>                          0
+<Y_MAX>                          20
+<Y_INC>                          5
+<YLabel>                         Thickness
+
+# b25_2_Flat.
 <PropertyX_WM>                   CenterDist
 <PropertyX_MIN_WM>               60
 <PropertyX_MAX_WM>               74
@@ -475,24 +380,15 @@ PLOTTIMEMAX_Catalog>            50
 <Property4D_INC_WM>              5
 <Property4D_Label_WM>            km
 
-
 <Marker_WM>                      ULVZ_Flat
 <Bin1_WM>                        1
 <Bin2_WM>                        13
 <BinINC_WM>                      1
 <OUTFILE_WM>                     Modeling_Flat.pdf
 
-<PLOTWIDTH_WM>                   10.0
-<PLOTHEIGHT_WM>                  7.5
-<TIMEMIN_WM>                     0
-<TIMEMAX_WM>                     15
-<Tick_WM>                        5
-<CompareKey_WM>                  CCC_new
-
 
 # b40_1, b40_2, b40_3.
 # MS: ModelSpace.
-
 <PropertyX_MS>                   CenterDist
 <PropertyX_MIN>                  60
 <PropertyX_MAX>                  74
@@ -524,43 +420,23 @@ PLOTTIMEMAX_Catalog>            50
 <Marker_MS>                      ULVZ_Flat
 <Method_MS>                      Waterlevel
 
-<PLOTWIDTH_MS>                   10.0
-<PLOTHEIGHT_MS>                  7.5
-<TIMEMIN_MS>                     0
-<TIMEMAX_MS>                     15
-<Tick_MS>                        5
-
 <EdgeDist1_MS>                   -7
 <EdgeDist2_MS>                   10
 <EdgeDistINC_MS>                 0.5
 
 
 # b40_4, b40_5.
-<Method_1DMS>                    Waterlevel
-
-<X_Name>                         Vs_Bot
-<X_MIN>                          0.70
-<X_MAX>                          1.0
-<X_INC>                          0.06
-<XLabel>                         Vs
-
-<Y_Name>                         Thickness
-<Y_MIN>                          0
-<Y_MAX>                          20
-<Y_INC>                          5
-<YLabel>                         Thickness
 
 <GCARC1_1DMS>                    60
 <GCARC2_1DMS>                    75
 <GCARCINC_1DMS>                  1
-
-<spaceX>                         0.1
+<Method_1DMS>                    Waterlevel
 
 # For b40_5 compare:
-<Marker1_1D>                      Stretch_by_Record
+<Marker1_1D>                     Stretch_by_Record
 
 <CompareDIR>                     /NAS/shule/PROJ/t041.ULVZ_1D_REFL_Original/WaterFRS
-<Marker2_1D>                      Original
+<Marker2_1D>                     Original
 
 # ==========================================================
 #             ! EQs goes into calculation !

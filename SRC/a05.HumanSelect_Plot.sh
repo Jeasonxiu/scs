@@ -22,7 +22,10 @@ cd ${WORKDIR_Plot}/tmpdir_$$
 trap "rm -rf ${WORKDIR_Plot}/tmpdir_$$ ${WORKDIR}/*_${RunNumber}; exit 1" SIGINT
 
 
+
+
 # Plot parameters.
+
 height=`echo ${PLOTHEIGHT_Select} / ${PLOTPERPAGE_Select} | bc -l`
 halfh=` echo ${height} / 2 | bc -l`
 quarth=`echo ${height} / 4 | bc -l`

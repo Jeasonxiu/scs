@@ -190,7 +190,7 @@ EOF
 
         AMP=1
         ### data. (flipped and normalize within plot window).
-        if [ "${Normalize}" -eq 1 ]
+        if [ "${Normalize_Catalog}" -eq 1 ]
         then
             awk -v T1=${PLOTTIMEMIN_Catalog} -v T2=${PLOTTIMEMAX_Catalog} '{if ( $1>T1 && $1<T2 ) print $2}' ${file} > tmpfile_$$
             AMP=`${BASHCODEDIR}/amplitude.sh tmpfile_$$`
