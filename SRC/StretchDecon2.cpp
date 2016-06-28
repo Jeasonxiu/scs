@@ -19,8 +19,9 @@ using namespace std;
  * Best fit is decided by choosing the minimum absolute
  * difference within certain time window.
  *
- * This will do a grid search on Tstar and vertical stretch.
- * Use the minimum absolute different stretch parameters.
+ * This will search Tstar first. Once the proper Tstar is found.
+ * Fix the Tstar operator, do the vertical stretch serach.
+ * Use the minimum absolute different vertical stretch parameters.
  *
  * Then do taper on both ESW and trace, then apply waterlevel
  * de-convolution.
