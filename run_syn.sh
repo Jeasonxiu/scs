@@ -2,7 +2,7 @@
 
 # ==============================================================
 # SYNTHESIS
-# This script runs ScS-Stripping on synthesis.
+# This script runs ScS-Stripping project.
 #
 # Shule Yu
 # Feb 08 2015
@@ -28,8 +28,9 @@ fi
 #            ! Parameters !
 #============================================
 
+
 # DIRs
-WORKDIR=`grep "<SYNWORKDIR>" INFILE | awk '{print $2}'`
+WORKDIR=`grep "<SYNWORKDIR>" ${CODEDIR}/INFILE | awk '{print $2}'`
 trap "rm -f ${WORKDIR}/tmpfile*_$$; exit 1" SIGINT
 mkdir -p ${WORKDIR}/LIST
 mkdir -p ${WORKDIR}/INPUT
@@ -39,6 +40,17 @@ cp ${CODEDIR}/list_syn.sh ${WORKDIR}/tmpfile_list_$$
 cp ${CODEDIR}/list_syn.sh ${WORKDIR}/LIST/LIST_`date +%m%d_%H%M`
 chmod -x ${WORKDIR}/LIST/*
 cd ${WORKDIR}
+
+# Deal with parameters for plotting.
+grep -n "<" ${CODEDIR}/INFILE_Plot     \
+| grep ">" | grep -v "BEGIN" | grep -v "END" \
+| awk 'BEGIN {FS="<"} {print $2}'            \
+| awk 'BEGIN {FS=">"} {print $1,$2}' > tmpfile_$$
+awk '{print $1}' tmpfile_$$ > tmpfile1_$$
+awk '{$1="";print "\""$0"\""}' tmpfile_$$ > tmpfile2_$$
+sed 's/\"[[:blank:]]/\"/' tmpfile2_$$ > tmpfile3_$$
+paste -d= tmpfile1_$$ tmpfile3_$$ > tmpfile_$$
+source ${WORKDIR}/tmpfile_$$
 
 # Deal with parameters.
 grep -n "<" ${WORKDIR}/tmpfile_INFILE_$$     \
@@ -79,15 +91,13 @@ done < tmpfile_parameters_$$
 # Model names.
 EQnames=`cat ${WORKDIR}/tmpfile_EQsSYN_$$`
 
-# Additional DIRs.
+# Additional DIRs and files.
 EXECDIR=${WORKDIR}/bin
 WORKDIR_Plot=${WORKDIR}/PLOTS
-WORKDIR_Theo=${WORKDIR}/Theo
 WORKDIR_Basicinfo=${WORKDIR}/Basicinfo
 WORKDIR_Sampling=${WORKDIR}/Sampling
 WORKDIR_AutoSelect=${WORKDIR}/AutoSelect
 WORKDIR_HandPick=${WORKDIR}/HandPick
-WORKDIR_Select=${WORKDIR}/SelectStation
 WORKDIR_ESFAll=${WORKDIR}/ESFAll
 WORKDIR_Category=${WORKDIR}/Category
 WORKDIR_ESF=${WORKDIR}/ESF
@@ -113,7 +123,6 @@ WORKDIR_Freq=${WORKDIR}/Frequency
 WORKDIR_Game=${WORKDIR}/Game
 WORKDIR_Resolution=${WORKDIR}/Resolution
 WORKDIR_Amplitude=${WORKDIR}/Amplitude
-
 
 case "${DeconMethod}" in
 
@@ -175,27 +184,6 @@ case "${DeconMethod}" in
 esac
 
 
-## Region Parameters.
-case "${RegionName}" in
-    CA )
-            RLOMIN="-110"
-            RLOMAX="-60"
-            RLAMIN="-10"
-            RLAMAX="40" ;;
-    AK )
-            RLOMIN="-170"
-            RLOMAX="-125"
-            RLAMIN="45"
-            RLAMAX="70" ;;
-    Tonga )
-            RLOMIN="-170"
-            RLOMAX="-135"
-            RLAMIN="-10"
-            RLAMAX="25" ;;
-    * )
-            echo "    !=> RegionName error."
-            exit 1
-esac
 
 #============================================
 #            ! Test Dependencies !
@@ -230,7 +218,7 @@ ${CCOMP} -c ${SRCDIR}/*.fun.c ${INCLUDEDIR}
 rm -f libt041.a libASU_tools.a
 ar cr libt041.a *.o
 
-# Executables.
+# Executables (c) .
 for code in `ls -rt ${SRCDIR}/*.c 2>/dev/null | grep -v fun.c`
 do
     name=`basename ${code}`

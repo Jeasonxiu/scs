@@ -34,7 +34,7 @@ mkdir -p ${WORKDIR_Model}
 cd ${WORKDIR_Model}
 rm -f ${WORKDIR_Model}/*
 cp ${WORKDIR}/tmpfile_INFILE_${RunNumber} ${WORKDIR_Model}/INFILE
-trap "rm -f ${WORKDIR_Model}/* ${WORKDIR}/*_${RunNumber} ; exit 1" SIGINT
+trap "rm -rf ${WORKDIR_Model}/* ${WORKDIR}/*_${RunNumber} ; exit 1" SIGINT
 
 # Work Begins.
 
@@ -42,7 +42,7 @@ echo "    ==> Stacking Synthesis for each bins ..."
 
 # Make synthesis stacks.
 
-# I/O. Part I.
+# Info Gathering. For each bin, get gcarc-weight.
 for file in `ls ${WORKDIR_Geo}/*.grid`
 do
     binN=${file%.grid}
@@ -51,24 +51,25 @@ do
     keys="<EQ> <STNM> <Weight_Smooth>"
     ${BASHCODEDIR}/Findfield.sh ${file} "${keys}" > tmpfile_$$
 
-    keys="<EQ> <STNM> <SHIFT_GCARC> <Weight>"
-    ${BASHCODEDIR}/Findfield.sh ${WORKDIR_Geo}/INFO "${keys}" > tmpfile_StationFile_$$
+	mysql -N -u shule ${DB} > tmpfile_eq_stnm_gcarc_$$ << EOF
+select EQ,STNM,SHIFT_GCARC from Master_a21 where wantit=1;
+EOF
 
-    rm -f tmpfile_${binN}_shiftgcarc_$$
+    rm -f tmpfile_${binN}_gcarc_weight_$$
     while read EQ STNM weight
     do
-        awk -v E=${EQ} -v S=${STNM} -v W=${weight} '{ if ($1==E && $2==S) printf "%.1lf\t%.4lf\n",$3,W}' tmpfile_StationFile_$$ >> tmpfile_${binN}_shiftgcarc_$$
+        awk -v E=${EQ} -v S=${STNM} -v W=${weight} '{ if ($1==E && $2==S) printf "%.1lf\t%.3lf\n",$3,W}' tmpfile_eq_stnm_gcarc_$$ >> tmpfile_${binN}_gcarc_weight_$$
     done < tmpfile_$$
 
 done # Done bin loop.
 
-# I/O. Part II.
+# Info Gathering. For each Model, get gcarc-frsfile.
 
 for Model in ${Modelnames}
 do
-
-    keys="<EQ> <STNM> <GCARC>"
-    ${BASHCODEDIR}/Findfield.sh ${SYNWORKDIR_FRS}/INFO_All "${keys}" | awk -v M=${Model} -v D=${SYNWORKDIR_FRS} '{if ($1==M) printf "%.1lf\t%s/%s_%s.frs\n",$3,D,$1,$2}' > tmpfile_${Model}_$$
+	mysql -N -u shule ${SYNDB} > tmpfile_${Model}_$$ << EOF
+select truncate(GCARC,1),concat("${SYNWORKDIR_FRS}/",EQ,"_",STNM,".frs") from Master_a41 where eq=${Model} and wantit=1;
+EOF
 
 done
 
@@ -79,25 +80,25 @@ do
 
     for Model in ${Modelnames}
     do
-        # C code I/O.
-        D_Max=`minmax -C tmpfile_${Model}_$$ | awk '{print $2}'`
-        awk -v D=${D_Max} '{ if ($1>D) printf "%.1lf\n",D ; else printf "%.1lf\n",$1}' tmpfile_${binN}_shiftgcarc_$$ > tmpfile_grouplist_$$
+		# Info Gathering. For each bin-Model pair, use the same gcarc,
+		# get frsfile-weight list as the c code input.
+        D_Min=`minmax -C tmpfile_${Model}_$$ | awk '{printf "%.1lf",$1+0.1}'`
+        D_Max=`minmax -C tmpfile_${Model}_$$ | awk '{printf "%.1lf",$2-0.1}'`
+        awk -v M=${D_Min} -v D=${D_Max} '{ if ($1>D) printf "%.1lf\n",D ; else if ($1<M) printf "%.1lf\n",M; else printf "%.1lf\n",$1}' tmpfile_${binN}_gcarc_weight_$$ > tmpfile_grouplist_$$
 
-        awk '{ print $2 }' tmpfile_${binN}_shiftgcarc_$$ > tmpfile_weight_$$
+        awk '{ print $2 }' tmpfile_${binN}_gcarc_weight_$$ > tmpfile_weight_$$
         ${BASHCODEDIR}/Findrow.sh tmpfile_${Model}_$$ tmpfile_grouplist_$$ | awk '{print $2}' > tmpfile1_$$
-        paste tmpfile1_$$ tmpfile_weight_$$ > tmpfile_Cin_$$
+        paste tmpfile1_$$ tmpfile_weight_$$ > ${Model}_${binN}.frsfile_weight
 
-        firstfile=`head -n 1 tmpfile_Cin_$$ | awk '{print $1}'`
+        firstfile=`head -n 1 ${Model}_${binN}.frsfile_weight | awk '{print $1}'`
 
         # C code.
-        ${EXECDIR}/StackModels.out 2 2 1 << EOF
-`wc -l < tmpfile_Cin_$$`
+        ${EXECDIR}/StackModels.out 1 2 1 << EOF
 `wc -l < ${firstfile}`
-tmpfile_Cin_$$
+${Model}_${binN}.frsfile_weight
 ${Model}_${binN}.frstack
 ${DELTA}
 EOF
-		mv tmpfile_Cin_$$ ${Model}_${binN}.frs_weight
 
     done # Done Model loop.
 

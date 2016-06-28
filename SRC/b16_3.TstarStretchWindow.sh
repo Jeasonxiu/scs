@@ -11,7 +11,7 @@ echo ""
 echo "--> `basename $0` is running. (`date`)"
 mkdir -p ${WORKDIR_Plot}/tmpdir_$$
 cd ${WORKDIR_Plot}/tmpdir_$$
-trap "rm -r ${WORKDIR_Plot}/tmpdir_$$ 2>/dev/null; exit 1" SIGINT EXIT
+trap "rm -rf ${WORKDIR_Plot}/tmpdir_$$; exit 1" SIGINT EXIT
 
 # Plot parameters.
 gmtset PAPER_MEDIA = letter
@@ -32,17 +32,17 @@ do
 
     if ! [ -e ${INFILE} ]
     then
-        echo "    ==> Stretch Plot: Run work_main.sh first for ${EQ}..."
+        echo "    ~=> Run a16. first for ${EQ}..."
         continue
     else
-        echo "    ==> Plot Stretch result: ${EQ}."
+        echo "    ==> Plotting Stretch result ${EQ}."
     fi
 
     # Stretch Parameters.
     DATADIR_S=${WORKDIR_ESF}/${EQ}_${ReferencePhase}
     DATADIR_ScS=${WORKDIR_ESF}/${EQ}_${MainPhase}
-    CateN=`grep "<CateN>"             ${INFILE} | awk '{print $2}'`
-    nXStretch=`grep "<nXStretch>"       ${INFILE} | awk '{print $2}'`
+    CateN=`grep "<CateN>" ${INFILE} | awk '{print $2}'`
+    nXStretch=`grep "<nXStretch>" ${INFILE} | awk '{print $2}'`
 
     # ===========================
     #         ! Plot !
@@ -51,11 +51,11 @@ do
     REG="-R${PLOTTIMEMIN_S}/${PLOTTIMEMAX_S}/-1/1"
 	if [ ${CateN} -ge 3 ]
 	then
-		PROJ="-JX7i/`echo "10.5 *6 / 7 / ${CateN}" | bc -l`i"
-		MVY=`echo ${CateN} | awk '{print 10.5/$1}'`
+		PROJ="-JX${PLOTWIDTH_S}i/`echo "${PLOTHEIGHT_S} *6 / 7 / ${CateN}" | bc -l`i"
+		MVY=`echo ${PLOTHEIGHT_S} ${CateN} | awk '{print $1/$2}'`
 	else
-		PROJ="-JX7i/`echo "10.5 *6 / 7 / 3" | bc -l`i"
-		MVY=`echo 3 | awk '{print 10.5/3}'`
+		PROJ="-JX${PLOTWIDTH_S}i/`echo "${PLOTHEIGHT_S} *6 / 7 / 3" | bc -l`i"
+		MVY=`echo ${PLOTHEIGHT_S} | awk '{print $1/3}'`
 	fi
     OUTFILE=${count}.ps
 

@@ -38,15 +38,6 @@ gmt gmtset MAP_FRAME_PEN 0.5p,black
 
 BinCenter="-W0.02i,green -S+0.13i"
 
-# Count how many pairs are used in binning.
-rm -f tmpfile_$$
-for file in `ls ${WORKDIR_Geo}/*.grid`
-do
-	awk 'NR>1 {print $1"_"$2}' ${file} >> tmpfile_$$
-done
-NSTA=`sort -u tmpfile_$$ | wc -l`
-
-
 REG="-R${LOMIN}/${LOMAX}/${LAMIN}/${LAMAX}"
 xscale=`echo "${PLOTWIDTH_Map}/(${LOMAX} - ${LOMIN})" | bc -l`
 yscale=`echo "${PLOTHEIGHT_Map}/(${LAMAX} - ${LAMIN})" | bc -l`
@@ -56,7 +47,16 @@ REG1="-R0/${Time}/-1/1"
 xscale1=`echo "${xscale}*${LOINC}*0.8/${Time}" | bc -l`
 yscale1=`echo "${yscale}*${LAINC}*0.8/2" | bc -l`
 PROJ1="-Jx${xscale1}i/${yscale1}i"
+
 gmt xyz2grd ${BASHCODEDIR}/ritsema.2880 -G2880.grd -I2 ${REG} -:
+
+# Count how many pairs are used in binning.
+rm -f tmpfile_$$
+for file in `ls ${WORKDIR_Geo}/*.grid`
+do
+	awk 'NR>1 {print $1"_"$2}' ${file} >> tmpfile_$$
+done
+NSTA=`sort -u tmpfile_$$ | wc -l`
 
 # Decide amplitude.
 AMP1="1"
@@ -86,13 +86,12 @@ gmt psbasemap ${REG} ${PROJ} -Ba${LOINC}f0.5:"Longitude":/a${LAINC}f0.5:"Latitud
 gmt pscoast ${REG} -Jx${xscale}id/${yscale}id -Dl -A40000 -W0.3p,black -O -K >> ${OUTFILE}
 
 # FRS Info.
-
+keys="<binLon> <binLat>"
 for file in `ls ${WORKDIR_Geo}/*.grid | sort -n`
 do
 	BinN=${file%.*}
 	BinN=${BinN##*/}
 
-	keys="<binLon> <binLat>"
 	INFO=`${BASHCODEDIR}/Findfield.sh ${file} "${keys}" | head -n 1`
 	binLon=`echo ${INFO} | awk '{print $1}'`
 	binLat=`echo ${INFO} | awk '{print $2}'`
@@ -106,8 +105,8 @@ EOF
 	gmt psxy ${REG1} ${PROJ1} ${BinCenter} -N -O -K >> ${OUTFILE} << EOF
 0 0
 EOF
-	# Info.
 
+	# Info.
 	cat > tmpfile_$$ << EOF
 0 0 #${BinN}, ${NR}.
 EOF
@@ -180,7 +179,7 @@ EOF
 	for time in `seq -5 5`
 	do
 		gmt psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
 	done
 	# Time mark.
@@ -226,7 +225,7 @@ EOF
 		for time in `seq -5 5`
 		do
 			gmt psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
 		done
 
@@ -297,7 +296,7 @@ EOF
 	for time in `seq -5 5`
 	do
 		gmt psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
 	done
 	# Time mark.
@@ -339,7 +338,7 @@ EOF
 		for time in `seq -5 5`
 		do
 			gmt psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
 		done
 
@@ -421,7 +420,7 @@ EOF
 	for time in `seq -5 5`
 	do
 		gmt psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
 	done
 	# Time mark.
@@ -466,7 +465,7 @@ EOF
 		for time in `seq -5 5`
 		do
 			gmt psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
 		done
 

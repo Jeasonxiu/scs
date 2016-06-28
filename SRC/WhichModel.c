@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     char   **PS;
     double *P;
 
-    enum PIenum {TraceLength,binN};
+    enum PIenum {binN};
     enum PSenum {infile1,infile2,outfile,model};
 //     enum Penum  {};
 
@@ -57,16 +57,17 @@ int main(int argc, char **argv){
 
     // Job begin.
     FILE   *fpin1,*fpin2,*fpout;
-    double *amp1,*amp2,time,CCC,tmp,PNorm,PNorm1,CCC_new;
+    double *amp1,*amp2,time,CCC,tmp,PNorm,PNorm1,CCC_Amp;
+	int TraceLength=filenr(PS[infile2]);
 
-    amp1=(double *)malloc(PI[TraceLength]*sizeof(double));
-    amp2=(double *)malloc(PI[TraceLength]*sizeof(double));
+    amp1=(double *)malloc(TraceLength*sizeof(double));
+    amp2=(double *)malloc(TraceLength*sizeof(double));
 
     // Read in traces (data).
     fpin1=fopen(PS[infile1],"r");
     fpin2=fopen(PS[infile2],"r");
 
-    for (count=0;count<PI[TraceLength];count++){
+    for (count=0;count<TraceLength;count++){
         fscanf(fpin1,"%lf%lf%lf",&time,&amp1[count],&tmp);
         fscanf(fpin2,"%lf%lf%lf",&time,&amp2[count],&tmp);
     }
@@ -74,20 +75,20 @@ int main(int argc, char **argv){
     fclose(fpin2);
 
     // Method 1.
-    CC_static(amp1,PI[TraceLength],amp2,PI[TraceLength],&CCC);
+    CC_static(amp1,TraceLength,amp2,TraceLength,&CCC);
 
     // amp2 is model stack, amp1 is the same throughout model.
     // Method 2. norm_2 difference.
-    PNorm=p_norm_err(amp2,amp1,PI[TraceLength],2);
+    PNorm=p_norm_err(amp2,amp1,TraceLength,2);
 
     // Method 3. norm_1 difference.
-    PNorm1=p_norm_err(amp2,amp1,PI[TraceLength],1);
+    PNorm1=p_norm_err(amp2,amp1,TraceLength,1);
 
     // Method 4.
-    CC_static_energy(amp1,PI[TraceLength],amp2,PI[TraceLength],&CCC_new);
+    CC_static_energy(amp1,TraceLength,amp2,TraceLength,&CCC_Amp);
 
     fpout=fopen(PS[outfile],"a");
-    fprintf(fpout,"%d\t%s\t%.4lf\t%.4lf\t%.4lf\t%.4lf\n",PI[binN],PS[model],CCC,PNorm,PNorm1,CCC_new);
+    fprintf(fpout,"%d\t%s\t%.4lf\t%.4lf\t%.4lf\t%.4lf\n",PI[binN],PS[model],CCC,PNorm,PNorm1,CCC_Amp);
     fclose(fpout);
 
     // Free spaces.

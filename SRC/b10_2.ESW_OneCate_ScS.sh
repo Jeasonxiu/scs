@@ -131,7 +131,7 @@ EOF
         fi # end new page test.
 
         ## go to the right position to plot seismograms.
-        psxy -JX${PLOTWIDTH_Catalog}i/${height}i -R${PLOTTIMEMIN_Catalog}/${PLOTTIMEMAX_Catalog}/-1/1 -X-${PLOTWIDTH_Catalog}i -Y-${height}i -O -K >> ${OUTFILE} << EOF
+        psxy -JX${PLOTWIDTH_Catalog}i/${height}i -R${PLOTTIMEMIN_Catalog_ScS}/${PLOTTIMEMAX_Catalog_ScS}/-1/1 -X-${PLOTWIDTH_Catalog}i -Y-${height}i -O -K >> ${OUTFILE} << EOF
 EOF
 
         ### plot shifted ESF window.
@@ -160,8 +160,8 @@ EOF
 
         ### plot zero line with time marker.
         psxy -J -R -W0.3p,. -O -K >> ${OUTFILE} << EOF
-${PLOTTIMEMIN_Catalog} 0
-${PLOTTIMEMAX_Catalog} 0
+${PLOTTIMEMIN_Catalog_ScS} 0
+${PLOTTIMEMAX_Catalog_ScS} 0
 EOF
         psxy tmptime1_$$ -J -R -Sy0.02i -Gblack -O -K >> ${OUTFILE}
         psxy tmptime2_$$ -J -R -Sy0.05i -Gblack -O -K >> ${OUTFILE}
@@ -178,25 +178,25 @@ EOF
         if [ "${Polarity}" -eq 1 ]
         then
             psxy -J -R -Sc0.08i -Gred -N -O -K >> ${OUTFILE} << EOF
-${PLOTTIMEMIN_Catalog} 1
+${PLOTTIMEMIN_Catalog_ScS} 1
 EOF
             pstext -J -R -N -O -K >> ${OUTFILE} << EOF
-${PLOTTIMEMIN_Catalog} 1 8 0 0 CM +
+${PLOTTIMEMIN_Catalog_ScS} 1 8 0 0 CM +
 EOF
         else
             psxy -J -R -Sc0.08i -Gblue -N -O -K >> ${OUTFILE} << EOF
-${PLOTTIMEMIN_Catalog} 1
+${PLOTTIMEMIN_Catalog_ScS} 1
 EOF
             pstext -J -R -N -O -K >> ${OUTFILE} << EOF
-${PLOTTIMEMIN_Catalog} 1 8 0 0 CM _
+${PLOTTIMEMIN_Catalog_ScS} 1 8 0 0 CM _
 EOF
         fi
 
         AMP=1
         ### data. (flipped and normalize within plot window).
-        if [ "${Normalize}" -eq 1 ]
+        if [ "${Normalize_Catalog}" -eq 1 ]
         then
-            awk -v T1=${PLOTTIMEMIN_Catalog} -v T2=${PLOTTIMEMAX_Catalog} '{if (  $1>T1 && $1<T2 ) print $2}' ${file} > tmpfile_$$
+            awk -v T1=${PLOTTIMEMIN_Catalog_ScS} -v T2=${PLOTTIMEMAX_Catalog_ScS} '{if (  $1>T1 && $1<T2 ) print $2}' ${file} > tmpfile_$$
             AMP=`${BASHCODEDIR}/amplitude.sh tmpfile_$$`
         fi
 
@@ -207,13 +207,13 @@ EOF
         #### shifted empirical source. (normalize to AMP)
         awk -v S=${D_T} -v A=${AMP} -v P=${Polarity} '{print $1+S,$2*P/A}' ${WORKDIR_ESFAll}/${EQ}_${MainPhase}/${EQ}.ESF_F |  psxy -J -R -W0.3p,${color[1]},- -O -K >> ${OUTFILE}
         #### waveform
-        awk -v T1=${PLOTTIMEMIN_Catalog} -v T2=${PLOTTIMEMAX_Catalog} -v A=${AMP} '{ if (  $1>T1 && $1<T2 ) print $1,$2/A}' ${file} | psxy -J -R -W0.5p -O -K >> ${OUTFILE}
+        awk -v T1=${PLOTTIMEMIN_Catalog_ScS} -v T2=${PLOTTIMEMAX_Catalog_ScS} -v A=${AMP} '{ if (  $1>T1 && $1<T2 ) print $1,$2/A}' ${file} | psxy -J -R -W0.5p -O -K >> ${OUTFILE}
 
         ### plot indicator of weight < 0.
         if [ `echo "${Weight}>0" |bc` -ne 1 ]
         then
             psxy -J -R -Sx0.2i -Wthick,red -N -O -K >> ${OUTFILE} << EOF
-${PLOTTIMEMIN_Catalog} 0
+${PLOTTIMEMIN_Catalog_ScS} 0
 EOF
         fi
 
