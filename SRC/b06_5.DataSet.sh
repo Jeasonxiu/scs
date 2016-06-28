@@ -97,11 +97,11 @@ EOF
     echo "    ==> ${EQ} Total event-staion pair number: ${NSTA}..."
 
     title="Data Distribution. ${EQ}. Event-Station Pair: ${NSTA}"
-    pstext -R-1/1/-1/1 -JX${PLOTWIDTH_Data}i/1i -Y10i -N -P -K > ${OUTFILE} << EOF
+    pstext -R-1/1/-1/1 -JX7i/1i -Y10i -N -P -K > ${OUTFILE} << EOF
 0 0 14 0 0 CB ${title}
 EOF
 
-    PROJ="-JG${CLON}/${CLAT}/${PROJ_Data}i"
+    PROJ="-JG${CLON_Data}/${CLAT_Data}/${PROJ_Data}i"
     REG="-R-180/180/-90/90"
 
     REG1="-R${RLOMIN}/${RLOMAX}/${RLAMIN}/${RLAMAX}"
@@ -208,11 +208,11 @@ OUTFILE=DataSet.ps
 echo "    ==> Total traces: ${NSTA}."
 
 title="Data Distribution. Event-Station Pair: ${NSTA}"
-pstext -R-1/1/-1/1 -JX${PLOTWIDTH_Data}i/1i -Y10i -N -P -K > ${OUTFILE} << EOF
+pstext -R-1/1/-1/1 -JX7i/1i -Y10i -N -P -K > ${OUTFILE} << EOF
 0 0 14 0 0 CB ${title}
 EOF
 
-PROJ="-JG${CLON}/${CLAT}/${PROJ_Data}i"
+PROJ="-JG${CLON_Data}/${CLAT_Data}/${PROJ_Data}i"
 REG="-R-180/180/-90/90"
 
 REG1="-R${RLOMIN}/${RLOMAX}/${RLAMIN}/${RLAMAX}"

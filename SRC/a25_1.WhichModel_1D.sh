@@ -30,7 +30,7 @@ trap "rm -f ${WORKDIR_Model}/CompareCCC ${WORKDIR}/*_${RunNumber}" SIGINT
 
 # Compare with data.
 
-echo "<BinN> <Model> <CCC> <Norm2> <Norm1> <CCC_new>" > CompareCCC
+echo "<BinN> <Model> <CCC> <Norm2> <Norm1> <CCC_Amp>" > CompareCCC
 
 for file in `ls ${WORKDIR_Geo}/*.grid`
 do
@@ -41,8 +41,7 @@ do
 
     for Model in ${Modelnames}
     do
-        ${EXECDIR}/WhichModel.out 2 4 0 << EOF
-`wc -l < ${Model}_${binN}.frstack`
+        ${EXECDIR}/WhichModel.out 1 4 0 << EOF
 ${binN}
 ${WORKDIR_Geo}/${binN}.frstack
 ${Model}_${binN}.frstack
@@ -55,6 +54,6 @@ done # Done Bin loop.
 
 # Clean up.
 
-cd ${CODEDIR}
+cd ${WORKDIR}
 
 exit 0

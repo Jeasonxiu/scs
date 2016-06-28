@@ -129,7 +129,7 @@ EOF
 for time in `seq -5 5`
 do
     psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
 done
 
@@ -177,7 +177,7 @@ EOF
     for time in `seq -5 5`
     do
     psxy -J -R -Sy0.02i -Wblack -O -K >> ${OUTFILE} << EOF
-`echo "${time} * ${TickMap}" | bc -l` 0
+`echo "${time} * ${Tick_Map}" | bc -l` 0
 EOF
     done
 

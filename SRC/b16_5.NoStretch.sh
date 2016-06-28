@@ -50,11 +50,11 @@ do
     REG="-R${PLOTTIMEMIN_S}/${PLOTTIMEMAX_S}/-1/1"
 	if [ ${CateN} -ge 3 ]
 	then
-		PROJ="-JX7i/`echo "10.5 *6 / 7 / ${CateN}" | bc -l`i"
-		MVY=`echo ${CateN} | awk '{print 10.5/$1}'`
+		PROJ="-JX${PLOTWIDTH_S}i/`echo "${PLOTHEIGHT_S} *6 / 7 / ${CateN}" | bc -l`i"
+		MVY=`echo ${PLOTHEIGHT_S} ${CateN} | awk '{print $1/$2}'`
 	else
-		PROJ="-JX7i/`echo "10.5 *6 / 7 / 3" | bc -l`i"
-		MVY=`echo 3 | awk '{print 10.5/3}'`
+		PROJ="-JX${PLOTWIDTH_S}i/`echo "${PLOTHEIGHT_S} *6 / 7 / 3" | bc -l`i"
+		MVY=`echo ${PLOTHEIGHT_S} | awk '{print $1/3}'`
 	fi
     OUTFILE=${count}.ps
 
