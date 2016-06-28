@@ -2,10 +2,10 @@
 
 # ${SRCDIR}/a31.ExtractHeader.sh
 # ${SRCDIR}/a32.AutoSelect.sh
-${SRCDIR}/a33.ESW_OneCate.sh
-${SRCDIR}/a34.Cluster.sh
-${SRCDIR}/a35.ESW_S.sh
-${SRCDIR}/a36.ESW_ScS.sh
+# ${SRCDIR}/a33.ESW_OneCate.sh
+# ${SRCDIR}/a34.Cluster.sh
+# ${SRCDIR}/a35.ESW_S.sh
+# ${SRCDIR}/a36.ESW_ScS.sh
 # ${SRCDIR}/a37_1.StretchWindow.sh
 # ${SRCDIR}/a37_2.StretchUp.sh
 # ${SRCDIR}/a37_3.TstarStretchWindow.sh
@@ -16,12 +16,12 @@ ${SRCDIR}/a36.ESW_ScS.sh
 # ${SRCDIR}/a38_3.Subtract.sh
 # ${SRCDIR}/a38_5.Raw.sh
 # ${SRCDIR}/a38_6.WaterStripHalfS.sh
-${SRCDIR}/a37_a38.StretchDecon.sh
-${SRCDIR}/a40_1.WaterFRS.sh
+# ${SRCDIR}/a37_a38.StretchDecon.sh
+# ${SRCDIR}/a40_1.WaterFRS.sh
 # ${SRCDIR}/a40_3.SubtractFRS.sh
 # ${SRCDIR}/a40_5.RawFRS.sh
 # ${SRCDIR}/a40_6.WaterStripHalfSFRS.sh
-${SRCDIR}/a41.WeightScheme.sh
+# ${SRCDIR}/a41.WeightScheme.sh
 
 
 # ${SRCDIR}/b33_1.ESW_OneCate_S.sh
@@ -43,9 +43,10 @@ ${SRCDIR}/a41.WeightScheme.sh
 # ${SRCDIR}/b40_2.ModelSpace_2D_AmpAccounted.sh
 # ${SRCDIR}/b40_3.ModelSpace_2D_EdgeDist.sh
 # ${SRCDIR}/b40_4.ModelSpace_1D.sh
+# ${SRCDIR}/b40_5.ModelSpace_1D_Compare.sh
 # ${SRCDIR}/b40_5.ModelSpace_1D_StackNoisy.sh
 # ${SRCDIR}/b41_1.CatalogAll.sh
-${SRCDIR}/b41_4.CatalogAll_StretchDecon.sh
+# ${SRCDIR}/b41_4.CatalogAll_StretchDecon.sh
 
 #  ================        Supplementary        ==================
 

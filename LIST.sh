@@ -34,6 +34,8 @@ ${SRCDIR}/a17_1.Decon.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
 # ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/a23.BinBootStrap.sh
+# ${SRCDIR}/a24_1.StackModels_1D.sh
+# ${SRCDIR}/a25_1.WhichModel_1D.sh
 
 
 # ${SRCDIR}/b01.TheoCalc.sh
@@ -88,7 +90,7 @@ ${SRCDIR}/a17_1.Decon.sh
 # ${SRCDIR}/b17_2.DeconProfile.sh
 # ${SRCDIR}/b17_3.DeconFreq.sh
 # ${SRCDIR}/b19.DeconFRS_Compare.sh
-${SRCDIR}/b20_1.CatalogAll.sh
+# ${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/b20_2.CatalogCompareDeconMethod.sh
 # ${SRCDIR}/b20_3.WeightHistogram.sh
 # ${SRCDIR}/b20_4.CatalogAll_StretchDecon.sh
@@ -101,10 +103,11 @@ ${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/b22_3.FinalDistMap.sh
 # ${SRCDIR}/b22_4.BinGcarcInc.sh
 # ${SRCDIR}/b23.BinBootStrap.sh
+# ${SRCDIR}/b25_1.WhichModel_1D.sh
 
 
 #  ================        Supplementary        ==================
-
+# 
 # ${SRCDIR}/a52.PREM_Or_ULVZ.sh
 # ${SRCDIR}/a53.frequency.sh
 # ${SRCDIR}/a54.dataGame.sh
@@ -138,7 +141,9 @@ ${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/b68.SectionELV/plot.sh
 
 #  ================        under construction        ==================
-# ${SRCDIR}/a24_1.StackModels_1D.sh
+# ${SRCDIR}/a24_2.StackModels_Flat.sh
+# ${SRCDIR}/a25_2.WhichModel_Flat.sh
+# ${SRCDIR}/b25_2.WhichModel_Flat.sh
 
 # ${SRCDIR}/a51.ULVZboostrap.sh
 # ${SRCDIR}/a52.PREMboostrap.sh
@@ -148,8 +153,5 @@ ${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/a17_7.WaterStripS.sh
 # ${SRCDIR}/a19_2.NOFRS.sh
 # ${SRCDIR}/a19_7.WaterStripSFRS.sh
-# ${SRCDIR}/a25.WhichModel.sh
-# ${SRCDIR}/b25_1.WhichModel_1D.sh
-# ${SRCDIR}/b25_2.WhichModel_Flat.sh
 
 exit 0

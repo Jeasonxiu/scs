@@ -77,7 +77,7 @@ EOF
     # ================================================
 
 	mysql -N -u shule ${DB} > tmpfile_info << EOF
-select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,HITLO,HITLA,Peak_S,Peak_ScS,Shift_D from Master_a20 where eq=${EQ} and wantit=1 order by gcarc;
+select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,SNR_D,HITLO,HITLA,Peak_S,Peak_ScS,Shift_D from Master_a20 where eq=${EQ} and wantit=1 order by SNR_D;
 EOF
 
     # Hand Select result.
@@ -113,7 +113,7 @@ EOF
 
     page=0
     plot=$(($PLOTPERPAGE_ALL+1))
-    while read STNM NETNM Weight Gcarc Cate D_T_S CCC_S Polarity_S D_T_ScS CCC_ScS CCC_St Polarity_ScS HITLO HITLA Peak_S Peak_ScS Shift_St Good
+    while read STNM NETNM Weight Gcarc Cate D_T_S CCC_S Polarity_S D_T_ScS CCC_ScS CCC_St Polarity_ScS SNR_D HITLO HITLA Peak_S Peak_ScS Shift_St Good
     do
 
         Gcarc=`printf "%.2lf" ${Gcarc}`
@@ -308,7 +308,7 @@ EOF
         done
 
         pstext ${PROJFRS} ${REGFRS} -O -K >> ${OUTFILE} << EOF
-`echo "${Time} * 0.05" | bc -l` 1 6 0 0 LT FRS
+`echo "${Time} * 0.05" | bc -l` 1 6 0 0 LT FRS (SNR_D: ${SNR_D})
 EOF
         psxy ${PROJFRS} ${REGFRS} ${frsfile} -O -K >> ${OUTFILE}
 

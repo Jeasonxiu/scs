@@ -77,7 +77,7 @@ EOF
     # ================================================
 
 	mysql -N -u shule ${DB} > tmpfile_info << EOF
-select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,HITLO,HITLA,Peak_S,Peak_ScS,Shift_D,DeconSource,Ts_D,Ver_D from Master_a20 where eq=${EQ} and wantit=1 order by Misfit_ScS;
+select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,HITLO,HITLA,Peak_S,Peak_ScS,Shift_D,SNR_D,DeconSource,Ts_D,Ver_D from Master_a20 where eq=${EQ} and wantit=1 order by SNR_D;
 EOF
 
     # Hand Select result.
@@ -113,7 +113,7 @@ EOF
 
     page=0
     plot=$(($PLOTPERPAGE_ALL+1))
-    while read STNM NETNM Weight Gcarc Cate D_T_S CCC_S Polarity_S D_T_ScS CCC_ScS CCC_St Polarity_ScS HITLO HITLA Peak_S Peak_ScS Shift_St DeconSource Ts_D Ver_D Good
+    while read STNM NETNM Weight Gcarc Cate D_T_S CCC_S Polarity_S D_T_ScS CCC_ScS CCC_St Polarity_ScS HITLO HITLA Peak_S Peak_ScS Shift_St SNR_D DeconSource Ts_D Ver_D Good
     do
 
         Gcarc=`printf "%.2lf" ${Gcarc}`
@@ -235,6 +235,7 @@ EOF
         fi
 
     ### 6.6. plot ScS waveform and Stretched S esf.
+
         psxy ${PROJ} ${REGESF} -W0.3p,black,. -m -O -K >> ${OUTFILE} << EOF
 -50 0
 50 0
@@ -313,7 +314,7 @@ EOF
         done
 
         pstext ${PROJFRS} ${REGFRS} -O -K >> ${OUTFILE} << EOF
-`echo "${Time} * 0.05" | bc -l` 1 6 0 0 LT FRS
+`echo "${Time} * 0.05" | bc -l` 1 6 0 0 LT FRS (SNR_D: ${SNR_D})
 EOF
         psxy ${PROJFRS} ${REGFRS} ${frsfile} -O -K >> ${OUTFILE}
 
@@ -322,6 +323,26 @@ EOF
 EOF
 
         ### 6.6. plot Decon waveform.
+
+		### Signal & Noise window.
+        psxy ${PROJ} ${REGESF} -Glightblue -m -L -O -K >> ${OUTFILE} << EOF
+`echo "${S1_D} ${AN}"|awk '{print $1-$2}'` -1
+`echo "${S1_D} ${AN}"|awk '{print $1-$2}'` 1
+${S1_D} 1
+${S1_D} -1
+>
+${S2_D} 1
+${S2_D} -1
+`echo "${S2_D} ${AN}"|awk '{print $1+$2}'` -1
+`echo "${S2_D} ${AN}"|awk '{print $1+$2}'` 1
+EOF
+        psxy ${PROJ} ${REGESF} -Glightgreen -L -O -K >> ${OUTFILE} << EOF
+${S1_D} 1
+${S1_D} -1
+${S2_D} -1
+${S2_D} 1
+EOF
+
         psxy ${PROJ} ${REGESF} -W0.3p,black,. -m -O -K >> ${OUTFILE} << EOF
 -50 0
 50 0
@@ -349,7 +370,7 @@ EOF
         pstext ${PROJ} ${REGESF} -O -K >> ${OUTFILE} << EOF
 -50 1 6 0 0 LT Decon
 EOF
-        psxy ${deconfile} ${PROJ} ${REGESF} -Wpurple -O -K >> ${OUTFILE}
+        psxy ${deconfile} ${PROJ} ${REGESF} -W25/25/112 -O -K >> ${OUTFILE}
 
         ### 6.6. plot ScS with ScS esf.
         psxy ${PROJ} ${REGESF} -W0.3p,black,. -X${onethirdwidth}i -m -O -K >> ${OUTFILE} << EOF
@@ -380,7 +401,7 @@ EOF
 
         ### 6.6. Info.
         pstext ${PROJFRS} ${REGFRS} -X${onethirdwidth}i -N -O -K >> ${OUTFILE} << EOF
-0 0.9 9 0 0 LT ${STNM}  ${Gcarc}    `echo ${Ts_D}|awk '{printf "%.3lf",$1}'`    `echo ${Ver_D}|awk '{printf "%.4lf",$1}'`
+0 0.9 9 0 0 LT ${STNM}  ${Gcarc}    `echo ${Ts_D}|awk '{printf "%.3lf",$1}'`    `echo ${Ver_D}|awk '{printf "%.3lf",$1}'`
 EOF
         # Plot a little map.
         pscoast -Jx${xscale}id/${yscale}id -R${RLOMIN}/${RLOMAX}/${RLAMIN}/${RLAMAX} -Dl -A40000 -W3,gray,faint -X` echo "1.15*${onesixthwidth}" | bc -l`i -O -K >> ${OUTFILE}

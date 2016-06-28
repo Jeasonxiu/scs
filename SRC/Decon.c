@@ -182,6 +182,8 @@ int main(int argc, char **argv){
 
         // Taper the edges.
         taperd(scs[count],NPTS_signal,P[Taper_signal]);
+		// Modified taperd:
+// 		taperd_section(scs[count],NPTS_signal,0.5,P[Taper_signal]);
 
     }
     fclose(fp);

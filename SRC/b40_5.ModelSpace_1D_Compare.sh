@@ -63,7 +63,7 @@ EOF
 
     ### plot titles and legends
 	cat > tmpfile_$$ << EOF
-0 105 FRS 1D ModelSpace, Gcarc ${GCARC}, DeconMethod: ${Method_1DMS}.
+0 105 FRS 1D ModelSpace, Gcarc ${GCARC}. ${Marker1_1D}, @;red;${Marker2_1D}@;;.
 EOF
 
 	gmt pstext tmpfile_$$ -JX10.0i/7.5i -R-100/100/-100/100 -F+jCB+f15p,1,black -Xf0.5i -Yf0.5i -N -K > ${OUTFILE}
@@ -94,6 +94,8 @@ EOF
     for Model in ${EQnames}
     do
 		file=`grep ${Model} filenames`
+		file2=${file##*/}
+		file2=${CompareDIR}/${file2}
 
 		if ! [ -e ${file} ]
 		then
@@ -131,6 +133,11 @@ EOF
 
         ### plot FRS's.
 		gmt psxy ${file} -J -R -W0.5p,black -O -K >> ${OUTFILE}
+
+		if [ -e ${file2} ]
+		then
+			gmt psxy ${file2} -J -R -W0.5p,red -O -K >> ${OUTFILE}
+		fi
 
         ### go back
 		gmt psxy -J -R -X`echo ${MVX}| awk '{print -$1}'`i -Y`echo ${MVY}| awk '{print -$1}'`i -O -K >> ${OUTFILE} << EOF

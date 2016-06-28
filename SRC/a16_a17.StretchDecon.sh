@@ -75,7 +75,7 @@ select Pairname,stnm,concat("${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/",stnm,".
 EOF
 
         # C Code.
-        time ${EXECDIR}/StretchDecon.out 2 5 17 << EOF
+        ${EXECDIR}/StretchDecon.out 2 5 17 << EOF
 ${nXStretch}
 ${nYStretch}
 tmpfile_Cin_$$
