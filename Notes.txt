@@ -1,3 +1,9 @@
 1. Why some ScS is very very small, even comparing to stations at almost the same location:
 
+2. Fix this: why stretch by record no negative tstar on synthesis: ~047@50deg.
 
+3. Fix a05.HandPick. Make it faster.
+
+4. Try Mask S on data.
+
+5. Misfit outliar throw away. What is its scheme ?

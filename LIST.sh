@@ -24,16 +24,16 @@
 # ${SRCDIR}/a17_5.Raw.sh
 # ${SRCDIR}/a17_6.WaterStripHalfS.sh
 # ${SRCDIR}/a16_a17.StretchDecon.sh
-${SRCDIR}/a16_a17.StretchDecon2.sh
-${SRCDIR}/a19_1.WaterFRS.sh
+# ${SRCDIR}/a16_a17.StretchDecon2.sh
+# ${SRCDIR}/a19_1.WaterFRS.sh
 # ${SRCDIR}/a19_3.SubtractFRS.sh
 # ${SRCDIR}/a19_5.RawFRS.sh
 # ${SRCDIR}/a19_6.WaterStripHalfSFRS.sh
-${SRCDIR}/a20.WeightScheme.sh
-${SRCDIR}/a21_1.CircleBin.sh
+# ${SRCDIR}/a20.WeightScheme.sh
+# ${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
-${SRCDIR}/a22.StackData.sh
-${SRCDIR}/a23.BinBootStrap.sh
+# ${SRCDIR}/a22.StackData.sh
+# ${SRCDIR}/a23.BinBootStrap.sh
 # ${SRCDIR}/a24_1.StackModels_1D.sh
 # ${SRCDIR}/a25_1.WhichModel_1D.sh
 
@@ -93,16 +93,16 @@ ${SRCDIR}/a23.BinBootStrap.sh
 # ${SRCDIR}/b20_1.CatalogAll.sh
 # ${SRCDIR}/b20_2.CatalogCompareDeconMethod.sh
 # ${SRCDIR}/b20_3.WeightHistogram.sh
-${SRCDIR}/b20_4.CatalogAll_StretchDecon.sh
+# ${SRCDIR}/b20_4.CatalogAll_StretchDecon.sh
 # ${SRCDIR}/b21_1.CircleBin.sh
 # ${SRCDIR}/b21_2.GeneralBin.sh
 # ${SRCDIR}/b21_3.PathAtSampling.sh
 # ${SRCDIR}/b21_4.BinWeightHistogram.sh
-${SRCDIR}/b22_1.DataStackMap.sh
+# ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b22_2.BinCatalog.sh
 # ${SRCDIR}/b22_3.FinalDistMap.sh
 # ${SRCDIR}/b22_4.BinGcarcInc.sh
-${SRCDIR}/b23.BinBootStrap.sh
+# ${SRCDIR}/b23.BinBootStrap.sh
 # ${SRCDIR}/b25_1.WhichModel_1D.sh
 
 

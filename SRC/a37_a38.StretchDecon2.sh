@@ -80,7 +80,7 @@ select Pairname,stnm,concat("${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/",stnm,".
 EOF
 
         # C Code.
-        ${EXECDIR}/StretchDecon.out 2 5 17 << EOF
+        ${EXECDIR}/StretchDecon2.out 2 5 17 << EOF
 ${nXStretch}
 ${nYStretch}
 tmpfile_Cin_$$
@@ -109,7 +109,7 @@ EOF
 
         if [ $? -ne 0 ]
         then
-            echo "    !=> StretchDecon.out failed for Category: ${cate} ..."
+            echo "    !=> StretchDecon2.out failed for Category: ${cate} ..."
             continue
         fi
 

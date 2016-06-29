@@ -248,10 +248,10 @@ int main(int argc, char **argv){
 			ScSWaveformTapered_time[index][index2]-=ShiftTimeFactor;
 		}
 
-		taperd(ScSWaveformTapered_amp[index],NPTS_Cut,0.1);
+// 		taperd(ScSWaveformTapered_amp[index],NPTS_Cut,0.1);
 
 		// Modified taperd:
-// 		taperd_section(ScSWaveformTapered_amp[index],NPTS_Cut,0.425,0.1);
+		taperd_section(ScSWaveformTapered_amp[index],NPTS_Cut,0.4,0.1);
 
 	}
 

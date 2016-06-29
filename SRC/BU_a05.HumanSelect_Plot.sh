@@ -19,7 +19,7 @@ echo "--> `basename $0` is running. (`date`)"
 mkdir -p ${WORKDIR_Plot}/tmpdir_$$
 mkdir -p ${WORKDIR_HandPick}
 cd ${WORKDIR_Plot}/tmpdir_$$
-trap "rm -rf ${WORKDIR_Plot}/tmpdir_$$ ${WORKDIR}/*_${RunNumber}; exit 1" EXIT SIGINT
+trap "rm -rf ${WORKDIR_Plot}/tmpdir_$$ ${WORKDIR}/*_${RunNumber}; exit 1" SIGINT
 
 
 
@@ -89,20 +89,15 @@ EOF
 
 
 	# Information collection.
-	mysql -N -u shule ${DB} > tmpfile_Cin_S_$$ << EOF
-select file,stnm,S from Master_a04 where eq=${EQ} and WantIt=1 order by netwk,gcarc;
+	mysql -N -u shule ${DB} > tmpfile_filelist << EOF
+select file from Master_a04 where eq=${EQ} and WantIt=1 order by gcarc;
 EOF
-	mysql -N -u shule ${DB} > tmpfile_Cin_ScS_$$ << EOF
-select file,stnm,ScS from Master_a04 where eq=${EQ} and WantIt=1 order by netwk,gcarc;
-EOF
-
 	mysql -N -u shule ${DB} > tmpfile_pairname << EOF
 select PairName from Master_a04 where eq=${EQ} and WantIt=1 order by netwk,gcarc;
 EOF
 
 
 	echo "select evlo,evla,evde,mag from Master_a04 where eq=${EQ} limit 1" > tmpfile_$$
-
 	INFO=`mysql -N -u shule ${DB} < tmpfile_$$`
     EVLO=`echo "${INFO}" | awk '{printf "%.2lf",$1}'`
     EVLA=`echo "${INFO}" | awk '{printf "%.2lf",$2}'`
@@ -115,28 +110,6 @@ EOF
     # ================================================
     #         ! Make Plot data !
     # ================================================
-
-	${EXECDIR}/SAC2Signal.out 0 2 6 << EOF
-tmpfile_Cin_S_$$
-${WORKDIR_Plot}/tmpdir_$$/
--150
-300
-${DELTA}
-${F1}
-${F2}
-${Taper_ESF}
-EOF
-
-	if [ $? -ne 0 ]
-	then
-		echo "    !=> SAC2Signal.out failed ..."
-		exit 1
-	fi
-
-	continue
-done
-
-exit 0
 
     # SAC Operations.
 
@@ -677,6 +650,9 @@ EOF
 
 
 done # done EQ loop.
+
+# Clean up.
+rm -rf ${WORKDIR_Plot}/tmpdir_$$
 
 cd ${WORKDIR}
 
