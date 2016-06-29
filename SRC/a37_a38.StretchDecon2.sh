@@ -6,6 +6,10 @@
 # Note: Do this record by record.
 # Then deconvolve the ESW from the signal.
 #
+# Different from a37_a38: Search Tstart first, then fix Tstar,
+#                         search vertical stretch on S.
+#                         See details in StretchDecon2.cpp
+#
 # Outputs:
 #
 #           ${WORKDIR_Stretch}/${EQ}/

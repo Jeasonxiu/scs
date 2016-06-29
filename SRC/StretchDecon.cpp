@@ -421,6 +421,9 @@ int main(int argc, char **argv){
 					IndexTs=index2;
 					IndexVer=index3;
 				}
+
+				cout << "TmpCCC: " << TmpCCC << endl;
+
 			}
 		}
 
@@ -666,7 +669,7 @@ void CompareESW_ScS(CompareESW X,CompareScS Y,int *Shift,double *CCC,
 		}
 	}
 
-	for (X_AE=X.Peak;X_AE<X.Length;X_AE--){
+	for (X_AE=X.Peak;X_AE<X.Length;X_AE++){
 		if (X.Signal[X_AE]<AMPlevel){
 			break;
 		}
@@ -678,7 +681,7 @@ void CompareESW_ScS(CompareESW X,CompareScS Y,int *Shift,double *CCC,
 		}
 	}
 
-	for (Y_AE=Y.Peak;Y_AE<Y.Length;Y_AE--){
+	for (Y_AE=Y.Peak;Y_AE<Y.Length;Y_AE++){
 		if (Y.Signal[Y_AE]<AMPlevel){
 			break;
 		}

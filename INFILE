@@ -5,8 +5,8 @@
 
 <DATADIR>                        /home/shule/DATA_t041
 <CMTINFO>                        /home/shule/DATA_t041/CMT.dat
-<WORKDIR>                        /home/shule/PROJ/t041.ScS_Stripping
-<DB>                             ScS
+<WORKDIR>                        /home/shule/PROJ/t041.ScS_Stripping_StretchDecon
+<DB>                             ScS_StretchDecon
 
 <SYNDATADIR>                     /home/shule/PROJ/t039.ULVZ
 <SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_1D_REFL
@@ -443,6 +443,7 @@ TX2011_S
 # ==========================================================
 
 <EQs_BEGIN>
+
 
 
 200608250044
