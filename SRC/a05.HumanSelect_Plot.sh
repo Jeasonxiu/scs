@@ -60,6 +60,7 @@ else
 	Fresh=0
 fi
 
+
 for EQ in ${EQnames}
 do
 
@@ -155,13 +156,16 @@ EOF
 
 	else
 
-		mysql -N -u shule ${DB} >> tmpfile_s_$$ << EOF
+		while read pairname
+		do
+
+			mysql -N -u shule ${DB} >> tmpfile_s_$$ << EOF
 select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,1,P-S,xpP-S,S-S,xsS-S,PP-S,SS-S,SKKS-S,PKP-S,SKS-S,ScS-S from Master_a04 where pairname="${pairname}";
 EOF
-
-		mysql -N -u shule ${DB} >> tmpfile_scs_$$ << EOF
+			mysql -N -u shule ${DB} >> tmpfile_scs_$$ << EOF
 select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,1,P-ScS,xpP-ScS,S-ScS,xsS-ScS,PP-ScS,SS-ScS,SKKS-ScS,PKP-ScS,SKS-ScS,ScS-ScS from Master_a04 where pairname="${pairname}";
 EOF
+		done < tmpfile_pairname_$$
 
 	fi
 
