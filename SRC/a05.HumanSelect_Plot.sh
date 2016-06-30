@@ -21,9 +21,6 @@ mkdir -p ${WORKDIR_HandPick}
 cd ${WORKDIR_Plot}/tmpdir_$$
 trap "rm -rf ${WORKDIR_Plot}/tmpdir_$$ ${WORKDIR}/*_${RunNumber}; exit 1" EXIT SIGINT
 
-
-
-
 # Plot parameters.
 
 height=`echo ${PLOTHEIGHT_Select} / ${PLOTPERPAGE_Select} | bc -l`
@@ -78,7 +75,7 @@ EOF
 	fi
 
 
-	echo "    ==> Porcessing ${EQ} (`date +%H:%M:%S`) ..."
+	echo "    ==> Gathering ${EQ} Information (`date +%H:%M:%S`) ..."
     # EQ specialized parameters.
 
     F1=`grep ${EQ} ${WORKDIR}/EQ_Freq_${RunNumber} | awk '{print $2}'`
@@ -95,119 +92,27 @@ EOF
 	mysql -N -u shule ${DB} > tmpfile_Cin_ScS_$$ << EOF
 select file,stnm,ScS from Master_a04 where eq=${EQ} and WantIt=1 order by netwk,gcarc;
 EOF
-
-	mysql -N -u shule ${DB} > tmpfile_pairname << EOF
-select PairName from Master_a04 where eq=${EQ} and WantIt=1 order by netwk,gcarc;
+	mysql -N -u shule ${DB} > tmpfile_pairname_$$ << EOF
+select pairname from Master_a04 where eq=${EQ} and WantIt=1 order by netwk,gcarc;
 EOF
 
-
 	echo "select evlo,evla,evde,mag from Master_a04 where eq=${EQ} limit 1" > tmpfile_$$
-
 	INFO=`mysql -N -u shule ${DB} < tmpfile_$$`
     EVLO=`echo "${INFO}" | awk '{printf "%.2lf",$1}'`
     EVLA=`echo "${INFO}" | awk '{printf "%.2lf",$2}'`
     EVDE=`echo "${INFO}" | awk '{printf "%.1lf",$3}'`
     EVMA=`echo "${INFO}" | awk '{printf "%.1lf",$4}'`
-    YYYY=`echo ${EQ} | cut -b 1-4`
+	YYYY=`echo ${EQ} | cut -b 1-4`
     MM=`echo ${EQ}   | cut -b 5-6`
     DD=`echo ${EQ}   | cut -b 7-8`
 
-    # ================================================
-    #         ! Make Plot data !
-    # ================================================
-
-	${EXECDIR}/SAC2Signal.out 0 2 6 << EOF
-tmpfile_Cin_S_$$
-${WORKDIR_Plot}/tmpdir_$$/
--150
-300
-${DELTA}
-${F1}
-${F2}
-${Taper_ESF}
-EOF
-
-	if [ $? -ne 0 ]
-	then
-		echo "    !=> SAC2Signal.out failed ..."
-		exit 1
-	fi
-
-	continue
-done
-
-exit 0
-
-    # SAC Operations.
-
-    for file in `cat tmpfile_filelist`
-    do
-        cat >> sacmacro << EOF
-r ${file}
-rmean
-rtr
-taper width ${Taper_ESF}
-bp co ${F1} ${F2} n ${order} p ${passes}
-interp d ${DELTA}
-w alpha ${file##*/}.txt
-EOF
-    done
-    sac > /dev/null 2>&1 << EOF
-m sacmacro
-quit
-EOF
-
-    # Post-process waveform data.
-
-    for file in `ls *sac.txt`
-    do
-        timefile=${file%txt}time
-        datafile=${file%txt}inf
-        timefile2=${file%txt}time2
-        datafile2=${file%txt}inf2
-
-        ##     retrieve other phases' arrival time,
-        ##     calculate their arrival time relative to the chosen phase.
-        awk '{ if ( NR==3 || NR==4 ) print $1"\n"$2"\n"$3"\n"$4"\n"$5}' ${file} > tmpfile1_$$
-        zero=`awk 'NR==3 {print $1}' tmpfile1_$$`
-        zero2=`awk 'NR==10 {print $1}' tmpfile1_$$`
-        paste tmpfile_ticks.lst tmpfile1_$$ > tmpfile_$$
-        awk -v Z=${zero} '{print $1,$2,$3,$4-Z}' tmpfile_$$ > ${timefile}
-        awk -v Z=${zero2} '{print $1,$2,$3,$4-Z}' tmpfile_$$ > ${timefile2}
-
-        ##     remove the first 30 lines ( sac header ).
-        ##     cut according to time window, add time ( x axis ) data.
-        Begin=`awk 'NR==2 {printf "%lf",$1}' ${file}`
-
-        ZL=`echo " ( ${zero} - ${Begin} ) / ${DELTA} " | bc`
-        L1=`echo " ${ZL} + ${PLOTTIMEMIN_Select} / ${DELTA}     " | bc`
-        L2=`echo " ${ZL} + ${PLOTTIMEMAX_Select} / ${DELTA}     " | bc`
-
-        awk ' NR>30 {print $1"\n"$2"\n"$3"\n"$4"\n"$5}' ${file} \
-            | sed '/^$/d' \
-            | awk -v L=${L2} ' NR<L {print $0}'    \
-            | awk -v L=${L1} ' NR>L {print $0}'    \
-            | awk -v D=${DELTA} '{print NR*D,$1}'  \
-            | awk -v T1=${PLOTTIMEMIN_Select} '{print $1+T1,$2}' > ${datafile}
-
-        ZL_2=`echo " ( ${zero2} - ${Begin} ) / ${DELTA} " | bc`
-        L1_2=`echo " ${ZL_2} + ${PLOTTIMEMIN_Select} / ${DELTA}     " | bc`
-        L2_2=`echo " ${ZL_2} + ${PLOTTIMEMAX_Select} / ${DELTA}     " | bc`
-
-        awk ' NR>30 {print $1"\n"$2"\n"$3"\n"$4"\n"$5}' ${file} \
-            | sed '/^$/d' \
-            | awk -v L=${L2_2} ' NR<L {print $0}'    \
-            | awk -v L=${L1_2} ' NR>L {print $0}'    \
-            | awk -v D=${DELTA} '{print NR*D,$1}'    \
-            | awk -v T1=${PLOTTIMEMIN_Select} '{print $1+T1,$2}' > ${datafile2}
-
-    done
 
     # Put human-picked bad traces at the bottom of the station list.
 
 	if [ ${Fresh} -eq 0 ]
 	then
-			mysql -u shule ${DB} > /dev/null 2>&1 << EOF
+
+		mysql -u shule ${DB} > /dev/null 2>&1 << EOF
 alter table a06 drop primary key, add primary key (PairName);
 EOF
 
@@ -218,48 +123,86 @@ EOF
 			mysql -u shule ${DB} > /dev/null 2>&1 << EOF
 insert ignore into a06 (PairName) values ("${pairname}");
 EOF
-			mysql -N -u shule ${DB} >> tmpfile_bads_$$ << EOF
-select file,gcarc,stnm,stlo,stla,netwk,az,baz,hitlo,hitla,0 from Master_a04 left join a06 on Master_a04.pairname=a06.pairname where a06.pairname="${pairname}" and keeps=0;
+
+			echo "select count(*) from a06 where keeps=0 and pairname=\"${pairname}\"" > tmpfile_$$
+			if [ `mysql -N -u shule ${DB} < tmpfile_$$` -eq 0 ]
+			then
+				mysql -N -u shule ${DB} >> tmpfile_goods_$$ << EOF
+select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,1,P-S,xpP-S,S-S,xsS-S,PP-S,SS-S,SKKS-S,PKP-S,SKS-S,ScS-S from Master_a04 where pairname="${pairname}";
 EOF
-			mysql -N -u shule ${DB} >> tmpfile_badscs_$$ << EOF
-select file,gcarc,stnm,stlo,stla,netwk,az,baz,hitlo,hitla,0 from Master_a04 left join a06 on Master_a04.pairname=a06.pairname where a06.pairname="${pairname}" and keepscs=0;
+			else
+				mysql -N -u shule ${DB} >> tmpfile_bads_$$ << EOF
+select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,0,P-S,xpP-S,S-S,xsS-S,PP-S,SS-S,SKKS-S,PKP-S,SKS-S,ScS-S from Master_a04 where pairname="${pairname}";
 EOF
-			mysql -N -u shule ${DB} >> tmpfile_goods_$$ << EOF
-select file,gcarc,stnm,stlo,stla,netwk,az,baz,hitlo,hitla,1 from Master_a04 left join a06 on Master_a04.pairname=a06.pairname where a06.pairname="${pairname}" and ( keeps is null or keeps=1 );
+			fi
+
+			echo "select count(*) from a06 where keepscs=0 and pairname=\"${pairname}\"" > tmpfile_$$
+			if [ `mysql -N -u shule ${DB} < tmpfile_$$` -eq 0 ]
+			then
+				mysql -N -u shule ${DB} >> tmpfile_goodscs_$$ << EOF
+select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,1,P-ScS,xpP-ScS,S-ScS,xsS-ScS,PP-ScS,SS-ScS,SKKS-ScS,PKP-ScS,SKS-ScS,ScS-ScS from Master_a04 where pairname="${pairname}";
 EOF
-			mysql -N -u shule ${DB} >> tmpfile_goodscs_$$ << EOF
-select file,gcarc,stnm,stlo,stla,netwk,az,baz,hitlo,hitla,1 from Master_a04 left join a06 on Master_a04.pairname=a06.pairname where a06.pairname="${pairname}" and ( keepscs is null or keepscs=1 );
+			else
+				mysql -N -u shule ${DB} >> tmpfile_badscs_$$ << EOF
+select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,0,P-ScS,xpP-ScS,S-ScS,xsS-ScS,PP-ScS,SS-ScS,SKKS-ScS,PKP-ScS,SKS-ScS,ScS-ScS from Master_a04 where pairname="${pairname}";
 EOF
-		done < tmpfile_pairname
+			fi
+
+		done < tmpfile_pairname_$$
 
 		cat tmpfile_goods_$$ tmpfile_bads_$$ > tmpfile_s_$$
 		cat tmpfile_goodscs_$$ tmpfile_badscs_$$ > tmpfile_scs_$$
 
 	else
 
-		rm -f tmpfile_s_$$
-		for file in `cat tmpfile_filelist`
-		do
-			mysql -N -u shule ${DB} >> tmpfile_s_$$ << EOF
-select file,gcarc,stnm,stlo,stla,netwk,az,baz,hitlo,hitla,1 from Master_a04 where file="${file}" order by gcarc;
+		mysql -N -u shule ${DB} >> tmpfile_s_$$ << EOF
+select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,1,P-S,xpP-S,S-S,xsS-S,PP-S,SS-S,SKKS-S,PKP-S,SKS-S,ScS-S from Master_a04 where pairname="${pairname}";
 EOF
-		done
-		cp tmpfile_s_$$ tmpfile_scs_$$
+
+		mysql -N -u shule ${DB} >> tmpfile_scs_$$ << EOF
+select stnm,gcarc,KCMPNM,stlo,stla,netwk,az,baz,hitlo,hitla,1,P-ScS,xpP-ScS,S-ScS,xsS-ScS,PP-ScS,SS-ScS,SKKS-ScS,PKP-ScS,SKS-ScS,ScS-ScS from Master_a04 where pairname="${pairname}";
+EOF
 
 	fi
+
+
+    # ==================================
+    #         ! Make S Plot data !
+    # ==================================
+
+	echo "        ==> Processing ${EQ} ${ReferencePhase} (`date +%H:%M:%S`) ..."
+
+	${EXECDIR}/SAC2Signal.out 0 2 6 << EOF
+tmpfile_Cin_S_$$
+${WORKDIR_Plot}/tmpdir_$$/
+-190
+380
+${DELTA}
+${F1}
+${F2}
+0.05
+EOF
+
+	if [ $? -ne 0 ]
+	then
+		echo "    !=> SAC2Signal.out failed ..."
+		exit 1
+	fi
+
 
     # ===================================
     #        ! Plot S !
     # ===================================
-	echo "    ==> Ploting ${EQ} ${ReferencePhase} profile for HandSelection (`date +%H:%M:%S`) ..."
+
+	echo "        ==> Plotting ${EQ} ${ReferencePhase} profile for HandSelection (`date +%H:%M:%S`) ..."
 
     NSTA=`wc -l < tmpfile_s_$$`
     page=0
     plot=$((PLOTPERPAGE_Select+1))
 
-    while read file GCARC STNM STLO STLA NETWK AZ BAZ HITLO HITLA good
+    while read STNM GCARC KCMPNM STLO STLA NETWK AZ BAZ HITLO HITLA good Times
     do
-        file=${file##*/}
+        file="${STNM}.waveform"
 
         ## new page test.
         if [ ${plot} -eq $((PLOTPERPAGE_Select+1)) ]
@@ -336,13 +279,15 @@ EOF
 EOF
 
         ## plot traveltime ticks.
+		echo ${Times} | sed -s 's/ /\n/g' > tmpfile_$$
+		paste tmpfile_ticks.lst tmpfile_$$ > tmpfile2_$$
         while read num phase color Ttime
         do
             psxy -JX -R -W0.3p,${color},- -O -K >> ${OUTFILE} << EOF
 ${Ttime} -1
 ${Ttime} 1
 EOF
-        done < ${file}.time
+        done < tmpfile2_$$
 
         ## plot Checkbox.
         if [ ${page} -eq 1 ] && [ ${plot} -eq 1 ]
@@ -419,14 +364,7 @@ EOF
         done
 
         ## plot waveform.
-        ## normalize waveform within plot window.
-
-        awk '{ print $1 }' ${file}.inf > tmp.xy1
-        awk '{ print $2 }' ${file}.inf > tmp.xy2
-        ${BASHCODEDIR}/normalize.sh tmp.xy2 > tmp.xy3
-        paste tmp.xy1 tmp.xy3 > tmp.xy
-
-        psxy tmp.xy -JX -R -W0.5p -O -K >> ${OUTFILE}
+        psxy ${file} -JX -R -W0.5p -O -K >> ${OUTFILE}
 
         ## add station info.
 
@@ -461,19 +399,43 @@ EOF
     ps2pdf tmp.ps ${WORKDIR_HandPick}/${EQ}_${ReferencePhase}_HandPick.pdf
     rm -f *.ps
 
+    # ==================================
+    #         ! Make ScS Plot data !
+    # ==================================
+
+	echo "        ==> Processing ${EQ} ${MainPhase} (`date +%H:%M:%S`) ..."
+
+	${EXECDIR}/SAC2Signal.out 0 2 6 << EOF
+tmpfile_Cin_ScS_$$
+${WORKDIR_Plot}/tmpdir_$$/
+-190
+380
+${DELTA}
+${F1}
+${F2}
+0.05
+EOF
+
+	if [ $? -ne 0 ]
+	then
+		echo "    !=> SAC2Signal.out failed ..."
+		exit 1
+	fi
+
 
     # ===================================
     #        ! Plot ScS !
     # ===================================
-	echo "    ==> Ploting ${EQ} ${MainPhase} profile for HandSelection (`date +%H:%M:%S`) ..."
 
-    NSTA=`wc -l < tmpfile_scs_$$`
+	echo "        ==> Plotting ${EQ} ${MainPhase} profile for HandSelection (`date +%H:%M:%S`) ..."
+
+    NSTA=`wc -l < tmpfile_s_$$`
     page=0
     plot=$((PLOTPERPAGE_Select+1))
 
-    while read file GCARC STNM STLO STLA NETWK AZ BAZ HITLO HITLA good
+    while read STNM GCARC KCMPNM STLO STLA NETWK AZ BAZ HITLO HITLA good Times
     do
-        file=${file##*/}
+        file="${STNM}.waveform"
 
         ## new page test.
         if [ ${plot} -eq $((PLOTPERPAGE_Select+1)) ]
@@ -550,13 +512,15 @@ EOF
 EOF
 
         ## plot traveltime ticks.
+		echo ${Times} | sed -s 's/ /\n/g' > tmpfile_$$
+		paste tmpfile_ticks.lst tmpfile_$$ > tmpfile2_$$
         while read num phase color Ttime
         do
             psxy -JX -R -W0.3p,${color},- -O -K >> ${OUTFILE} << EOF
 ${Ttime} -1
 ${Ttime} 1
 EOF
-        done < ${file}.time2
+        done < tmpfile2_$$
 
         ## plot Checkbox.
         if [ ${page} -eq 1 ] && [ ${plot} -eq 1 ]
@@ -633,14 +597,7 @@ EOF
         done
 
         ## plot waveform.
-        ## normalize waveform within plot window.
-
-        awk '{ print $1 }' ${file}.inf2 > tmp.xy1
-        awk '{ print $2 }' ${file}.inf2 > tmp.xy2
-        ${BASHCODEDIR}/normalize.sh tmp.xy2 > tmp.xy3
-        paste tmp.xy1 tmp.xy3 > tmp.xy
-
-        psxy tmp.xy -JX -R -W0.5p -O -K >> ${OUTFILE}
+        psxy ${file} -JX -R -W0.5p -O -K >> ${OUTFILE}
 
         ## add station info.
 
@@ -664,7 +621,9 @@ EOF
 
         plot=$((plot+1))
 
-    done < tmpfile_scs_$$ # Done scs plotting loop.
+    done < tmpfile_scs_$$ # Done S plotting loop.
+
+
 
     # seal the last page.
     psxy -J -R -O >> ${OUTFILE} << EOF

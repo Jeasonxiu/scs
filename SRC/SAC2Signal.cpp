@@ -89,25 +89,13 @@ int main(int argc, char **argv){
 		return 1;
 	}
 
-	cout << "C++ Inputs are:" << endl;
-	for (auto i: PI){
-		cout << i << endl;
-	}
-	for (auto i: PS){
-		cout << i << endl;
-	}
-	for (auto i: P){
-		cout << i << endl;
-	}
-	return 1;
-
     /****************************************************************
 
                               Job begin.
 
     ****************************************************************/
 
-	double **data,*ptime,C1,delta,F1,F2,taperwidth;
+	double **data,*ptime;
 	int nptsx,nptsy,*bad_flag;
 	string *stnm;
 	char **filelist;
@@ -130,28 +118,34 @@ int main(int argc, char **argv){
 	infp.open(PS[infile]);
 	for (int index=0;index<nptsx;index++){
 		infp >> tmpstr >> stnm[index] >> ptime[index];
-		strcpy(tmpstr.c_str(),filelist[index]);
+		strcpy(filelist[index],tmpstr.c_str());
 	}
 
 	infp.close();
 
 
-    read_sac(data,nptsx,nptsy,ptime,C1,delta,F1,F2,2,2,2,1,taperwidth,filelist,
-	         bad_flag);
+    read_sac(data,nptsx,nptsy,ptime,P[C1],P[delta],P[F1],P[F2],2,2,2,1,
+	         P[taperwidth],filelist,bad_flag);
 
 	ofstream outfp;
-
 	for (int index=0;index<nptsx;index++){
-		if (bad_flag[index]!=0){
-			continue;
-		}
 
 		tmpstr=PS[outfile_pre]+stnm[index]+".waveform";
 		outfp.open(tmpstr);
 
-		for (int index2=0;index2<nptsy;index2++){
-			outfp << P[C1]+P[delta]*index2 << " " << data[index][index2] 
-			      << endl;
+		if (bad_flag[index]!=0){
+			outfp << "0 0" << endl;
+		}
+
+		else{
+
+			normalize_window(data[index],nptsy,(int)ceil((-150-P[C1])/P[delta]),
+			                 (int)ceil(300/P[delta]));
+
+			for (int index2=0;index2<nptsy;index2++){
+				outfp << P[C1]+P[delta]*index2 << " " << data[index][index2]
+					  << endl;
+			}
 		}
 
 		outfp.close();

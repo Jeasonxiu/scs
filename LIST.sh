@@ -4,7 +4,7 @@
 # ${SRCDIR}/a02.ExtractHeader.sh
 # ${SRCDIR}/a03.ScS_Sampling.sh
 # ${SRCDIR}/a04.AutoSelect.sh
-# ${SRCDIR}/a05.HumanSelect_Plot.sh
+${SRCDIR}/a05.HumanSelect_Plot.sh
 # ${SRCDIR}/a06.HumanSelect.sh
 # ${SRCDIR}/a08.AddRadpat.sh
 # ${SRCDIR}/a09.CorrectDepth.sh
