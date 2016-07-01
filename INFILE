@@ -5,8 +5,8 @@
 
 <DATADIR>                        /home/shule/DATA_t041
 <CMTINFO>                        /home/shule/DATA_t041/CMT.dat
-<WORKDIR>                        /home/shule/PROJ/t041.ScS_Stripping
-<DB>                             ScS
+<WORKDIR>                        /home/shule/PROJ/t041.ScS_Stripping_StretchDecon
+<DB>                             ScS_StretchDecon
 
 <SYNDATADIR>                     /home/shule/PROJ/t039.ULVZ
 <SYNWORKDIR>                     /home/shule/PROJ/t041.ULVZ_1D_REFL
@@ -444,7 +444,10 @@ TX2011_S
 
 <EQs_BEGIN>
 
-200705251747
+
+200608250044
+200707211327
+
 <EQs_END>
 
 200608250044
@@ -474,6 +477,10 @@ TX2011_S
 <EQsSYN_BEGIN>
 
 201500000032
+
+<EQsSYN_END>
+
+201500000032
 201500000063
 201500000094
 201500000035
@@ -492,4 +499,3 @@ TX2011_S
 201500000078
 201500000109
 
-<EQsSYN_END>
