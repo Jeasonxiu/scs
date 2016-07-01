@@ -133,7 +133,7 @@ load data local infile "tmpfile_in_$$" into table tmptable$$
 fields terminated by "," lines terminated by "\n"
 (@tmp1,SNR_W1,SNR_W2,@tmp2,Shift_D,CCC_D,Misfit_D,@tmp3,N1_Time,S1_Time,N2_Time,N3_Time)
 set PairName=concat("${EQ}_",@tmp1),
-SNR_D=if(convert(@tmp2,double),@tmp2,NULL);
+SNR_D=SNR_W1*SNR_W2;
 EOF
 
 	# update Master_$$.
