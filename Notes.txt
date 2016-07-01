@@ -1,3 +1,11 @@
-1. Why some ScS is very very small, even comparing to stations at almost the same location:
+[1]. Try stretch record by record.
+    -- Both schemes (Use half thinner S data / Use all data, half-thin ESW)
+	   show FRS bin-stack bumps goes away (20160629).
 
+2. Possble bug: stretch by records no negative tstar on synthesis: ~047@50deg.
 
+[3]. Fix a05.HandPick. Make it faster.
+
+4. Try Mask S on data.
+
+5. Misfit outliar throw away. What is its scheme ?

@@ -19,8 +19,9 @@ using namespace std;
  * Best fit is decided by choosing the minimum absolute
  * difference within certain time window.
  *
- * This will do a grid search on Tstar and vertical stretch.
- * Use the minimum absolute different stretch parameters.
+ * This will search Tstar first. Once the proper Tstar is found.
+ * Fix the Tstar operator, do the vertical stretch serach.
+ * Use the minimum absolute different vertical stretch parameters.
  *
  * Then do taper on both ESW and trace, then apply waterlevel
  * de-convolution.
@@ -50,7 +51,7 @@ struct DeconPair{
 								  //     need to move forward.
 };
 
-void CompareESW_ScS(CompareESW,CompareScS,int *,double *,double *,
+void CompareESW_ScS(CompareESW,CompareScS,int *,double *,double *,double *,
                     double,int,int);
 
 int main(int argc, char **argv){
@@ -247,10 +248,10 @@ int main(int argc, char **argv){
 			ScSWaveformTapered_time[index][index2]-=ShiftTimeFactor;
 		}
 
-		taperd(ScSWaveformTapered_amp[index],NPTS_Cut,0.1);
+// 		taperd(ScSWaveformTapered_amp[index],NPTS_Cut,0.1);
 
 		// Modified taperd:
-// 		taperd_section(ScSWaveformTapered_amp[index],NPTS_Cut,0.425,0.1);
+		taperd_section(ScSWaveformTapered_amp[index],NPTS_Cut,0.4,0.1);
 
 	}
 
@@ -395,62 +396,73 @@ int main(int argc, char **argv){
 
 	int IndexTs,IndexVer,Shift,TmpShift;
 	int L1=(int)ceil(P[C1]/P[delta]),L2=(int)ceil(P[C2]/P[delta]);
-	double CCC,Diff,OriginalDiff,TmpDiff,TmpCCC;
+	double CCC,CCDiff,Diff,TmpCCDiff,TmpDiff,TmpCCC;
 	CompareScS *tstaredScS;
 	double *tstaredScS_Aux=new double [NPTS_Cut+NPTS_Tstar-1];
 	DeconPair *DeconInput = new DeconPair [Data.size()];
 
 	for (size_t index=0;index<Data.size();index++){
 
-		// Compare between ESW(Ts!=0,Ver!=0) and Original ScS.
-		Diff=1/0.0;
+		cout << "Stretching " << Data[index].STNM << ".. ["  << index << " / "
+		     << Data.size() << "]:" << endl;
+
+		// Compare between ESW(Ts!=0,Ver==0) and Original ScS.
+		CCDiff=1/0.0;
 		IndexTs=0;
-		IndexVer=0;
 
 		for (int index2=0;index2<PI[nXStretch];index2++){
-			for (int index3=0;index3<PI[nYStretch];index3++){
 
-				CompareESW_ScS(alteredESW[index2][index3],originalScS[index],
-							   &TmpShift,&TmpCCC,&TmpDiff,
+			CompareESW_ScS(alteredESW[index2][0],originalScS[index],
+						   &TmpShift,&TmpCCC,&TmpCCDiff,&TmpDiff,
+						   P[AMPlevel],L1,L2);
+
+
+			if (TmpCCDiff<=CCDiff){
+			    CCDiff=TmpCCDiff;
+				IndexTs=index2;
+			}
+
+		}
+
+		if (IndexTs!=0){
+
+			cout << "    Tstar on ESW..."  << endl;
+
+			// Fix Ts, compare between ESW(Ver!=0) and Original ScS.
+			Diff=1/0.0;
+			IndexVer=0;
+
+			for (int index2=0;index2<PI[nYStretch];index2++){
+				CompareESW_ScS(alteredESW[IndexTs][index2],originalScS[index],
+							   &TmpShift,&TmpCCC,&TmpCCDiff,&TmpDiff,
 							   P[AMPlevel],L1,L2);
 
 				if (TmpDiff<=Diff){
 					Diff=TmpDiff;
-					Shift=TmpShift;
+					Shift=TmpShift;              // Shift here means when their
+					                             // peak are aligned, how much
+												 // shift should applied.
 					CCC=TmpCCC;
-					IndexTs=index2;
-					IndexVer=index3;
+					IndexVer=index2;
 				}
 
-				cout << "TmpCCC: " << TmpCCC << endl;
-
 			}
+
+			// Notedown compare result.
+			DeconInput[index].Source=alteredESW[IndexTs][IndexVer].Signal;
+			DeconInput[index].Signal=originalScS[index].Signal;
+			DeconInput[index].Source_Peak=alteredESW[IndexTs][IndexVer].Peak;
+			DeconInput[index].Signal_Peak=originalScS[index].Peak;
+			DeconInput[index].Ts=IndexTs*TsINC;
+			DeconInput[index].Ver=P[V1]+IndexVer*VerINC;
+			DeconInput[index].Shift=Shift*P[delta];
+			DeconInput[index].CCC=CCC;
+			DeconInput[index].Diff=Diff;
+
 		}
+		else{
 
-
-// 		if (IndexTs!=0){
-// 			cout << "Tstar ESW: " << Data[index].PairName << " " << index
-// 			     << " / " << Data.size() << endl;
-// 		}
-
-		// Notedown compare result.
-		DeconInput[index].Source=alteredESW[IndexTs][IndexVer].Signal;
-		DeconInput[index].Signal=originalScS[index].Signal;
-		DeconInput[index].Source_Peak=alteredESW[IndexTs][IndexVer].Peak;
-		DeconInput[index].Signal_Peak=originalScS[index].Peak;
-		DeconInput[index].Ts=IndexTs*TsINC;
-		DeconInput[index].Ver=P[V1]+IndexVer*VerINC;
-		DeconInput[index].Shift=Shift*P[delta];
-		DeconInput[index].CCC=CCC;
-		DeconInput[index].Diff=Diff;
-
-
-		if (IndexTs==0){
-
-// 			cout << "Tstar ScS: " << Data[index].PairName << " " << index
-// 			     << " / " << Data.size() << endl;
-
-			OriginalDiff=Diff;
+			cout << "    Tstar on ScS..."  << endl;
 
 			// Apply Tstar on ScS.
 
@@ -463,15 +475,15 @@ int main(int argc, char **argv){
 
 				// Make tstared ScS.
 				convolve(originalScS[index].Signal,TstarOperator[index2],
-				         NPTS_Cut,NPTS_Tstar,tstaredScS_Aux);
+						 NPTS_Cut,NPTS_Tstar,tstaredScS_Aux);
 
 				// Find peak for normalize.
 
 				tstaredScS[index2].Peak=originalScS[index].Peak+
-				                        TstarOperator_Peak[index2];
+										TstarOperator_Peak[index2];
 
 				findpeak(tstaredScS_Aux,NPTS_Cut,&tstaredScS[index2].Peak,
-				         -100,200);
+						 -100,200);
 
 				NormalizeFactor=tstaredScS_Aux[tstaredScS[index2].Peak];
 
@@ -488,43 +500,57 @@ int main(int argc, char **argv){
 
 			}
 
-			// Compare between ESW(Ts=0,Ver!=0) and Tstared ScS.
 
-			Diff=1/0.0;
+			// Compare between ESW(Ts==0,Ver==0) and Tstared ScS.
+			CCDiff=1/0.0;
 			IndexTs=0;
-			IndexVer=0;
 
 			for (int index2=0;index2<PI[nXStretch];index2++){
-				for (int index3=0;index3<PI[nYStretch];index3++){
 
-					CompareESW_ScS(alteredESW[0][index3],tstaredScS[index2],
-								   &TmpShift,&TmpCCC,&TmpDiff,
-								   P[AMPlevel],L1,L2);
+				CompareESW_ScS(alteredESW[0][0],tstaredScS[index2],
+							   &TmpShift,&TmpCCC,&TmpCCDiff,&TmpDiff,
+							   P[AMPlevel],L1,L2);
 
-					if (TmpDiff<=Diff){
-						Diff=TmpDiff;
-						Shift=TmpShift;
-						CCC=TmpCCC;
-						IndexTs=index2;
-						IndexVer=index3;
-					}
+
+				if (TmpCCDiff<=CCDiff){
+					CCDiff=TmpCCDiff;
+					IndexTs=index2;
 				}
 
 			}
 
-			if (OriginalDiff>Diff){
 
-				// Notedown new compare result.
-				DeconInput[index].Source=alteredESW[0][IndexVer].Signal;
-				DeconInput[index].Signal=tstaredScS[IndexTs].Signal;
-				DeconInput[index].Source_Peak=alteredESW[0][IndexVer].Peak;
-				DeconInput[index].Signal_Peak=tstaredScS[IndexTs].Peak;
-				DeconInput[index].Ts=-1*IndexTs*TsINC;
-				DeconInput[index].Ver=P[V1]+IndexVer*VerINC;
-				DeconInput[index].Shift=Shift*P[delta];
-				DeconInput[index].CCC=CCC;
-				DeconInput[index].Diff=Diff;
+			// Fix Ts, compare between ESW(Ver!=0) and Tstared ScS.
+			Diff=1/0.0;
+			IndexVer=0;
+
+			for (int index2=0;index2<PI[nYStretch];index2++){
+
+				CompareESW_ScS(alteredESW[0][index2],tstaredScS[IndexTs],
+							   &TmpShift,&TmpCCC,&TmpCCDiff,&TmpDiff,
+							   P[AMPlevel],L1,L2);
+
+				if (TmpDiff<=Diff){
+					Diff=TmpDiff;
+					Shift=TmpShift;              // Shift here means when their
+					                             // peak are aligned, how much
+												 // shift should applied.
+					CCC=TmpCCC;
+					IndexVer=index2;
+				}
+
 			}
+
+			// Notedown new compare result.
+			DeconInput[index].Source=alteredESW[0][IndexVer].Signal;
+			DeconInput[index].Signal=tstaredScS[IndexTs].Signal;
+			DeconInput[index].Source_Peak=alteredESW[0][IndexVer].Peak;
+			DeconInput[index].Signal_Peak=tstaredScS[IndexTs].Peak;
+			DeconInput[index].Ts=-1*IndexTs*TsINC;
+			DeconInput[index].Ver=P[V1]+IndexVer*VerINC;
+			DeconInput[index].Shift=Shift*P[delta];
+			DeconInput[index].CCC=CCC;
+			DeconInput[index].Diff=Diff;
 
 			// Release memory of tstaredScS.
 			for (int index2=0;index2<PI[nXStretch];index2++){
@@ -533,7 +559,11 @@ int main(int argc, char **argv){
 				}
 			}
 			delete[] tstaredScS;
+
 		}
+
+		cout << "        Tstar Parameter : " << DeconInput[index].Ts << endl;
+		cout << "        Vertical Stretch: " << DeconInput[index].Ver << endl;
 	}
 
 	// Step 8. Output stretched ESW / or ScS.
@@ -657,7 +687,7 @@ int main(int argc, char **argv){
 
 
 void CompareESW_ScS(CompareESW X,CompareScS Y,int *Shift,double *CCC,
-                    double *Diff,double AMPlevel,int L1,int L2){
+                    double *CCDiff,double *Diff,double AMPlevel,int L1,int L2){
 
 	// 1. Find AMPlevel begin and end positions.
 
@@ -689,10 +719,32 @@ void CompareESW_ScS(CompareESW X,CompareScS Y,int *Shift,double *CCC,
 
 	// 2. Use CCC to compare and align two traces.
 	CC(X.Signal+X_AB,X_AE-X_AB+1,Y.Signal+Y_AB,Y_AE-Y_AB+1,Shift,CCC);
+
+	int BEGIN_X,BEGIN_Y,TotalLength,T1,T2;
+	if ((*Shift)<0){
+		BEGIN_X=X_AB;
+		BEGIN_Y=Y_AB-(*Shift);
+		T1=X_AE-X_AB+1;
+		T2=Y_AE-Y_AB+1+(*Shift);
+		TotalLength=(T1<T2)?T1:T2;
+	}
+	else{
+		BEGIN_X=X_AB+(*Shift);
+		BEGIN_Y=Y_AB;
+		T1=X_AE-X_AB+1-(*Shift);
+		T2=Y_AE-Y_AB+1;
+		TotalLength=(T1<T2)?T1:T2;
+	}
+
+	(*CCDiff)=0;
+	for (int index=0;index<TotalLength;index++){
+		(*CCDiff)+=fabs(X.Signal[BEGIN_X+index]-Y.Signal[BEGIN_Y+index]);
+	}
+	(*CCDiff)/=TotalLength;
+
+
+	// 3. Calculate Shift and Diff in the compare window.
 	(*Shift)-=((X.Peak-X_AB)-(Y.Peak-Y_AB));
-
-
-	// 3. Calculate Diff in the compare window.
 
 	(*Diff)=0;
 

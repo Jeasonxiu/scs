@@ -4,7 +4,7 @@
 # ${SRCDIR}/a02.ExtractHeader.sh
 # ${SRCDIR}/a03.ScS_Sampling.sh
 # ${SRCDIR}/a04.AutoSelect.sh
-# ${SRCDIR}/a05.HumanSelect_Plot.sh
+${SRCDIR}/a05.HumanSelect_Plot.sh
 # ${SRCDIR}/a06.HumanSelect.sh
 # ${SRCDIR}/a08.AddRadpat.sh
 # ${SRCDIR}/a09.CorrectDepth.sh
@@ -25,6 +25,7 @@ ${SRCDIR}/a17_1.Decon.sh
 # ${SRCDIR}/a17_5.Raw.sh
 # ${SRCDIR}/a17_6.WaterStripHalfS.sh
 # ${SRCDIR}/a16_a17.StretchDecon.sh
+# ${SRCDIR}/a16_a17.StretchDecon2.sh
 # ${SRCDIR}/a19_1.WaterFRS.sh
 # ${SRCDIR}/a19_3.SubtractFRS.sh
 # ${SRCDIR}/a19_5.RawFRS.sh

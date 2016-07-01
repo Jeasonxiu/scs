@@ -1,17 +1,20 @@
 #!/bin/bash
 
 #=================================================================
-# SYNTHESIS
 # This script: Stretch S ESW or ScS traces to match their shape.
 # Note: Do this record by record.
 # Then deconvolve the ESW from the signal.
+#
+# Different from a16_a17: Search Tstart first, then fix Tstar,
+#                         search vertical stretch on S.
+#                         See details in StretchDecon2.cpp
 #
 # Outputs:
 #
 #           ${WORKDIR_Stretch}/${EQ}/
 #           ${WORKDIR_WaterDecon}/${EQ}/
-#           ${SYNDB}.Master_a37
-#           ${SYNDB}.Master_a38
+#           ${DB}.Master_a16
+#           ${DB}.Master_a17
 #
 # Shule Yu
 # Jun 09 2016
@@ -21,11 +24,11 @@ echo ""
 echo "--> `basename $0` is running. (`date`)"
 
 # Continue from last modification.
-mysql -u shule ${SYNDB} << EOF
+mysql -u shule ${DB} << EOF
 drop table if exists Master_$$;
 drop table if exists Master2_$$;
-create table Master_$$ as select * from Master_a36;
-create table Master2_$$ as select * from Master_a36;
+create table Master_$$ as select * from Master_a13;
+create table Master2_$$ as select * from Master_a13;
 EOF
 
 # Work Begins.
@@ -35,7 +38,7 @@ do
 	cat > tmpfile_CheckValid_$$ << EOF
 select count(*) from Master_$$ where eq=${EQ} and wantit=1;
 EOF
-	NR=`mysql -N -u shule ${SYNDB} < tmpfile_CheckValid_$$`
+	NR=`mysql -N -u shule ${DB} < tmpfile_CheckValid_$$`
 	rm -f tmpfile_CheckValid_$$
 	if [ ${NR} -eq 0 ]
 	then
@@ -71,12 +74,12 @@ EOF
         fi
 
 		# Gather Information.
-		mysql -N -u shule ${SYNDB} > tmpfile_Cin_$$ << EOF
+		mysql -N -u shule ${DB} > tmpfile_Cin_$$ << EOF
 select Pairname,stnm,concat("${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/",stnm,".waveform"),FullStackFile_S,concat("${WORKDIR_WaterDecon}/${EQ}/",stnm,".tapered"),concat("${WORKDIR_Stretch}/${EQ}/",stnm,".StretchedTaperSource"),concat("${WORKDIR_WaterDecon}/${EQ}/",stnm,".trace"),Peak_ScS,NA_ScS from Master_$$ where eq=${EQ} and wantit=1 and Category=${cate} order by Misfit4_ScS;
 EOF
 
         # C Code.
-        ${EXECDIR}/StretchDecon.out 2 5 17 << EOF
+        ${EXECDIR}/StretchDecon2.out 2 5 17 << EOF
 ${nXStretch}
 ${nYStretch}
 tmpfile_Cin_$$
@@ -105,7 +108,7 @@ EOF
 
         if [ $? -ne 0 ]
         then
-            echo "    !=> StretchDecon.out failed for Category: ${cate} ..."
+            echo "    !=> StretchDecon2.out failed for Category: ${cate} ..."
             continue
         fi
 
@@ -113,7 +116,7 @@ EOF
 		sed 's/[[:blank:]]\+/,/g' tmpfile_Cout_$$ > tmpfile_in_$$
 
 		# put the calculation into Master_$$.
-		mysql -u shule ${SYNDB} << EOF
+		mysql -u shule ${DB} << EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName     varchar(22) not null unique primary key,
@@ -139,13 +142,13 @@ set SNR_D=if(convert(@tmp1,double),@tmp1,NULL);
 EOF
 
 		# update Master_$$.
-		${BASHCODEDIR}/UpdateTable.sh ${SYNDB} Master_$$ tmptable$$ PairName
+		${BASHCODEDIR}/UpdateTable.sh ${DB} Master_$$ tmptable$$ PairName
 
 		# format infile2.
 		sed 's/[[:blank:]]\+/,/g' tmpfile_Cout2_$$ > tmpfile_in_$$
 
 		# put the calculation into Master2_$$.
-		mysql -u shule ${SYNDB} << EOF
+		mysql -u shule ${DB} << EOF
 drop table if exists tmptable$$;
 create table tmptable$$(
 PairName     varchar(22) not null unique primary key,
@@ -157,7 +160,7 @@ fields terminated by "," lines terminated by "\n"
 EOF
 
 		# update Master2_$$.
-		${BASHCODEDIR}/UpdateTable.sh ${SYNDB} Master2_$$ tmptable$$ PairName
+		${BASHCODEDIR}/UpdateTable.sh ${DB} Master2_$$ tmptable$$ PairName
 
     done # Done Category loop.
 
@@ -165,20 +168,20 @@ EOF
 
 done # Done EQ loop.
 
-# Create Master_a38
-mysql -u shule ${SYNDB} << EOF
+# Create Master_a17
+mysql -u shule ${DB} << EOF
 drop table if exists tmptable$$;
-drop table if exists Master_a38;
-create table Master_a38 as select * from Master_$$;
+drop table if exists Master_a17;
+create table Master_a17 as select * from Master_$$;
 drop table if exists Master_$$;
 EOF
 
 
-# Create Master_a37
-mysql -u shule ${SYNDB} << EOF
+# Create Master_a16
+mysql -u shule ${DB} << EOF
 drop table if exists tmptable$$;
-drop table if exists Master_a37;
-create table Master_a37 as select * from Master2_$$;
+drop table if exists Master_a16;
+create table Master_a16 as select * from Master2_$$;
 drop table if exists Master2_$$;
 EOF
 
