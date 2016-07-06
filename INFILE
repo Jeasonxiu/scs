@@ -428,7 +428,7 @@ TX2011_S
 # b40_4, b40_5.
 
 <GCARC1_1DMS>                    60
-<GCARC2_1DMS>                    75
+<GCARC2_1DMS>                    85
 <GCARCINC_1DMS>                  1
 <Method_1DMS>                    Waterlevel
 
@@ -473,7 +473,7 @@ TX2011_S
 
 <EQsSYN_BEGIN>
 
-201500000047
+201500000041
 
 <EQsSYN_END>
 
