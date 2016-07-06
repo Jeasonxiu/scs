@@ -25,9 +25,9 @@ gmt gmtset MAP_GRID_PEN_PRIMARY 0.5p,gray,-
 
 # Histogram parameters.
 
-XMAX=${D2_FRSS}
+XMAX=${D2_FRS}
 XMIN=${D1_FRS}
-XINC="10"
+XINC="1"
 
 # ================================================
 #         ! Check calculation result !
@@ -38,7 +38,7 @@ OUTFILE=tmp.ps
 # Gathering Information.
 
 mysql -N -u shule ${DB} > histo.dat << EOF
-select GCARC from Master_a20 where wantit=1;
+select SHIFT_GCARC from Master_a20 where wantit=1;
 EOF
 
 #==========  x axis ==========
@@ -54,7 +54,7 @@ YINC=`echo "${YNUM}/2" | bc`
 
 #==========  some text  ==========
 cat > tmpfile_$$  << EOF
-0 1.1 ${EQ} weights from waveform estimations. NR=`wc -l < histo.dat`
+0 1.1 Final Gcarc Histogram. NR=`wc -l < histo.dat`
 EOF
 gmt pstext tmpfile_$$ -JX9i/6.5i -R-1/1/-1/1 -F+jCB+f20p -N -K > ${OUTFILE}
 
@@ -65,8 +65,7 @@ gmt pshistogram histo.dat -R -J -W${XINC} -L0.5p -Gblue -O >> ${OUTFILE}
 
 # Make PDF.
 Title=`basename $0`
-cat `ls -rt *.ps` > tmp.ps
-ps2pdf tmp.ps ${WORKDIR_Plot}/${Title%.sh}_${WeightScheme}.pdf
+ps2pdf tmp.ps ${WORKDIR_Plot}/${Title%.sh}.pdf
 
 rm -rf ${WORKDIR_Plot}/tmpdir_$$
 

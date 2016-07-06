@@ -98,7 +98,7 @@
 # ${SRCDIR}/b21_2.GeneralBin.sh
 # ${SRCDIR}/b21_3.PathAtSampling.sh
 # ${SRCDIR}/b21_4.BinWeightHistogram.sh
-# ${SRCDIR}/b21_5.AllGcarcHistogram.sh
+${SRCDIR}/b21_5.AllGcarcHistogram.sh
 # ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b22_2.BinCatalog.sh
 # ${SRCDIR}/b22_3.FinalDistMap.sh
