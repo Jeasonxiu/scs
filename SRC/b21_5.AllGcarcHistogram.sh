@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ================================================================
-# Plot Histogram of the weights for each earthquakes.
-# Pull information from Master_a20.
+# Plot Histogram of the gcarc of all earthquakes.
+# Pull information from Master_a21.
 #
 # Shule Yu
 # Apr 27 2016
@@ -38,7 +38,7 @@ OUTFILE=tmp.ps
 # Gathering Information.
 
 mysql -N -u shule ${DB} > histo.dat << EOF
-select SHIFT_GCARC from Master_a20 where wantit=1;
+select SHIFT_GCARC from Master_a21 where wantit=1;
 EOF
 
 #==========  x axis ==========

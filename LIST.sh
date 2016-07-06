@@ -30,9 +30,9 @@
 # ${SRCDIR}/a19_5.RawFRS.sh
 # ${SRCDIR}/a19_6.WaterStripHalfSFRS.sh
 # ${SRCDIR}/a20.WeightScheme.sh
-# ${SRCDIR}/a21_1.CircleBin.sh
+${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
-# ${SRCDIR}/a22.StackData.sh
+${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/a23.BinBootStrap.sh
 # ${SRCDIR}/a24_1.StackModels_1D.sh
 # ${SRCDIR}/a25_1.WhichModel_1D.sh
@@ -98,7 +98,7 @@
 # ${SRCDIR}/b21_2.GeneralBin.sh
 # ${SRCDIR}/b21_3.PathAtSampling.sh
 # ${SRCDIR}/b21_4.BinWeightHistogram.sh
-${SRCDIR}/b21_5.AllGcarcHistogram.sh
+# ${SRCDIR}/b21_5.AllGcarcHistogram.sh
 # ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b22_2.BinCatalog.sh
 # ${SRCDIR}/b22_3.FinalDistMap.sh
