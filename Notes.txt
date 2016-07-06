@@ -10,4 +10,13 @@
 
 5. Misfit outliar throw away. What is its scheme ?
 
+
 6. Possible bug: Standard devication at bin 34,35 is crazy.
+
+7. ScS Amp / S Amp Data vs Predicted (SYN and Rad).
+
+8. < 75 bin stack.o
+
+9. Pick Same number of number of record from quiet bin ,stack them to see if they are messy.
+
+10. Distance - FRS amplitude issue.

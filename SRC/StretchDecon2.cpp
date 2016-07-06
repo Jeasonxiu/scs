@@ -399,12 +399,12 @@ int main(int argc, char **argv){
 		}
 
 		// Normalize to ScS.
-// 		NormalizeFactor=ScSWaveformTapered_amp[index][PeakScS[index]];
-// 		for (int index2=0;index2<NPTS_Cut;index2++){
-// 			ScSWaveformTapered_amp[index][index2]/=NormalizeFactor;
-// 		}
-// 
-// 		taperd_section(ScSWaveformTapered_amp[index]+WB,WL,0.4,0.1);
+		NormalizeFactor=ScSWaveformTapered_amp[index][PeakScS[index]];
+		for (int index2=0;index2<NPTS_Cut;index2++){
+			ScSWaveformTapered_amp[index][index2]/=NormalizeFactor;
+		}
+
+		taperd_section(ScSWaveformTapered_amp[index]+WB,WL,0.4,0.1);
 
 	}
 
