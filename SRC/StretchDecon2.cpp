@@ -29,7 +29,7 @@ using namespace std;
 
 struct Record{
 	string PairName,STNM,Waveform,OldESW,Tapered,NewESW,Trace;
-	double Peak_ScS,NA_ScS;
+	double Peak_ScS,NA_ScS,Peak_S,DTS,PREM_S,PREM_ScS;
 };
 
 struct CompareESW{
@@ -150,7 +150,9 @@ int main(int argc, char **argv){
 	infp.open(PS[infile]);
 	while (infp >> TmpRecord.PairName >> TmpRecord.STNM >> TmpRecord.Waveform
 				>> TmpRecord.OldESW >> TmpRecord.Tapered >> TmpRecord.NewESW
-				>> TmpRecord.Trace >> TmpRecord.Peak_ScS >> TmpRecord.NA_ScS){
+				>> TmpRecord.Trace >> TmpRecord.Peak_ScS >> TmpRecord.NA_ScS
+				>> TmpRecord.Peak_S >> TmpRecord.DTS
+				>> TmpRecord.PREM_S >> TmpRecord.PREM_ScS ){
 		Data.push_back(TmpRecord);
 	}
 	infp.close();
@@ -222,10 +224,12 @@ int main(int argc, char **argv){
 
 	int PeakWB=(int)ceil(90/P[delta]),PeakWL=(int)ceil(30/P[delta]),Peak;
 	double NormalizeFactor,ShiftTimeFactor;
+	double PeakTimeOnESW; // reference to arrival anchor.
 
 	max_ampd(oldESW_amp+PeakWB,PeakWL,&Peak);
 	NormalizeFactor=oldESW_amp[PeakWB+Peak];
 	ShiftTimeFactor=oldESW_time[PeakWB+Peak];
+	PeakTimeOnESW=(PeakWB+Peak)*P[delta]-100.0;
 
 	for (int index=0;index<NPTS_Cut;index++){
 		oldESW_amp[index]/=NormalizeFactor;
@@ -233,6 +237,9 @@ int main(int argc, char **argv){
 	}
 
 	// 2. Normalize and taper ScS waveforms.
+	int *PeakScS=new int [Data.size()];
+	int *PeakS=new int [Data.size()];
+
 	for (size_t index=0;index<Data.size();index++){
 
 
@@ -243,15 +250,19 @@ int main(int argc, char **argv){
 		NormalizeFactor=ScSWaveformTapered_amp[index][Peak];
 		ShiftTimeFactor=ScSWaveformTapered_time[index][Peak];
 
+		PeakScS[index]=Peak;
+
 		for (int index2=0;index2<NPTS_Cut;index2++){
 			ScSWaveformTapered_amp[index][index2]/=NormalizeFactor;
 			ScSWaveformTapered_time[index][index2]-=ShiftTimeFactor;
 		}
 
-// 		taperd(ScSWaveformTapered_amp[index],NPTS_Cut,0.1);
-
-		// Modified taperd:
-		taperd_section(ScSWaveformTapered_amp[index],NPTS_Cut,0.4,0.1);
+		Peak=(int)ceil((Data[index].Peak_S+100+
+		                Data[index].PREM_S-Data[index].PREM_ScS)/P[delta]);
+		if (Peak>=100){
+			findpeak(ScSWaveformTapered_amp[index],NPTS_Cut,&Peak,-100,200);
+		}
+		PeakS[index]=Peak;
 
 	}
 
@@ -337,6 +348,65 @@ int main(int argc, char **argv){
 	delete[] oldESW_amp;
 	delete[] TstaredESW_Aux;
 
+// 	Step 5'. Post-process ScS waveform, this may choose from:
+// 		a. Don't strip S.
+// 		b. May strip S by applying a sectioned taper.
+// 		c. May strip S by subtracting S ESW at S CCC position.
+
+
+	for (size_t index=0;index<Data.size();index++){
+
+		int WB,WL;
+		if (PeakScS[index]>NPTS_Cut/2){
+			WL=2*(NPTS_Cut-PeakScS[index]);
+			WB=NPTS_Cut-WL;
+		}
+		else{
+			WB=0;
+			WL=2*PeakScS[index];
+		}
+
+		// a:
+// 		taperd(ScSWaveformTapered_amp[index]+WB,WL,0.1);
+
+		// b:
+// 		taperd_section(ScSWaveformTapered_amp[index]+WB,WL,0.4,0.1);
+
+		// c:
+		int SubtractWindow=(int)ceil(60/P[delta]);
+		if (PeakS[index]<SubtractWindow/2){
+			continue;
+		}
+
+		double SPeakAMP=ScSWaveformTapered_amp[index][PeakS[index]];
+		int ScSBegin,ESWBegin;
+
+		// Find subtraction begin position on ESW and ScS.
+		ScSBegin=PeakS[index]-SubtractWindow/2;
+		ESWBegin=(int)ceil((Data[index].Peak_S-Data[index].DTS-
+		                    PeakTimeOnESW)/P[delta]);
+
+		ESWBegin+=(TstaredESW_Peak[0]-SubtractWindow/2);
+
+
+		// Subtract ESW from S waveform.
+		for (int index2=0;index2<SubtractWindow;index2++){
+			if (ScSBegin+index2<0 || ESWBegin+index2<0){
+				continue;
+			}
+			ScSWaveformTapered_amp[index][ScSBegin+index2]-=
+			TstaredESW[0][ESWBegin+index2]*SPeakAMP;
+		}
+
+		// Normalize to ScS.
+		NormalizeFactor=ScSWaveformTapered_amp[index][PeakScS[index]];
+		for (int index2=0;index2<NPTS_Cut;index2++){
+			ScSWaveformTapered_amp[index][index2]/=NormalizeFactor;
+		}
+
+		taperd_section(ScSWaveformTapered_amp[index]+WB,WL,0.4,0.1);
+
+	}
 
 	// Step 5. Since we need to try vertical stretch as well, we need to have
 	//         a matrix of altered ESW (named alteredESW);
@@ -408,6 +478,7 @@ int main(int argc, char **argv){
 
 		// Compare between ESW(Ts!=0,Ver==0) and Original ScS.
 		CCDiff=1/0.0;
+// 		CCDiff=0.0;
 		IndexTs=0;
 
 		for (int index2=0;index2<PI[nXStretch];index2++){
@@ -416,8 +487,13 @@ int main(int argc, char **argv){
 						   &TmpShift,&TmpCCC,&TmpCCDiff,&TmpDiff,
 						   P[AMPlevel],L1,L2);
 
+			if (Data[index].STNM=="s101"){
+				cout << "		->    Tstar/Compare: " << index2*TsINC << " " << TmpCCDiff << endl;
+			}
+
 
 			if (TmpCCDiff<=CCDiff){
+// 			if (TmpCCDiff>=CCDiff){
 			    CCDiff=TmpCCDiff;
 				IndexTs=index2;
 			}
@@ -503,6 +579,7 @@ int main(int argc, char **argv){
 
 			// Compare between ESW(Ts==0,Ver==0) and Tstared ScS.
 			CCDiff=1/0.0;
+// 			CCDiff=0.0;
 			IndexTs=0;
 
 			for (int index2=0;index2<PI[nXStretch];index2++){
@@ -513,6 +590,7 @@ int main(int argc, char **argv){
 
 
 				if (TmpCCDiff<=CCDiff){
+// 				if (TmpCCDiff>=CCDiff){
 					CCDiff=TmpCCDiff;
 					IndexTs=index2;
 				}
@@ -719,6 +797,20 @@ void CompareESW_ScS(CompareESW X,CompareScS Y,int *Shift,double *CCC,
 
 	// 2. Use CCC to compare and align two traces.
 	CC(X.Signal+X_AB,X_AE-X_AB+1,Y.Signal+Y_AB,Y_AE-Y_AB+1,Shift,CCC);
+
+// 	double *x_cc=new double [X_AE-X_AB+1];
+// 	double *y_cc=new double [Y_AE-Y_AB+1];
+// 	for (int index=0;index<X_AE-X_AB+1;index++){
+// 		x_cc[index]=X.Signal[X_AB+index]-AMPlevel;
+// 	}
+// 	for (int index=0;index<Y_AE-Y_AB+1;index++){
+// 		y_cc[index]=Y.Signal[Y_AB+index]-AMPlevel;
+// 	}
+// 	normalized(x_cc,X_AE-X_AB+1);
+// 	normalized(y_cc,Y_AE-Y_AB+1);
+// 	CC(x_cc,X_AE-X_AB+1,y_cc,Y_AE-Y_AB+1,Shift,CCC);
+// 	delete[] x_cc;
+// 	delete[] y_cc;
 
 	int BEGIN_X,BEGIN_Y,TotalLength,T1,T2;
 	if ((*Shift)<0){

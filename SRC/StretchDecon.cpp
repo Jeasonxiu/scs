@@ -402,6 +402,10 @@ int main(int argc, char **argv){
 
 	for (size_t index=0;index<Data.size();index++){
 
+
+		cout << "Stretching " << Data[index].STNM << ".. ["  << index << " / " 
+		     << Data.size() << "]:" << endl;
+
 		// Compare between ESW(Ts!=0,Ver!=0) and Original ScS.
 		Diff=1/0.0;
 		IndexTs=0;
@@ -422,16 +426,15 @@ int main(int argc, char **argv){
 					IndexVer=index3;
 				}
 
-				cout << "TmpCCC: " << TmpCCC << endl;
-
 			}
 		}
 
 
-// 		if (IndexTs!=0){
-// 			cout << "Tstar ESW: " << Data[index].PairName << " " << index
-// 			     << " / " << Data.size() << endl;
-// 		}
+		if (IndexTs!=0){
+
+			cout << "    Tstar on ESW..."  << endl;
+
+		}
 
 		// Notedown compare result.
 		DeconInput[index].Source=alteredESW[IndexTs][IndexVer].Signal;
@@ -447,8 +450,7 @@ int main(int argc, char **argv){
 
 		if (IndexTs==0){
 
-// 			cout << "Tstar ScS: " << Data[index].PairName << " " << index
-// 			     << " / " << Data.size() << endl;
+			cout << "    Tstar on ScS..."  << endl;
 
 			OriginalDiff=Diff;
 
@@ -534,6 +536,10 @@ int main(int argc, char **argv){
 			}
 			delete[] tstaredScS;
 		}
+
+		cout << "        Tstar Parameter : " << DeconInput[index].Ts << endl;
+		cout << "        Vertical Stretch: " << DeconInput[index].Ver << endl;
+
 	}
 
 	// Step 8. Output stretched ESW / or ScS.

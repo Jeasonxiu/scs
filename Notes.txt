@@ -9,3 +9,5 @@
 4. Try Mask S on data.
 
 5. Misfit outliar throw away. What is its scheme ?
+
+6. Possible bug: Standard devication at bin 34,35 is crazy.
