@@ -118,10 +118,10 @@ SS
 <RCompare>                       13
 <R1>                             0.3
 <R2>                             1.5
+<nXStretch>                      201
 <V1>                             -0.1
 <V2>                             0.05
-<nXStretch>                      200
-<nYStretch>                      30
+<nYStretch>                      31
 <AMPlevel_Default>               0.2
 
 
@@ -471,7 +471,8 @@ TX2011_S
 
 <EQsSYN_BEGIN>
 
-201500000072
+
+201500000047
 
 <EQsSYN_END>
 

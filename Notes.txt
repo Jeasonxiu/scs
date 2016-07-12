@@ -2,21 +2,27 @@
     -- Both schemes (Use half thinner S data / Use all data, half-thin ESW)
 	   show FRS bin-stack bumps goes away (20160629).
 
-2. Possble bug: stretch by records no negative tstar on synthesis: ~047@50deg.
+[2]. Possble bug: stretch by records no negative tstar on synthesis: ~047@50deg.
+	-- C++ bug found: Vertical stretch doesn't start with index=0. (20160713)
 
 [3]. Fix a05.HandPick. Make it faster.
+	-- Data process is upgraded, plotting is still slow as hell.
 
 4. Try Mask S on data.
+	-- Program done.
+	-- Need eyeball inspection on "All" plots.
 
-5. Misfit outliar throw away. What is its scheme ?
+5. Misfit outliar throw away. What's the scheme?
 
+6. Possible bug: Standard deviation at bin 34,35 is crazy.
+	-- The crazy std goes away when I do the SNR_D-FinalWeight ramp between 7~15.
 
-6. Possible bug: Standard devication at bin 34,35 is crazy.
+7. Add a plot: ScS Amp / S Amp Data vs Predicted (on SYN /on Rad Prediction).
 
-7. ScS Amp / S Amp Data vs Predicted (SYN and Rad).
+8. < 75 bin stack. What's the difference on distance-mixed bins?
 
-8. < 75 bin stack.o
-
-9. Pick Same number of number of record from quiet bin ,stack them to see if they are messy.
+9. Pick Same number of record from "quiet" bin ,stack them to see if they are messy like the noisy ones. Need to know how many data is required for a meaningful stack.
 
 10. Distance - FRS amplitude issue.
+
+11. I ordered the "All" plot by Misfit4_ScS, why in 1D_REFL synthesis this is not the same order as gcarc?

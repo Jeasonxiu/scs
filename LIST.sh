@@ -30,9 +30,9 @@
 # ${SRCDIR}/a19_5.RawFRS.sh
 # ${SRCDIR}/a19_6.WaterStripHalfSFRS.sh
 # ${SRCDIR}/a20.WeightScheme.sh
-${SRCDIR}/a21_1.CircleBin.sh
+# ${SRCDIR}/a21_1.CircleBin.sh
 # ${SRCDIR}/a21_2.GeneralBin.sh
-${SRCDIR}/a22.StackData.sh
+# ${SRCDIR}/a22.StackData.sh
 # ${SRCDIR}/a23.BinBootStrap.sh
 # ${SRCDIR}/a24_1.StackModels_1D.sh
 # ${SRCDIR}/a25_1.WhichModel_1D.sh

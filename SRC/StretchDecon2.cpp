@@ -429,11 +429,17 @@ int main(int argc, char **argv){
 	}
 
 	// 2. Stretch Vertically.
+	int ZeroVerticalIndex=0;
+
 	for (int index=0;index<PI[nYStretch];index++){
 		for (int index2=0;index2<PI[nXStretch];index2++){
 
 			TmpSignal=new double [NPTS_TstaredESW];
 			V=alteredESW[index2][index].Ver;
+
+			if  (fabs(V)<VerINC/2+VerINC/10){
+				ZeroVerticalIndex=index;
+			}
 
 			for (int index3=0;index3<NPTS_TstaredESW;index3++){
 				TmpSignal[index3]=(TstaredESW[index2][index3]+V)/(1+V);
@@ -483,7 +489,7 @@ int main(int argc, char **argv){
 
 		for (int index2=0;index2<PI[nXStretch];index2++){
 
-			CompareESW_ScS(alteredESW[index2][0],originalScS[index],
+			CompareESW_ScS(alteredESW[index2][ZeroVerticalIndex],originalScS[index],
 						   &TmpShift,&TmpCCC,&TmpCCDiff,&TmpDiff,
 						   P[AMPlevel],L1,L2);
 
@@ -584,7 +590,7 @@ int main(int argc, char **argv){
 
 			for (int index2=0;index2<PI[nXStretch];index2++){
 
-				CompareESW_ScS(alteredESW[0][0],tstaredScS[index2],
+				CompareESW_ScS(alteredESW[0][ZeroVerticalIndex],tstaredScS[index2],
 							   &TmpShift,&TmpCCC,&TmpCCDiff,&TmpDiff,
 							   P[AMPlevel],L1,L2);
 
