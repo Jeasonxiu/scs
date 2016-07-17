@@ -73,8 +73,8 @@ EOF
 
 	4 ) # Use SNR measured on deconed ScS trace. SNR_D in Master_$$.
 		
-		Higher=10.0
-		Lower=2.0
+		Higher=15.0
+		Lower=7.0
 
 		mysql -u shule ${DB} << EOF
 create table tmptable$$ as (select PairName,if(SNR_D>=${Higher},convert(1.0,double),if(SNR_D<${Lower},convert(0.0,double),(SNR_D-${Lower})/(${Higher}-${Lower}))) as Weight_Final from Master_$$ where wantit=1 );

@@ -67,7 +67,7 @@ EOF
     # ================================================
 
 	mysql -N -u shule ${SYNDB} > sort.lst << EOF
-select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,Peak_S,Peak_ScS,Shift_D,DeconSource,Ts_D,Ver_D from Master_a41 where eq=${EQ} and wantit=1 order by Misfit_ScS;
+select STNM,NETWK,round(Weight_Final,2),GCARC,Category,D_T_S,CCC_S,Polarity_S,D_T_ScS,CCC_ScS,CCC_D,Polarity_ScS,Peak_S,Peak_ScS,Shift_D,DeconSource,Ts_D,Ver_D from Master_a41 where eq=${EQ} and wantit=1 order by gcarc;
 EOF
 
 
@@ -197,9 +197,9 @@ EOF
         pstext ${PROJ} ${REGESF} -O -K >> ${OUTFILE} << EOF
 -50 1 6 0 0 LT S
 EOF
-        psxy -J -R -Sa0.06i -Gblue -N -O -K >> ${OUTFILE} << EOF
-${Peak_S} 1.0
-EOF
+#         psxy -J -R -Sa0.06i -Gblue -N -O -K >> ${OUTFILE} << EOF
+# ${Peak_S} 1.0
+# EOF
         awk -v C=${Polarity_S} '{print $1,$2*C}' S.xy | psxy ${PROJ} ${REGESF} -O -K >> ${OUTFILE}
         awk -v DT=${D_T_S} '{print $1+DT,$2}' ${Sesf} | psxy ${PROJ} ${REGESF} -W${color[${Cate}]} -O -K >> ${OUTFILE}
 
@@ -281,9 +281,9 @@ EOF
         pstext ${PROJ} ${REGESF} -O -K >> ${OUTFILE} << EOF
 -50 1 6 0 0 LT ScS
 EOF
-        psxy -J -R -Sa0.06i -Gblue -N -O -K >> ${OUTFILE} << EOF
-${Peak_ScS} 1.0
-EOF
+#         psxy -J -R -Sa0.06i -Gblue -N -O -K >> ${OUTFILE} << EOF
+# ${Peak_ScS} 1.0
+# EOF
         awk -v C=${Polarity_ScS} '{print $1,$2*C}' ScS.xy | psxy ${PROJ} ${REGESF} -O -K >> ${OUTFILE}
         awk -v DT=${D_T_ScS}  '{print $1+DT,$2}' ${ScSesf} | psxy ${PROJ} ${REGESF} -W${color[${Cate}]} -O -K >> ${OUTFILE}
 

@@ -76,7 +76,7 @@ EOF
 
 		# Gather Information.
 		mysql -N -u shule ${SYNDB} > tmpfile_Cin_$$ << EOF
-select Pairname,stnm,concat("${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/",stnm,".waveform"),FullStackFile_S,concat("${WORKDIR_WaterDecon}/${EQ}/",stnm,".tapered"),concat("${WORKDIR_Stretch}/${EQ}/",stnm,".StretchedTaperSource"),concat("${WORKDIR_WaterDecon}/${EQ}/",stnm,".trace"),Peak_ScS,NA_ScS from Master_$$ where eq=${EQ} and wantit=1 and Category=${cate} order by Misfit4_ScS;
+select Pairname,stnm,concat("${WORKDIR_ESF}/${EQ}_${MainPhase}/${cate}/",stnm,".waveform"),FullStackFile_S,concat("${WORKDIR_WaterDecon}/${EQ}/",stnm,".tapered"),concat("${WORKDIR_Stretch}/${EQ}/",stnm,".StretchedTaperSource"),concat("${WORKDIR_WaterDecon}/${EQ}/",stnm,".trace"),Peak_ScS,NA_ScS,Peak_S,D_T_S,S,ScS from Master_$$ where eq=${EQ} and wantit=1 and Category=${cate} order by Misfit4_ScS;
 EOF
 
         # C Code.

@@ -43,7 +43,7 @@ EOF
 echo "    ==> Selecting traces goes into bin stack ..."
 
 mysql -u shule ${DB} << EOF
-update Master_$$ set wantit=0 where SHIFT_GCARC<${D1_FRS} or SHIFT_GCARC>${D2_FRS} or Weight_Final<${Threshold_Weight};
+update Master_$$ set wantit=0 where SHIFT_GCARC<${D1_FRS} or SHIFT_GCARC>${D2_FRS} or Weight_Final<${Threshold_Weight} or Weight_Final is null;
 EOF
 
 echo "select count(*) from Master_$$ where wantit=1" > tmpfile_$$
