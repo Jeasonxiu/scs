@@ -176,7 +176,7 @@ SS
 <LAMAX>                          27
 <LAINC>                          2.5
 <Radius>                         3
-<D1_FRS>                         40
+<D1_FRS>                         45
 <D2_FRS>                         85
 <Threshold>                      15
 <Threshold_Weight>               0.001
@@ -189,6 +189,7 @@ SS
 # a60. & b17_1,b17_2,b17_3. (DeconMethod)
 <DeconMethod>                    Waterlevel
                                  Waterlevel / Ammon / Subtract / WaterWL / Raw / WaterHalfS / WaterS
+								 When use a16_a17 and a36_a37, use Waterlevel.
 
 
 # a22.
@@ -325,6 +326,8 @@ TX2011_S
 <Method2>                        Waterlevel
                                  Ammon / Waterlevel / Subtract / AnyName (read from CompareDecon folder)
 
+# b21_9.
+<RandTestNum>                    48
 
 # b22_2.
 <StartBin>                       1

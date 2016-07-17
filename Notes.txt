@@ -8,20 +8,22 @@
 [3]. Fix a05.HandPick. Make it faster.
 	-- Data process is upgraded, plotting is still slow as hell.
 
-4. Try Mask S on data.
+[4]. Try Mask S on data.
 	-- Program done.
 	-- Need eyeball inspection on "All" plots.
 
 5. Misfit outliar throw away. What's the scheme?
 
-6. Possible bug: Standard deviation at bin 34,35 is crazy.
-	-- The crazy std goes away when I do the SNR_D-FinalWeight ramp between 7~15.
+[6]. Possible bug: Standard deviation at bin 34,35 is crazy.
+	-- The crazy std goes away when I do the SNR_D-FinalWeight ramp between 7~15 (rather than 2~10).
 
-7. Add a plot: ScS Amp / S Amp Data vs Predicted (on SYN /on Rad Prediction).
+7. Add a plot: ScS Amp / S Amp Data vs Predicted (on SYN or on Rad Prediction).
+	-- Plot this: X-axis is gcarc, Y-axis has Data and Prediction (different color).
 
-8. < 75 bin stack. What's the difference on distance-mixed bins?
+[8]. < 75 bin stack. What's the difference on distance-mixed bins?
+	-- Eyeball check is hard.
 
-9. Pick Same number of record from "quiet" bin ,stack them to see if they are messy like the noisy ones. Need to know how many data is required for a meaningful stack.
+9. Pick Same number of record from "quiet" bin ,stack them to see if they are as messy as the "noisy" ones. Need to know how many data is required for a meaningful stack.
 
 10. Distance - FRS amplitude issue.
 
