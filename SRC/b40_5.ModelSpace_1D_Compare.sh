@@ -53,13 +53,19 @@ done
 for GCARC in `seq ${GCARC1_1DMS} ${GCARCINC_1DMS} ${GCARC2_1DMS}`
 do
 
-    echo "    ==> Plotting 1D ModelSpace, Gcarc: ${GCARC}..."
-    OUTFILE=${GCARC}.ps
 
 	# Prepare plot trace info.
 	mysql -N -u shule ${SYNDB} > filenames << EOF
 select concat("${FRSDIR}/",pairname,".frs") from Master_a38 where wantit=1 and gcarc=${GCARC};
 EOF
+
+	if ! [ -s filenames ]
+	then
+		continue
+	fi
+
+    echo "    ==> Plotting 1D ModelSpace, Gcarc: ${GCARC}..."
+    OUTFILE=${GCARC}.ps
 
     ### plot titles and legends
 	cat > tmpfile_$$ << EOF

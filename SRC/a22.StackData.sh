@@ -80,6 +80,7 @@ EOF
     if [ $? -ne 0 ]
     then
         echo "    !=> StackFRS C code failed ..."
+		sleep 10000
         rm -f ${WORKDIR_Geo}/*
         exit 1;
     fi
