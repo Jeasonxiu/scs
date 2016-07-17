@@ -121,7 +121,8 @@ int main(int argc, char **argv){
             fprintf(fpout,"<EQ> <STNM> <DIST> <binR> <binLon> <binLat> <binLon_Before> <binLat_Before>\n");
             for (count2=0;count2<NRecord;count2++){
                 if (index[count2][count]==1){
-                    fprintf(fpout,"%s\t%s\t%.2lf\t%.2lf\t%.2lf\t%.2lf\t%.2lf\t%.2lf\n",EQ[count2],STNM[count2],gcpdistance(hitlo[count2],hitla[count2],binlo[count],binla[count]),binr[count],binlo[count],binla[count],binlo_before[count],binla_before[count]);
+//                     fprintf(fpout,"%s\t%s\t%.2lf\t%.2lf\t%.2lf\t%.2lf\t%.2lf\t%.2lf\n",EQ[count2],STNM[count2],gcpdistance(hitlo[count2],hitla[count2],binlo[count],binla[count]),binr[count],binlo[count],binla[count],binlo_before[count],binla_before[count]);
+                    fprintf(fpout,"%s\t%s\t%.2lf\t%.2lf\t%.2lf\t%.2lf\t%.2lf\t%.2lf\n",EQ[count2],STNM[count2],gcpdistance(hitlo[count2],hitla[count2],binlo[count],binla[count]),binr[count],binlo_before[count],binla_before[count],binlo_before[count],binla_before[count]);
                 }
             }
             fclose(fpout);

@@ -4,7 +4,7 @@
 # ${SRCDIR}/a02.ExtractHeader.sh
 # ${SRCDIR}/a03.ScS_Sampling.sh
 # ${SRCDIR}/a04.AutoSelect.sh
-${SRCDIR}/a05.HumanSelect_Plot.sh
+# ${SRCDIR}/a05.HumanSelect_Plot.sh
 # ${SRCDIR}/a06.HumanSelect.sh
 # ${SRCDIR}/a08.AddRadpat.sh
 # ${SRCDIR}/a09.CorrectDepth.sh
@@ -98,10 +98,14 @@ ${SRCDIR}/a05.HumanSelect_Plot.sh
 # ${SRCDIR}/b21_2.GeneralBin.sh
 # ${SRCDIR}/b21_3.PathAtSampling.sh
 # ${SRCDIR}/b21_4.BinWeightHistogram.sh
+# ${SRCDIR}/b21_5.AllGcarcHistogram.sh
+# ${SRCDIR}/b21_6.AmpRatioDataVRad.sh
+# ${SRCDIR}/b21_7.FinalDistMap.sh
+# ${SRCDIR}/b21_8.AmpRatioVDist.sh
+${SRCDIR}/b21_9.BinSubsample.sh
 # ${SRCDIR}/b22_1.DataStackMap.sh
 # ${SRCDIR}/b22_2.BinCatalog.sh
-# ${SRCDIR}/b22_3.FinalDistMap.sh
-# ${SRCDIR}/b22_4.BinGcarcInc.sh
+# ${SRCDIR}/b22_3.BinGcarcInc.sh
 # ${SRCDIR}/b23.BinBootStrap.sh
 # ${SRCDIR}/b25_1.WhichModel_1D.sh
 
